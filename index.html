@@ -11,74 +11,53 @@
   :root{
     --bg:#0f1210; --bg2:#151a13; --card:#1a2016; --card2:#212a1b; --line:#2c3626;
     --text:#eef2e8; --muted:#a7b39a; --muted2:#717d64;
-    --accent:#aad503; --on-accent:#151a08;
-    --input:#0d120b;
+    --accent:#aad503; --on-accent:#151a08; --input:#0d120b;
     --ok:#4ade80; --okbg:#12240f; --warn:#facc15; --warnbg:#2a2408; --bad:#f87171; --badbg:#2a1210;
-    --radius:16px; --shadow:0 10px 28px rgba(0,0,0,.35);
-    --safe-b:env(safe-area-inset-bottom,0px);
+    --radius:16px; --shadow:0 10px 28px rgba(0,0,0,.35); --safe-b:env(safe-area-inset-bottom,0px);
   }
-  *{box-sizing:border-box}
-  html,body{margin:0;padding:0}
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
   body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
     background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;
     padding-bottom:calc(78px + var(--safe-b));transition:background .2s,color .2s}
   a{color:var(--accent)}
-  .app{max-width:780px;margin:0 auto;padding:14px 15px 0}
-  .hidden{display:none!important}
+  .app{max-width:820px;margin:0 auto;padding:14px 15px 0} .hidden{display:none!important}
 
-  .topbar{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:10px;
-    padding:11px 15px;background:color-mix(in srgb,var(--bg) 88%,transparent);
-    backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-  .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.2px;font-size:16px}
-  .brand img{width:34px;height:34px;border-radius:9px;box-shadow:var(--shadow)}
-  .brand small{display:block;color:var(--muted2);font-weight:700;font-size:10.5px;letter-spacing:.4px}
+  .topbar{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:8px;padding:10px 13px;
+    background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .brand{display:flex;align-items:center;gap:9px;font-weight:800;font-size:15px}
+  .brand img{width:32px;height:32px;border-radius:9px;box-shadow:var(--shadow)}
+  .brand small{display:block;color:var(--muted2);font-weight:700;font-size:10px}
   .spacer{flex:1}
-  .pill{font-size:12px;color:var(--muted);background:var(--card);border:1px solid var(--line);
-    padding:6px 9px;border-radius:999px;display:inline-flex;align-items:center;gap:6px}
-  .dot{width:8px;height:8px;border-radius:50%;background:var(--muted2)}
-  .dot.online{background:var(--accent);box-shadow:0 0 10px var(--accent)}
-  .icon-btn{background:var(--card);border:1px solid var(--line);color:var(--text);
-    width:38px;height:38px;border-radius:11px;font-size:16px;cursor:pointer;display:grid;place-items:center}
+  .pill{font-size:11px;color:var(--muted);background:var(--card);border:1px solid var(--line);padding:5px 9px;border-radius:999px;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--muted2)} .dot.online{background:var(--accent);box-shadow:0 0 10px var(--accent)}
+  .icon-btn{background:var(--card);border:1px solid var(--line);color:var(--text);width:36px;height:36px;border-radius:11px;font-size:15px;cursor:pointer;display:grid;place-items:center;flex:none}
   .icon-btn:hover{border-color:var(--accent)}
 
-  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
-    padding:17px;margin:13px 0;box-shadow:var(--shadow)}
-  .card h2{margin:0 0 3px;font-size:17px}
-  .card h3{margin:16px 0 8px;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
-  .sub{color:var(--muted);font-size:13px;margin:0 0 12px}
-  .muted{color:var(--muted)} .tiny{font-size:12px;color:var(--muted2)} .center{text-align:center}
-  hr.hr{height:1px;background:var(--line);border:0;margin:15px 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin:13px 0;box-shadow:var(--shadow)}
+  .card h2{margin:0 0 3px;font-size:17px} .card h3{margin:15px 0 8px;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 12px} .muted{color:var(--muted)} .tiny{font-size:12px;color:var(--muted2)} .center{text-align:center}
 
   label{display:block;font-size:12.5px;color:var(--muted);margin:12px 0 6px;font-weight:600}
-  input,select,textarea{width:100%;background:var(--input);border:1px solid var(--line);color:var(--text);
-    padding:12px 13px;border-radius:11px;font-size:16px;outline:none;transition:border .15s}
+  input,select,textarea{width:100%;background:var(--input);border:1px solid var(--line);color:var(--text);padding:12px 13px;border-radius:11px;font-size:16px;outline:none}
   input:focus,select:focus{border-color:var(--accent)}
-  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  @media(max-width:520px){.grid2{grid-template-columns:1fr}}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px} @media(max-width:520px){.grid2{grid-template-columns:1fr}}
   .row{display:flex;gap:10px}.row>*{flex:1}
 
-  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--accent);
-    color:var(--on-accent);border:none;padding:13px 15px;border-radius:12px;font-size:15px;font-weight:800;
-    cursor:pointer;width:100%;transition:transform .05s,filter .15s}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--accent);color:var(--on-accent);border:none;padding:13px 15px;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;width:100%}
   .btn:active{transform:scale(.985)} .btn:hover{filter:brightness(1.06)}
   .btn.secondary{background:var(--card2);color:var(--text);border:1px solid var(--line)}
   .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--text)}
-  .btn.dark{background:#1c2116;color:#eef2e8;border:1px solid var(--line)}
-  .btn.danger{background:var(--bad);color:#2a0e0e}
+  .btn.dark{background:#20261b;color:#eef2e8;border:1px solid var(--line)}
   .btn.sm{width:auto;padding:9px 12px;font-size:13px;border-radius:10px}
-  .btn[disabled]{opacity:.5;cursor:not-allowed}
-  .btn-row{display:flex;gap:10px;margin-top:13px}.btn-row .btn{width:auto;flex:1}
+  .btn[disabled]{opacity:.5} .btn-row{display:flex;gap:10px;margin-top:13px}.btn-row .btn{width:auto;flex:1}
 
   .seg{display:flex;background:var(--input);border:1px solid var(--line);border-radius:12px;padding:4px;gap:4px}
   .seg button{flex:1;background:none;border:none;color:var(--muted);padding:10px;border-radius:9px;font-weight:800;font-size:13px;cursor:pointer}
   .seg button.active{background:var(--accent);color:var(--on-accent)}
 
-  .chip{display:inline-block;padding:4px 10px;border-radius:999px;font-size:11.5px;font-weight:800;
-    background:var(--card2);border:1px solid var(--line);color:var(--muted)}
-  .chip.ok{background:var(--okbg);border-color:#1f5a33;color:var(--ok)}
-  .chip.warn{background:var(--warnbg);border-color:#5a4a0a;color:var(--warn)}
-  .chip.bad{background:var(--badbg);border-color:#6a2226;color:var(--bad)}
+  .chip{display:inline-block;padding:4px 10px;border-radius:999px;font-size:11.5px;font-weight:800;background:var(--card2);border:1px solid var(--line);color:var(--muted)}
   .chip.acc{background:color-mix(in srgb,var(--accent) 18%,transparent);border-color:var(--accent);color:var(--accent)}
+  .chip.warn{background:var(--warnbg);border-color:#5a4a0a;color:var(--warn)}
 
   .rep-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--line)}
   table{border-collapse:collapse;width:100%;font-size:13px;background:var(--input)}
@@ -87,65 +66,59 @@
   thead th{background:var(--card2);color:var(--muted);font-size:10.5px;text-transform:uppercase;letter-spacing:.4px}
   tbody tr.area-row td{background:color-mix(in srgb,var(--accent) 12%,var(--card));font-weight:800}
   tbody tr.total td{background:var(--card2);font-weight:800}
-  tbody tr.asesor td:first-child{padding-left:22px;color:var(--muted)}
+  tbody tr.asesor td:first-child{padding-left:20px;color:var(--muted)}
 
   .kpi{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .kpi .k{background:var(--input);border:1px solid var(--line);border-radius:12px;padding:12px}
-  .kpi .k .n{font-size:20px;font-weight:900}
-  .kpi .k .l{font-size:10.5px;color:var(--muted2);text-transform:uppercase;letter-spacing:.5px}
+  .kpi .k .n{font-size:20px;font-weight:900} .kpi .k .l{font-size:10.5px;color:var(--muted2);text-transform:uppercase;letter-spacing:.5px}
 
-  .semaforo{width:12px;height:12px;border-radius:50%;display:inline-block;margin-right:5px;vertical-align:middle}
-  .semaforo.ok{background:var(--ok)}.semaforo.warn{background:var(--warn)}.semaforo.bad{background:var(--bad)}
+  .sem{width:11px;height:11px;border-radius:50%;display:inline-block;margin-right:5px;vertical-align:middle}
+  .sem.ok{background:var(--ok)}.sem.warn{background:var(--warn)}.sem.bad{background:var(--bad)}
   .pctok{color:var(--ok)}.pctwarn{color:var(--warn)}.pctbad{color:var(--bad)}
 
-  .nav{position:fixed;left:0;right:0;bottom:0;z-index:50;background:color-mix(in srgb,var(--bg) 94%,transparent);
-    backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:8px 6px calc(8px + var(--safe-b));
-    display:flex;justify-content:space-around}
-  .nav button{background:none;border:none;color:var(--muted2);font-size:11px;font-weight:800;display:flex;
-    flex-direction:column;align-items:center;gap:3px;padding:6px;cursor:pointer;flex:1;border-radius:10px}
-  .nav button .ic{font-size:20px;line-height:1}
-  .nav button.active{color:var(--accent)}
+  .nav{position:fixed;left:0;right:0;bottom:0;z-index:50;background:color-mix(in srgb,var(--bg) 94%,transparent);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:8px 6px calc(8px + var(--safe-b));display:flex;justify-content:space-around}
+  .nav button{background:none;border:none;color:var(--muted2);font-size:11px;font-weight:800;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px;cursor:pointer;flex:1;border-radius:10px}
+  .nav button .ic{font-size:20px;line-height:1} .nav button.active{color:var(--accent)}
 
-  .toast{position:fixed;left:50%;bottom:calc(92px + var(--safe-b));transform:translateX(-50%);
-    background:var(--card);border:1px solid var(--line);color:var(--text);padding:12px 18px;border-radius:12px;
-    box-shadow:var(--shadow);z-index:120;max-width:90%;text-align:center;font-size:14px}
+  .toast{position:fixed;left:50%;bottom:calc(92px + var(--safe-b));transform:translateX(-50%);background:var(--card);border:1px solid var(--line);color:var(--text);padding:12px 18px;border-radius:12px;box-shadow:var(--shadow);z-index:120;max-width:90%;text-align:center;font-size:14px}
   .modal-bg{position:fixed;inset:0;background:rgba(3,7,4,.72);z-index:90;display:grid;place-items:center;padding:14px}
-  .modal{background:var(--card);border:1px solid var(--line);border-radius:18px;max-width:560px;width:100%;
-    max-height:90vh;overflow:auto;box-shadow:var(--shadow)}
+  .modal{background:var(--card);border:1px solid var(--line);border-radius:18px;max-width:560px;width:100%;max-height:90vh;overflow:auto;box-shadow:var(--shadow)}
   .modal .m-head{padding:15px 17px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
   .modal .m-body{padding:17px}
-
   .list-item{display:flex;align-items:center;gap:10px;padding:11px;border:1px solid var(--line);border-radius:12px;margin-bottom:8px;background:var(--input)}
-  .list-item .li-main{flex:1;min-width:0}
-  .list-item .li-main .t{font-weight:800}
-  .list-item .li-main .s{font-size:12px;color:var(--muted)}
+  .list-item .li-main{flex:1;min-width:0}.list-item .li-main .t{font-weight:800}.list-item .li-main .s{font-size:12px;color:var(--muted)}
 
   .ocr-note{font-size:12px;color:var(--warn);background:var(--warnbg);border:1px solid #5a4a0a;padding:8px 10px;border-radius:10px;margin-top:8px}
   .field-flag{border-color:var(--warn)!important}
   .badge-ai{font-size:10px;background:color-mix(in srgb,var(--accent) 18%,transparent);border:1px solid var(--accent);color:var(--accent);padding:2px 7px;border-radius:999px;margin-left:6px}
-  .swatch{width:30px;height:30px;border-radius:8px;border:2px solid transparent;cursor:pointer}
-  .swatch.sel{border-color:var(--text)}
+  .swatch{width:32px;height:32px;border-radius:9px;border:2px solid transparent;cursor:pointer}.swatch.sel{border-color:var(--text)}
+  .fpbadge{display:inline-flex;align-items:center;gap:6px;font-weight:900}
+  .fpring{width:22px;height:22px;border-radius:50%;background:conic-gradient(#00a94f 0 25%,#0072ce 0 50%,#e4002b 0 75%,#ff7f00 0 100%);-webkit-mask:radial-gradient(circle 6px,transparent 98%,#000);mask:radial-gradient(circle 6px,transparent 98%,#000)}
 
-  /* Fullscreen report (fondo blanco) */
-  .fs{position:fixed;inset:0;background:#fff;color:#111;z-index:200;overflow:auto;padding:18px}
+  .fs{position:fixed;inset:0;background:#fff;color:#111;z-index:200;overflow:auto;padding:16px}
   .fs .fs-close{position:fixed;top:12px;right:12px;background:#111;color:#fff;border:none;width:40px;height:40px;border-radius:12px;font-size:18px;cursor:pointer;z-index:210}
-  .fs h1{font-size:22px;margin:4px 0 2px;text-align:center}
-  .fs .fs-date{text-align:center;color:#555;margin-bottom:14px;text-transform:capitalize}
+  .fs h1{font-size:22px;margin:2px 0 2px;text-align:center}
+  .fs .fs-date{text-align:center;color:#555;margin-bottom:6px;text-transform:capitalize}
+  .fs .fs-kpis{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:8px 0 12px}
+  .fs .fs-kpis .k{background:#f3f6ea;border-radius:10px;padding:8px 12px;text-align:center;min-width:96px}
+  .fs .fs-kpis .k .n{font-weight:900;font-size:16px}.fs .fs-kpis .k .l{font-size:10px;color:#666;text-transform:uppercase}
   .fs table{background:#fff;color:#111;border:1px solid #ddd;table-layout:fixed}
-  .fs th,.fs td{border-bottom:1px solid #e5e5e5;padding:8px 7px;font-size:12.5px;overflow:hidden;text-overflow:ellipsis}
-  .fs th:first-child,.fs td:first-child{width:34%}
+  .fs th,.fs td{border-bottom:1px solid #e5e5e5;padding:7px;font-size:12px;overflow:hidden;text-overflow:ellipsis}
+  .fs th:first-child,.fs td:first-child{width:26%}
   .fs thead th{background:#f3f6ea;color:#333}
-  .fs tr.area-row td{background:#eaf3c6;color:#1a1f14}
+  .fs tr.area-row td{background:#eaf3c6;color:#1a1f14;font-weight:800}
   .fs tr.total td{background:#111;color:#fff;font-weight:900}
-  .fs .fs-foot{text-align:center;color:#888;font-size:12px;margin-top:14px}
+  .fs .sem{width:10px;height:10px}
+  .fs .fs-foot{text-align:center;color:#888;font-size:12px;margin-top:12px}
 </style>
 </head>
 <body>
 
 <div class="topbar">
-  <div class="brand"><img src="icon-180.png" alt="RE"><div>Reporte Electro<small id="tbSub">Garantía · Seguro</small></div></div>
+  <div class="brand"><img src="icon-180.png" alt="RE"><div>Reporte Electro<small>Garantía · Seguro</small></div></div>
   <div class="spacer"></div>
-  <span class="pill" id="modePill"><span class="dot" id="modeDot"></span><span id="modeText">local</span></span>
+  <span class="pill" id="updPill"><span class="dot" id="modeDot"></span><span id="updText">—</span></span>
+  <button class="icon-btn" id="btnBrush" title="Color de la app">🖌️</button>
   <button class="icon-btn" id="btnTheme" title="Claro/oscuro">🌙</button>
   <button class="icon-btn" id="btnLogout" title="Cerrar sesión">⎋</button>
 </div>
@@ -160,363 +133,235 @@
 </nav>
 
 <script>
-/* =========================================================================
-   REPORTE ELECTRO v3
-   ========================================================================= */
+/* ===================== REPORTE ELECTRO v4 ===================== */
+const FIREBASE_CONFIG = { apiKey:"", authDomain:"", projectId:"", storageBucket:"", messagingSenderId:"", appId:"" };
 
-/* --- Pega aquí tu Firebase UNA sola vez para que quede en línea siempre --- */
-const FIREBASE_CONFIG = {
-  apiKey:"", authDomain:"", projectId:"", storageBucket:"", messagingSenderId:"", appId:""
-};
-
-/* --- Dominio --- */
-const AREAS_DEPTOS = {
-  "ELECTRO NEGRO":["AUDIO","CONNECT","VIDEOJUEGOS","COMPUTACION"],
-  "LINEA BLANCA":["ELECTRODOMESTICOS","CUIDADO PERSONAL","LINEA BLANCA","OTROS"]
-};
-const AREAS = Object.keys(AREAS_DEPTOS);
-const NOMIX_DEPTOS = ["VIDEO","AUDIO","COMPUTACION Y HOGAR","TELEFONIA","ELECTRODOMESTICOS","LINEA BLANCA","DECO",
+const AREA_EN="ELECTRO NEGRO", AREA_LB="LINEA BLANCA";
+const AREAS=[AREA_EN,AREA_LB];
+const DEPTOS_EN=["AUDIO","COMPUTACION","CONNECT","VIDEOJUEGOS","FOTOGRAFIA"]; // Electro Negro con departamentos
+// Línea Blanca va sola (sin departamentos)
+const SEGURO_DEPTS=new Set(["CONNECT"]); // solo Connect lleva meta de seguro
+const NOMIX_DEPTOS=["VIDEO","AUDIO","COMPUTACION Y HOGAR","TELEFONIA","ELECTRODOMESTICOS","LINEA BLANCA","DECO",
   "ZAPATOS HOMBRE","ZAPATOS MUJER","ZAPATILLAS HOMBRE","ZAPATILLAS MUJER","CALZADO COLEGIAL","ZAPATOS INFANTIL"];
-const THEME_PRESETS = {"Lima":"#aad503","Azul":"#3b82f6","Cian":"#06b6d4","Violeta":"#8b5cf6","Naranjo":"#f97316","Rojo":"#ef4444","Rosa":"#ec4899"};
-const ADMIN_PASS = "connect2025";
+const THEME_PRESETS={"Lima":"#aad503","Azul":"#3b82f6","Cian":"#06b6d4","Violeta":"#8b5cf6","Naranjo":"#f97316","Rojo":"#ef4444","Rosa":"#ec4899"};
+const ADMIN_PASS="connect2025";
 
-function metasSeed(){
-  const m={}; for(const a of AREAS) for(const d of AREAS_DEPTOS[a]) m[a+"::"+d]={garantia:0,seguro:0}; return m;
-}
-const DEFAULT_CONFIG = {
-  mes:{inicio:"",fin:""},
-  metas:metasSeed(),
-  theme:{accent:"#aad503"},
-  gemini:{apiKey:"",model:"gemini-2.0-flash"},
-  firebase:{apiKey:"",authDomain:"",projectId:"",storageBucket:"",messagingSenderId:"",appId:""}
-};
+function metaKey(area,dep){return area===AREA_LB?AREA_LB:area+"::"+dep;}
+function metasSeed(){const m={};DEPTOS_EN.forEach(d=>{m[metaKey(AREA_EN,d)]=SEGURO_DEPTS.has(d)?{garantia:0,seguro:0}:{garantia:0};});m[AREA_LB]={garantia:0};return m;}
+const DEFAULT_CONFIG={mes:{inicio:"",fin:""},metas:metasSeed(),theme:{accent:"#aad503"},
+  gemini:{apiKey:"",model:"gemini-2.0-flash"},firebase:{apiKey:"",authDomain:"",projectId:"",storageBucket:"",messagingSenderId:"",appId:""}};
 
-/* --- utils --- */
+/* utils */
 const $=(s,e=document)=>e.querySelector(s), $$=(s,e=document)=>[...e.querySelectorAll(s)];
 const clean=s=>(s||"").toString().trim();
 const norm=s=>clean(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
-const CLP=n=>"$"+Math.round(+n||0).toLocaleString("es-CL");
-const num=v=>Math.round(+String(v).replace(/[^\d]/g,""))||0;
+const CLP=n=>(n<0?"-$":"$")+Math.abs(Math.round(+n||0)).toLocaleString("es-CL");
+const num=v=>Math.round(+String(v).replace(/[^\d-]/g,""))||0;
+const looknum=s=>{const n=parseInt(String(s||"").replace(/[^\d-]/g,""),10);return isNaN(n)?0:n;};
 const todayStr=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");};
 function fechaLarga(s){const [y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d).toLocaleDateString("es-CL",{weekday:"long",day:"numeric",month:"long",year:"numeric"});}
+function fechaHora(ts){const d=new Date(ts);return d.toLocaleDateString("es-CL",{day:"2-digit",month:"2-digit"})+" "+d.toLocaleTimeString("es-CL",{hour:"2-digit",minute:"2-digit"});}
 function toast(m,ms=2600){let t=$(".toast");if(t)t.remove();t=document.createElement("div");t.className="toast";t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),ms);}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8);}
 function esc(s){return (s==null?"":String(s)).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
 function estado(p){return p>=100?"ok":p>=80?"warn":"bad";}
 function diffDays(a,b){return Math.round((new Date(b+"T00:00:00")-new Date(a+"T00:00:00"))/86400000);}
-function areaDeDepto(d){for(const a of AREAS)if(AREAS_DEPTOS[a].includes(d))return a;return "";}
 
-/* --- Tema --- */
-const PAL={
-  dark:{"--bg":"#0f1210","--bg2":"#151a13","--card":"#1a2016","--card2":"#212a1b","--line":"#2c3626","--text":"#eef2e8","--muted":"#a7b39a","--muted2":"#717d64","--input":"#0d120b"},
-  light:{"--bg":"#f4f6f0","--bg2":"#eef1e8","--card":"#ffffff","--card2":"#f5f8ef","--line":"#dde3d2","--text":"#1a1f14","--muted":"#5c6650","--muted2":"#8a927c","--input":"#f7f9f2"}
-};
-function lum(hex){const c=hex.replace("#","");const r=parseInt(c.slice(0,2),16),g=parseInt(c.slice(2,4),16),b=parseInt(c.slice(4,6),16);return (0.299*r+0.587*g+0.114*b)/255;}
-function applyTheme(){
-  const mode=localStorage.getItem("re_mode")||"dark";
-  const accent=(Store.config&&Store.config.theme&&Store.config.theme.accent)||"#aad503";
-  const r=document.documentElement.style, pal=PAL[mode];
-  for(const k in pal) r.setProperty(k,pal[k]);
-  r.setProperty("--accent",accent);
-  r.setProperty("--on-accent", lum(accent)>0.6?"#151a08":"#ffffff");
-  const bt=$("#btnTheme"); if(bt) bt.textContent=mode==="dark"?"🌙":"☀️";
-  const meta=document.querySelector('meta[name=theme-color]'); if(meta)meta.setAttribute("content",pal["--bg"]);
-}
+/* tema */
+const PAL={dark:{"--bg":"#0f1210","--bg2":"#151a13","--card":"#1a2016","--card2":"#212a1b","--line":"#2c3626","--text":"#eef2e8","--muted":"#a7b39a","--muted2":"#717d64","--input":"#0d120b"},
+  light:{"--bg":"#f4f6f0","--bg2":"#eef1e8","--card":"#ffffff","--card2":"#f5f8ef","--line":"#dde3d2","--text":"#1a1f14","--muted":"#5c6650","--muted2":"#8a927c","--input":"#f7f9f2"}};
+function lum(h){const c=h.replace("#","");return (0.299*parseInt(c.slice(0,2),16)+0.587*parseInt(c.slice(2,4),16)+0.114*parseInt(c.slice(4,6),16))/255;}
+function applyThemeAccent(hex){document.documentElement.style.setProperty("--accent",hex);document.documentElement.style.setProperty("--on-accent",lum(hex)>0.6?"#151a08":"#fff");}
+function applyTheme(){const mode=localStorage.getItem("re_mode")||"dark";const accent=(Store.config?.theme?.accent)||"#aad503";
+  const r=document.documentElement.style,pal=PAL[mode];for(const k in pal)r.setProperty(k,pal[k]);applyThemeAccent(accent);
+  const bt=$("#btnTheme");if(bt)bt.textContent=mode==="dark"?"🌙":"☀️";
+  const meta=document.querySelector('meta[name=theme-color]');if(meta)meta.setAttribute("content",pal["--bg"]);}
 function toggleTheme(){localStorage.setItem("re_mode",(localStorage.getItem("re_mode")||"dark")==="dark"?"light":"dark");applyTheme();}
 
-/* =========================================================================
-   Store (Firebase o local)
-   ========================================================================= */
-const Store={
-  mode:"local",db:null,auth:null,storage:null,user:null,config:null,
-  onVentas:null,ventasCache:[],onAvances:null,avancesCache:[],onUsers:null,usersCache:[],
-  lsGet(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}},
-  lsSet(k,v){localStorage.setItem(k,JSON.stringify(v))},
-
-  loadLocalConfig(){
-    const c=this.lsGet("re3_config",null);
-    this.config=Object.assign(JSON.parse(JSON.stringify(DEFAULT_CONFIG)),c||{});
-    this.config.metas=Object.assign(metasSeed(),this.config.metas||{});
-    this.config.gemini=Object.assign({},DEFAULT_CONFIG.gemini,this.config.gemini||{});
-    this.config.firebase=Object.assign({},DEFAULT_CONFIG.firebase,this.config.firebase||{});
-    this.config.theme=Object.assign({accent:"#aad503"},this.config.theme||{});
-    this.config.mes=Object.assign({inicio:"",fin:""},this.config.mes||{});
-    return this.config;
-  },
-  async saveConfig(c){this.config=c;this.lsSet("re3_config",c);
-    if(this.mode==="firebase"){try{await this.db.collection("config").doc("app").set(c,{merge:true});}catch(e){console.warn(e);toast("No se pudo guardar en línea (¿eres admin?)");}}},
-
-  async init(){
-    this.loadLocalConfig();
-    const fc=(FIREBASE_CONFIG.apiKey?FIREBASE_CONFIG:this.config.firebase);
-    if(fc&&fc.apiKey&&fc.projectId){
-      try{await this.initFirebase(fc);this.mode="firebase";return;}catch(e){console.warn("Firebase:",e);toast("Firebase no conectó, modo local");}
-    }
-    this.mode="local";
-  },
+/* ===================== Store ===================== */
+const Store={mode:"local",db:null,auth:null,storage:null,user:null,config:null,
+  ventasCache:[],onVentas:null,avancesCache:[],onAvances:null,usersCache:[],onUsers:null,
+  lsGet(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}},lsSet(k,v){localStorage.setItem(k,JSON.stringify(v))},
+  loadLocalConfig(){const c=this.lsGet("re4_config",null);this.config=Object.assign(JSON.parse(JSON.stringify(DEFAULT_CONFIG)),c||{});
+    this.config.metas=Object.assign(metasSeed(),this.config.metas||{});this.config.gemini=Object.assign({},DEFAULT_CONFIG.gemini,this.config.gemini||{});
+    this.config.firebase=Object.assign({},DEFAULT_CONFIG.firebase,this.config.firebase||{});this.config.theme=Object.assign({accent:"#aad503"},this.config.theme||{});
+    this.config.mes=Object.assign({inicio:"",fin:""},this.config.mes||{});return this.config;},
+  async saveConfig(c){this.config=c;this.lsSet("re4_config",c);if(this.mode==="firebase"){try{await this.db.collection("config").doc("app").set(c,{merge:true});}catch(e){toast("No se pudo guardar en línea (¿admin?)");}}},
+  async init(){this.loadLocalConfig();const fc=(FIREBASE_CONFIG.apiKey?FIREBASE_CONFIG:this.config.firebase);
+    if(fc&&fc.apiKey&&fc.projectId){try{await this.initFirebase(fc);this.mode="firebase";return;}catch(e){toast("Firebase no conectó, modo local");}}this.mode="local";},
   loadScript(src){return new Promise((res,rej)=>{const s=document.createElement("script");s.src=src;s.onload=res;s.onerror=rej;document.head.appendChild(s);});},
-  async initFirebase(fc){
-    if(!window.firebase){const b="https://www.gstatic.com/firebasejs/10.14.1/";
-      for(const f of ["firebase-app-compat.js","firebase-auth-compat.js","firebase-firestore-compat.js","firebase-storage-compat.js"])await this.loadScript(b+f);}
-    if(!firebase.apps.length)firebase.initializeApp(fc);
-    this.db=firebase.firestore();this.auth=firebase.auth();try{this.storage=firebase.storage();}catch{this.storage=null;}
-    try{const d=await this.db.collection("config").doc("app").get();
-      if(d.exists){this.config=Object.assign(this.config,d.data());this.config.metas=Object.assign(metasSeed(),this.config.metas||{});this.lsSet("re3_config",this.config);}}catch(e){console.warn(e);}
-  },
-
-  emailFor(username){return username+"@reporteelectro.app";},
-  usernameOf(nombre,apellido){return (norm(nombre)+"."+norm(apellido)).replace(/[^a-z0-9.]/g,"").replace(/\.+/g,".");},
-
-  async countUsers(){
-    if(this.mode==="firebase"){const s=await this.db.collection("usuarios").limit(1).get();return s.size;}
-    return Object.keys(this.lsGet("re3_users",{})).length;
-  },
-  async signUp({nombre,apellido,codigo,clave}){
-    const username=this.usernameOf(nombre,apellido);
-    const first=(await this.countUsers())===0;
-    const prof={nombre:clean(nombre),apellido:clean(apellido),codigo:clean(codigo),username,
-      display:clean(nombre)+" "+clean(apellido),rol:first?"admin":"user",estado:first?"activo":"pendiente",createdAt:Date.now()};
-    if(this.mode==="firebase"){
-      const cred=await this.auth.createUserWithEmailAndPassword(this.emailFor(username),clave);
-      prof.uid=cred.user.uid;
-      await this.db.collection("usuarios").doc(cred.user.uid).set(prof);
-      if(prof.estado!=="activo"){await this.auth.signOut();} else this.user=prof;
-    }else{
-      const users=this.lsGet("re3_users",{});
-      if(users[username])throw new Error("Ese usuario ya existe.");
-      prof.uid="local_"+uid();prof.clave=clave;users[username]=prof;this.lsSet("re3_users",users);
-      if(prof.estado==="activo"){this.lsSet("re3_session",prof.uid);this.user=prof;}
-    }
-    return prof;
-  },
-  async signIn({username,clave}){
-    username=norm(username).replace(/\s+/g,".");
-    if(this.mode==="firebase"){
-      const cred=await this.auth.signInWithEmailAndPassword(this.emailFor(username),clave);
-      const d=await this.db.collection("usuarios").doc(cred.user.uid).get();
-      const p=d.exists?d.data():null;
-      if(!p||p.estado!=="activo"){await this.auth.signOut();throw new Error("Tu cuenta está pendiente de aprobación por un administrador.");}
-      this.user=p;return p;
-    }else{
-      const users=this.lsGet("re3_users",{});const u=users[username];
-      if(!u||u.clave!==clave)throw new Error("Usuario o clave incorrectos.");
-      if(u.estado!=="activo")throw new Error("Tu cuenta está pendiente de aprobación por un administrador.");
-      this.lsSet("re3_session",u.uid);this.user=u;return u;
-    }
-  },
-  async restoreSession(){
-    if(this.mode==="firebase"){return new Promise(res=>{this.auth.onAuthStateChanged(async u=>{
-      if(u){const d=await this.db.collection("usuarios").doc(u.uid).get();const p=d.exists?d.data():null;
-        this.user=(p&&p.estado==="activo")?p:null; if(p&&p.estado!=="activo")await this.auth.signOut();}
-      else this.user=null; res(this.user);});});}
-    const sid=this.lsGet("re3_session",null);
-    if(sid){const users=this.lsGet("re3_users",{});this.user=Object.values(users).find(u=>u.uid===sid)||null;}
-    return this.user;
-  },
-  async signOut(){if(this.mode==="firebase")await this.auth.signOut();else localStorage.removeItem("re3_session");this.user=null;},
+  async initFirebase(fc){if(!window.firebase){const b="https://www.gstatic.com/firebasejs/10.14.1/";for(const f of ["firebase-app-compat.js","firebase-auth-compat.js","firebase-firestore-compat.js","firebase-storage-compat.js"])await this.loadScript(b+f);}
+    if(!firebase.apps.length)firebase.initializeApp(fc);this.db=firebase.firestore();this.auth=firebase.auth();try{this.storage=firebase.storage();}catch{this.storage=null;}
+    try{const d=await this.db.collection("config").doc("app").get();if(d.exists){this.config=Object.assign(this.config,d.data());this.config.metas=Object.assign(metasSeed(),this.config.metas||{});this.lsSet("re4_config",this.config);}}catch(e){}},
+  emailFor(u){return u+"@reporteelectro.app";},
+  usernameOf(n,a){return (norm(n)+"."+norm(a)).replace(/[^a-z0-9.]/g,"").replace(/\.+/g,".");},
+  async countUsers(){if(this.mode==="firebase"){const s=await this.db.collection("usuarios").limit(1).get();return s.size;}return Object.keys(this.lsGet("re4_users",{})).length;},
+  async signUp({nombre,apellido,codigo,clave}){const username=this.usernameOf(nombre,apellido);const first=(await this.countUsers())===0;
+    const prof={nombre:clean(nombre),apellido:clean(apellido),codigo:clean(codigo),username,display:clean(nombre)+" "+clean(apellido),rol:first?"admin":"user",estado:first?"activo":"pendiente",createdAt:Date.now()};
+    if(this.mode==="firebase"){const cred=await this.auth.createUserWithEmailAndPassword(this.emailFor(username),clave);prof.uid=cred.user.uid;
+      await this.db.collection("usuarios").doc(cred.user.uid).set(prof);if(prof.estado!=="activo")await this.auth.signOut();else this.user=prof;}
+    else{const users=this.lsGet("re4_users",{});if(users[username])throw new Error("Ese usuario ya existe.");prof.uid="local_"+uid();prof.clave=clave;users[username]=prof;this.lsSet("re4_users",users);if(prof.estado==="activo"){this.lsSet("re4_session",prof.uid);this.user=prof;}}
+    return prof;},
+  async signIn({username,clave}){username=norm(username).replace(/\s+/g,".");
+    if(this.mode==="firebase"){const cred=await this.auth.signInWithEmailAndPassword(this.emailFor(username),clave);const d=await this.db.collection("usuarios").doc(cred.user.uid).get();const p=d.exists?d.data():null;
+      if(!p||p.estado!=="activo"){await this.auth.signOut();throw new Error("Tu cuenta está pendiente de aprobación.");}this.user=p;return p;}
+    const users=this.lsGet("re4_users",{});const u=users[username];if(!u||u.clave!==clave)throw new Error("Usuario o clave incorrectos.");
+    if(u.estado!=="activo")throw new Error("Tu cuenta está pendiente de aprobación.");this.lsSet("re4_session",u.uid);this.user=u;return u;},
+  async restoreSession(){if(this.mode==="firebase"){return new Promise(res=>{this.auth.onAuthStateChanged(async u=>{if(u){const d=await this.db.collection("usuarios").doc(u.uid).get();const p=d.exists?d.data():null;this.user=(p&&p.estado==="activo")?p:null;if(p&&p.estado!=="activo")await this.auth.signOut();}else this.user=null;res(this.user);});});}
+    const sid=this.lsGet("re4_session",null);if(sid){const users=this.lsGet("re4_users",{});this.user=Object.values(users).find(u=>u.uid===sid)||null;}return this.user;},
+  async signOut(){if(this.mode==="firebase")await this.auth.signOut();else localStorage.removeItem("re4_session");this.user=null;},
   isAdmin(){return this.user&&this.user.rol==="admin";},
-
-  /* usuarios (admin) */
-  subscribeUsers(cb){this.onUsers=cb;
-    if(this.mode==="firebase"){this.db.collection("usuarios").onSnapshot(s=>{this.usersCache=s.docs.map(d=>Object.assign({uid:d.id},d.data()));cb(this.usersCache);},e=>console.warn(e));}
-    else{this._emitUsers();}},
-  _emitUsers(){this.usersCache=Object.values(this.lsGet("re3_users",{}));if(this.onUsers)this.onUsers(this.usersCache);},
-  async setUser(uid2,patch){
-    if(this.mode==="firebase"){await this.db.collection("usuarios").doc(uid2).update(patch);}
-    else{const users=this.lsGet("re3_users",{});const k=Object.keys(users).find(x=>users[x].uid===uid2);if(k){Object.assign(users[k],patch);this.lsSet("re3_users",users);this._emitUsers();}}
-    if(this.user&&this.user.uid===uid2)Object.assign(this.user,patch);
-  },
+  subscribeUsers(cb){this.onUsers=cb;if(this.mode==="firebase"){this.db.collection("usuarios").onSnapshot(s=>{this.usersCache=s.docs.map(d=>Object.assign({uid:d.id},d.data()));cb(this.usersCache);});}else this._emitU();},
+  _emitU(){this.usersCache=Object.values(this.lsGet("re4_users",{}));if(this.onUsers)this.onUsers(this.usersCache);},
+  async setUser(u2,patch){if(this.mode==="firebase")await this.db.collection("usuarios").doc(u2).update(patch);
+    else{const users=this.lsGet("re4_users",{});const k=Object.keys(users).find(x=>users[x].uid===u2);if(k){Object.assign(users[k],patch);this.lsSet("re4_users",users);this._emitU();}}
+    if(this.user&&this.user.uid===u2)Object.assign(this.user,patch);},
   async claimAdmin(){await this.setUser(this.user.uid,{rol:"admin",estado:"activo"});},
-
-  /* ventas */
   async addVenta(v){v.registradoPor=this.user.uid;v.registradoPorNombre=this.user.display||"";v.ts=Date.now();
-    if(this.mode==="firebase"){const r=await this.db.collection("ventas").add(v);v.id=r.id;}
-    else{v.id=uid();const a=this.lsGet("re3_ventas",[]);a.push(v);this.lsSet("re3_ventas",a);this._emitV();}return v;},
-  subscribeVentas(cb){this.onVentas=cb;
-    if(this.mode==="firebase"){this.db.collection("ventas").orderBy("ts","desc").onSnapshot(s=>{this.ventasCache=s.docs.map(d=>Object.assign({id:d.id},d.data()));cb(this.ventasCache);},e=>console.warn(e));}
-    else{this._emitV();}},
-  _emitV(){this.ventasCache=this.lsGet("re3_ventas",[]).sort((a,b)=>b.ts-a.ts);if(this.onVentas)this.onVentas(this.ventasCache);},
-
-  /* avances (admin) */
-  async addAvance(a){a.importadoPor=this.user.uid;a.ts=Date.now();
-    if(this.mode==="firebase"){const r=await this.db.collection("avances").add(a);a.id=r.id;}
-    else{a.id=uid();const arr=this.lsGet("re3_avances",[]);arr.push(a);this.lsSet("re3_avances",arr);this._emitA();}return a;},
-  async deleteAvance(id){if(this.mode==="firebase"){await this.db.collection("avances").doc(id).delete();}
-    else{const arr=this.lsGet("re3_avances",[]).filter(x=>x.id!==id);this.lsSet("re3_avances",arr);this._emitA();}},
-  subscribeAvances(cb){this.onAvances=cb;
-    if(this.mode==="firebase"){this.db.collection("avances").orderBy("ts","desc").onSnapshot(s=>{this.avancesCache=s.docs.map(d=>Object.assign({id:d.id},d.data()));cb(this.avancesCache);},e=>console.warn(e));}
-    else{this._emitA();}},
-  _emitA(){this.avancesCache=this.lsGet("re3_avances",[]).sort((a,b)=>b.ts-a.ts);if(this.onAvances)this.onAvances(this.avancesCache);},
-
-  async uploadBoleta(file){if(this.mode==="firebase"&&this.storage){const p=`boletas/${this.user.uid}/${Date.now()}_${(file.name||"b").slice(-40)}`;const r=this.storage.ref().child(p);await r.put(file);return await r.getDownloadURL();}return null;}
+    if(this.mode==="firebase"){const r=await this.db.collection("ventas").add(v);v.id=r.id;}else{v.id=uid();const a=this.lsGet("re4_ventas",[]);a.push(v);this.lsSet("re4_ventas",a);this._emitV();}return v;},
+  subscribeVentas(cb){this.onVentas=cb;if(this.mode==="firebase"){this.db.collection("ventas").orderBy("ts","desc").onSnapshot(s=>{this.ventasCache=s.docs.map(d=>Object.assign({id:d.id},d.data()));cb(this.ventasCache);});}else this._emitV();},
+  _emitV(){this.ventasCache=this.lsGet("re4_ventas",[]).sort((a,b)=>b.ts-a.ts);if(this.onVentas)this.onVentas(this.ventasCache);},
+  async addAvance(a){a.importadoPor=this.user.uid;a.ts=Date.now();if(this.mode==="firebase"){const r=await this.db.collection("avances").add(a);a.id=r.id;}else{a.id=uid();const arr=this.lsGet("re4_avances",[]);arr.push(a);this.lsSet("re4_avances",arr);this._emitA();}return a;},
+  async deleteAvance(id){if(this.mode==="firebase")await this.db.collection("avances").doc(id).delete();else{const arr=this.lsGet("re4_avances",[]).filter(x=>x.id!==id);this.lsSet("re4_avances",arr);this._emitA();}},
+  subscribeAvances(cb){this.onAvances=cb;if(this.mode==="firebase"){this.db.collection("avances").orderBy("ts","desc").onSnapshot(s=>{this.avancesCache=s.docs.map(d=>Object.assign({id:d.id},d.data()));cb(this.avancesCache);});}else this._emitA();},
+  _emitA(){this.avancesCache=this.lsGet("re4_avances",[]).sort((a,b)=>b.ts-a.ts);if(this.onAvances)this.onAvances(this.avancesCache);},
+  async uploadBoleta(file){if(this.mode==="firebase"&&this.storage){const p=`boletas/${this.user.uid}/${Date.now()}`;const r=this.storage.ref().child(p);await r.put(file);return await r.getDownloadURL();}return null;}
 };
 
-/* =========================================================================
-   IA (Gemini)
-   ========================================================================= */
+/* ===================== IA (solo boletas) ===================== */
 function fileToB64(f){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(",")[1]);r.onerror=rej;r.readAsDataURL(f);});}
-async function geminiCall(parts){
-  const g=Store.config.gemini;if(!g.apiKey)throw new Error("Falta la API key de Gemini (⚙️ Config).");
-  const url=`https://generativelanguage.googleapis.com/v1beta/models/${g.model||"gemini-2.0-flash"}:generateContent?key=${encodeURIComponent(g.apiKey)}`;
-  const body={contents:[{parts}],generationConfig:{temperature:0.1,response_mime_type:"application/json"}};
-  const r=await fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
-  if(!r.ok)throw new Error("Gemini "+r.status+": "+(await r.text()).slice(0,160));
-  const j=await r.json();const t=j?.candidates?.[0]?.content?.parts?.[0]?.text||"{}";
-  try{return JSON.parse(t);}catch{const m=t.match(/\{[\s\S]*\}/);return m?JSON.parse(m[0]):{};}
-}
-async function leerBoleta(file){
-  const b64=await fileToB64(file);
-  const deptTxt=AREAS.map(a=>a+": "+AREAS_DEPTOS[a].join(", ")).join(" | ");
+async function leerBoleta(file){const g=Store.config.gemini;if(!g.apiKey)throw new Error("Falta la API key de Gemini (⚙️ Config).");
+  const b64=await fileToB64(file);const deptTxt=AREA_EN+": "+DEPTOS_EN.join(", ")+" | "+AREA_LB+" (sin departamentos)";
   const prompt=`Lees una BOLETA de Falabella (Chile), imagen o PDF. Extrae SOLO lo que veas. Devuelve EXCLUSIVAMENTE JSON:
-{"vendedor_nombre":string|null,"vendedor_codigo":string|null,"producto":string|null,"monto":number|null,
-"valor_garantia":number|null,"tipo":"Garantía"|"Seguro"|null,"area":string|null,"departamento":string|null,
-"confianza":number,"dudas":[string]}
-El vendedor suele venir como "VENDEDOR:<codigo> <APELLIDO>". Montos como enteros en pesos (sin puntos ni símbolos).
-Según el producto, sugiere area y departamento de esta lista: ${deptTxt}. Si no puedes, deja null y agrégalo a "dudas".`;
-  return await geminiCall([{text:prompt},{inline_data:{mime_type:file.type||"image/jpeg",data:b64}}]);
+{"vendedor_nombre":string|null,"vendedor_codigo":string|null,"producto":string|null,"monto":number|null,"valor_garantia":number|null,"tipo":"Garantía"|"Seguro"|null,"area":string|null,"departamento":string|null,"confianza":number,"dudas":[string]}
+El vendedor viene como "VENDEDOR:<codigo> <APELLIDO>". Montos enteros en pesos. Sugiere area y departamento de: ${deptTxt}. Si no puedes, null y agrégalo a "dudas".`;
+  const url=`https://generativelanguage.googleapis.com/v1beta/models/${g.model||"gemini-2.0-flash"}:generateContent?key=${encodeURIComponent(g.apiKey)}`;
+  const r=await fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({contents:[{parts:[{text:prompt},{inline_data:{mime_type:file.type||"image/jpeg",data:b64}}]}],generationConfig:{temperature:0.1,response_mime_type:"application/json"}})});
+  if(!r.ok)throw new Error("Gemini "+r.status+": "+(await r.text()).slice(0,140));
+  const j=await r.json();const t=j?.candidates?.[0]?.content?.parts?.[0]?.text||"{}";try{return JSON.parse(t);}catch{const m=t.match(/\{[\s\S]*\}/);return m?JSON.parse(m[0]):{};}}
+
+/* ===================== Parser Looker (sin IA) ===================== */
+function mapLookerDept(raw){const u=norm(raw);
+  if(u.includes("juego")||u.includes("consola"))return {area:AREA_EN,dep:"VIDEOJUEGOS"};
+  if(u.includes("comput"))return {area:AREA_EN,dep:"COMPUTACION"};
+  if(u.includes("celular")||u.includes("connect")||u.includes("telefon"))return {area:AREA_EN,dep:"CONNECT"};
+  if(u.includes("fotograf"))return {area:AREA_EN,dep:"FOTOGRAFIA"};
+  if(u.includes("audio")||u.includes("video"))return {area:AREA_EN,dep:"AUDIO"};
+  return {area:AREA_LB,dep:""}; // cuidado personal, electrodomésticos, línea blanca -> Línea Blanca (sola)
 }
-function htmlATexto(s){return s.replace(/<style[\s\S]*?<\/style>/gi,"").replace(/<script[\s\S]*?<\/script>/gi,"")
-  .replace(/<\/(tr|div|p|table)>/gi,"\n").replace(/<\/t[dh]>/gi," | ").replace(/<[^>]+>/g," ")
-  .replace(/&nbsp;/g," ").replace(/&amp;/g,"&").replace(/[ \t]+/g," ").replace(/\n{2,}/g,"\n").trim();}
-async function leerAvanceLooker(text){
-  const prompt=`Recibes un reporte exportado de Looker (texto/tabla) con AVANCES de venta por DEPARTAMENTO y/o ASESOR,
-para garantía extendida (GEXT) y seguro (Seguro Connect), de una tienda de electrohogar en Chile.
-Devuelve EXCLUSIVAMENTE JSON: {"filas":[{"nivel":"departamento"|"asesor","nombre":string,"area":string|null,"departamento":string|null,"gext":number,"seguro":number}],"dudas":[string]}
-Áreas: "ELECTRO NEGRO" o "LINEA BLANCA". No incluyas filas de totales generales. Montos enteros en pesos. Contenido:
-"""${text.slice(0,120000)}"""`;
-  return await geminiCall([{text:prompt}]);
+function parseLookerFiles(texts){const out={deptos:[],vendedores:[]};
+  texts.forEach(t=>{let doc;try{doc=new DOMParser().parseFromString(t,"text/html");}catch{return;}
+    const table=doc.querySelector("table");if(!table)return;const rows=[...table.querySelectorAll("tr")];if(!rows.length)return;
+    const headers=[...rows[0].querySelectorAll("th,td")].map(x=>norm(x.textContent));
+    const idx=n=>headers.findIndex(h=>h.includes(n));
+    const iG=idx("gext"),iS=idx("seguro"),iVend=idx("vendedor"),iNom=idx("nombre"),iApe=idx("apellido"),iDep=idx("departamento");
+    rows.slice(1).forEach(r=>{if(r.classList.contains("total"))return;const cells=[...r.querySelectorAll("td,th")];if(cells.length<2)return;
+      const g=looknum(cells[iG]?.textContent),s=looknum(cells[iS]?.textContent);
+      if(iVend>=0){const id=clean(cells[iVend]?.textContent);const nom=(clean(cells[iNom]?.textContent)+" "+clean(cells[iApe]?.textContent)).trim();
+        if(id&&!/^total/i.test(id)&&(g||s||nom))out.vendedores.push({id,nombre:nom||("Vendedor "+id),gext:g,seguro:s});}
+      else if(iDep>=0){const dep=clean(cells[iDep]?.textContent);if(dep&&!/^total/i.test(dep))out.deptos.push(Object.assign({raw:dep,gext:g,seguro:s},mapLookerDept(dep)));}
+    });});
+  return out;
 }
 
-/* =========================================================================
-   Router
-   ========================================================================= */
+/* ===================== Router ===================== */
 let CURRENT="registrar";
 function go(v){CURRENT=v;$$("#nav button").forEach(b=>b.classList.toggle("active",b.dataset.view===v));render();}
 $("#nav").addEventListener("click",e=>{const b=e.target.closest("button");if(b)go(b.dataset.view);});
 $("#btnLogout").addEventListener("click",async()=>{if(confirm("¿Cerrar sesión?")){await Store.signOut();location.reload();}});
 $("#btnTheme").addEventListener("click",toggleTheme);
+$("#btnBrush").addEventListener("click",modalBrocha);
+function render(){const app=$("#app");if(!Store.user){$("#nav").classList.add("hidden");renderAuth(app);return;}
+  $("#nav").classList.remove("hidden");({registrar:renderRegistrar,reporte:renderReporte,avance:renderAvance,config:renderConfig}[CURRENT]||renderRegistrar)(app);}
+function updateHeader(){const on=Store.mode==="firebase";$("#modeDot").classList.toggle("online",on);
+  const ts=Math.max(Store.ventasCache[0]?.ts||0,Store.avancesCache[0]?.ts||0);
+  $("#updText").textContent=ts?("Act. "+fechaHora(ts)):(on?"en línea":"local");}
 
-function render(){
-  const app=$("#app");
-  if(!Store.user){$("#nav").classList.add("hidden");renderAuth(app);return;}
-  $("#nav").classList.remove("hidden");
-  ({registrar:renderRegistrar,reporte:renderReporte,avance:renderAvance,config:renderConfig}[CURRENT]||renderRegistrar)(app);
+/* color brocha */
+function modalBrocha(){const c=Store.config;
+  const html=`<div class="modal-bg" id="brBg"><div class="modal" style="max-width:360px"><div class="m-head"><b>Color de la app</b><button class="icon-btn" id="brX">✕</button></div>
+    <div class="m-body"><div style="display:flex;gap:10px;flex-wrap:wrap">${Object.entries(THEME_PRESETS).map(([n,h])=>`<div class="swatch ${c.theme.accent===h?'sel':''}" data-h="${h}" title="${n}" style="background:${h}"></div>`).join("")}</div>
+    <label>Personalizado</label><input type="color" id="brCustom" value="${c.theme.accent}" style="height:44px;padding:4px">
+    ${Store.isAdmin()?'<p class="tiny">Como admin, el color se guarda para todos.</p>':'<p class="tiny">Se aplica en tu dispositivo.</p>'}</div></div></div>`;
+  document.body.insertAdjacentHTML("beforeend",html);const close=()=>$("#brBg").remove();$("#brX").onclick=close;$("#brBg").onclick=e=>{if(e.target.id==="brBg")close();};
+  const pick=async h=>{c.theme.accent=h;applyThemeAccent(h);Store.lsSet("re4_config",c);if(Store.isAdmin())await Store.saveConfig(c);};
+  $$("#brBg .swatch").forEach(s=>s.onclick=()=>{pick(s.dataset.h);$$("#brBg .swatch").forEach(x=>x.classList.remove("sel"));s.classList.add("sel");});
+  $("#brCustom").oninput=e=>pick(e.target.value);
 }
 
-/* ---------------- AUTH ---------------- */
+/* ===================== AUTH ===================== */
 let authMode="login";
-function renderAuth(app){
-  app.innerHTML=`
-  <div class="card" style="max-width:430px;margin:46px auto">
-    <div class="center" style="margin-bottom:8px">
-      <img src="icon-180.png" style="width:64px;height:64px;border-radius:16px">
-      <h2 style="margin-top:10px">Reporte Electro</h2>
-      <p class="sub">Registro de garantía extendida y Seguro Connect.</p>
-    </div>
-    <div class="seg">
-      <button id="sLogin" class="${authMode==='login'?'active':''}">Iniciar sesión</button>
-      <button id="sReg" class="${authMode==='reg'?'active':''}">Registrarse</button>
-    </div>
-    <form id="authForm">
-      ${authMode==='reg'?`
-        <div class="grid2">
-          <div><label>Nombre</label><input name="nombre" required></div>
-          <div><label>Apellido</label><input name="apellido" required></div>
-        </div>
-        <label>Número de vendedor</label><input name="codigo" inputmode="numeric" placeholder="Ej: 667366" required>
-        <label>Clave</label><input name="clave" type="password" required minlength="4">
-        <label>Repetir clave</label><input name="clave2" type="password" required minlength="4">
-      `:`
-        <label>Usuario <span class="tiny">(nombre.apellido)</span></label>
-        <input name="username" required placeholder="miguel.moraga" autocapitalize="none">
-        <label>Clave</label><input name="clave" type="password" required>
-      `}
+function renderAuth(app){app.innerHTML=`
+  <div class="card" style="max-width:430px;margin:44px auto">
+    <div class="center" style="margin-bottom:8px"><img src="icon-180.png" style="width:64px;height:64px;border-radius:16px"><h2 style="margin-top:10px">Reporte Electro</h2><p class="sub">Garantía extendida y Seguro Connect.</p></div>
+    <div class="seg"><button id="sLogin" class="${authMode==='login'?'active':''}">Iniciar sesión</button><button id="sReg" class="${authMode==='reg'?'active':''}">Registrarse</button></div>
+    <form id="authForm">${authMode==='reg'?`
+      <div class="grid2"><div><label>Nombre</label><input name="nombre" required></div><div><label>Apellido</label><input name="apellido" required></div></div>
+      <label>Número de vendedor</label><input name="codigo" inputmode="numeric" placeholder="Ej: 667366" required>
+      <label>Clave</label><input name="clave" type="password" required minlength="4">
+      <label>Repetir clave</label><input name="clave2" type="password" required minlength="4">`:`
+      <label>Usuario <span class="tiny">(nombre.apellido)</span></label><input name="username" required placeholder="miguel.moraga" autocapitalize="none">
+      <label>Clave</label><input name="clave" type="password" required>`}
       <button class="btn" style="margin-top:16px" type="submit">${authMode==='reg'?'Crear cuenta':'Entrar'}</button>
-    </form>
-    ${authMode==='reg'?`<p class="tiny center" style="margin-top:12px">Tu cuenta quedará <b>pendiente</b> hasta que un administrador la apruebe.</p>`:''}
-    <p class="tiny center" style="margin-top:10px">Modo: <b>${Store.mode==='firebase'?'en línea':'local'}</b></p>
-  </div>`;
-  $("#sLogin").onclick=()=>{authMode="login";renderAuth(app);};
-  $("#sReg").onclick=()=>{authMode="reg";renderAuth(app);};
-  $("#authForm").onsubmit=async e=>{
-    e.preventDefault();const f=Object.fromEntries(new FormData(e.target));
-    const btn=$("#authForm .btn");
-    if(authMode==="reg"&&f.clave!==f.clave2){toast("Las claves no coinciden");return;}
+    </form>${authMode==='reg'?'<p class="tiny center" style="margin-top:12px">Tu cuenta queda <b>pendiente</b> hasta que un administrador la apruebe.</p>':''}
+    <p class="tiny center" style="margin-top:10px">Modo: <b>${Store.mode==='firebase'?'en línea':'local'}</b></p></div>`;
+  $("#sLogin").onclick=()=>{authMode="login";renderAuth(app);};$("#sReg").onclick=()=>{authMode="reg";renderAuth(app);};
+  $("#authForm").onsubmit=async e=>{e.preventDefault();const f=Object.fromEntries(new FormData(e.target));const btn=$("#authForm .btn");
+    if(authMode==="reg"&&f.clave!==f.clave2)return toast("Las claves no coinciden");
     btn.disabled=true;btn.textContent="Un momento…";
-    try{
-      if(authMode==="reg"){
-        const p=await Store.signUp(f);
-        if(p.estado==="activo"){toast("¡Bienvenido! Eres administrador.");go("registrar");}
-        else{toast("Cuenta creada. Espera la aprobación del administrador.",4200);authMode="login";renderAuth(app);}
-      }else{await Store.signIn(f);go("registrar");}
-    }catch(err){toast(err.message||"Error");btn.disabled=false;btn.textContent=authMode==='reg'?'Crear cuenta':'Entrar';}
-  };
+    try{if(authMode==="reg"){const p=await Store.signUp(f);if(p.estado==="activo"){toast("¡Bienvenido! Eres administrador.");go("registrar");}else{toast("Cuenta creada. Espera aprobación del admin.",4200);authMode="login";renderAuth(app);}}
+      else{await Store.signIn(f);go("registrar");}}
+    catch(err){toast(err.message||"Error");btn.disabled=false;btn.textContent=authMode==='reg'?'Crear cuenta':'Entrar';}};
 }
 
-/* ---------------- REGISTRAR ---------------- */
+/* ===================== REGISTRAR ===================== */
 let draft=null;
-function nuevoDraft(){return {tipo:"Garantía",monto:"",area:"",departamento:"",producto:"",codigoProducto:"",
-  asesorNombre:Store.user.display||"",asesorCodigo:Store.user.codigo||"",otro:false,boletaUrl:""};}
-function renderRegistrar(app){
-  if(!draft)draft=nuevoDraft();
-  const deptos=a=>AREAS_DEPTOS[a]||[];
+function nuevoDraft(){return {tipo:"Garantía",monto:"",area:"",departamento:"",producto:"",asesorNombre:Store.user.display||"",asesorCodigo:Store.user.codigo||"",otro:false,boletaUrl:""};}
+function fpBadge(){return `<span class="fpbadge"><span class="fpring"></span>Fpuntos</span>`;}
+function renderRegistrar(app){if(!draft)draft=nuevoDraft();
+  const esLB=draft.area===AREA_LB;
   app.innerHTML=`
   <div class="card">
     <h2>Registrar garantía / seguro</h2>
-    <p class="sub">Saca o sube la boleta para autocompletar, o ingresa a mano. Verificas siempre antes de sumar.</p>
-    <div class="btn-row">
-      <label class="btn secondary" style="cursor:pointer">📷 Sacar / subir boleta
-        <input id="fileBoleta" type="file" accept="image/*,application/pdf" capture="environment" class="hidden"></label>
-    </div>
+    <p class="sub">Saca o sube la boleta para autocompletar, o ingresa a mano. Verificas antes de sumar.</p>
+    <div class="btn-row"><label class="btn secondary" style="cursor:pointer">📷 Sacar / subir boleta<input id="fileBoleta" type="file" accept="image/*,application/pdf" capture="environment" class="hidden"></label></div>
     <div id="ocrStatus"></div>
-
     <h3>Tipo</h3>
-    <div class="seg">
-      <button type="button" id="tGar" class="${draft.tipo==='Garantía'?'active':''}">Garantía</button>
-      <button type="button" id="tSeg" class="${draft.tipo==='Seguro'?'active':''}">Seguro</button>
-    </div>
-
+    <div class="seg"><button type="button" id="tGar" class="${draft.tipo==='Garantía'?'active':''}">Garantía</button><button type="button" id="tSeg" class="${draft.tipo==='Seguro'?'active':''}">Seguro</button></div>
     <form id="vForm">
-      <label>Monto</label>
-      <input name="monto" inputmode="numeric" value="${esc(draft.monto)}" placeholder="$" required>
+      <label>Monto</label><input name="monto" inputmode="numeric" value="${esc(draft.monto)}" placeholder="$" required>
       <div class="grid2">
         <div><label>Área</label><select name="area" id="selArea"><option value="">—</option>${AREAS.map(a=>`<option ${draft.area===a?'selected':''}>${a}</option>`).join("")}</select></div>
-        <div><label>Departamento</label><select name="departamento" id="selDepto"><option value="">—</option></select></div>
+        <div id="deptoWrap" class="${esLB?'hidden':''}"><label>Departamento</label><select name="departamento" id="selDepto"><option value="">—</option></select></div>
       </div>
-
       <h3>Asesor</h3>
-      <div class="seg">
-        <button type="button" id="asMe" class="${!draft.otro?'active':''}">Yo (${esc(Store.user.display||'')})</button>
-        <button type="button" id="asOther" class="${draft.otro?'active':''}">A otra persona</button>
-      </div>
-      <div class="grid2 ${draft.otro?'':'hidden'}" id="otroBox">
-        <div><label>Nombre asesor</label><input name="asesorNombre" value="${esc(draft.asesorNombre)}"></div>
-        <div><label>N° vendedor</label><input name="asesorCodigo" value="${esc(draft.asesorCodigo)}" inputmode="numeric"></div>
-      </div>
-
+      <div class="seg"><button type="button" id="asMe" class="${!draft.otro?'active':''}">Yo (${esc(Store.user.display||'')})</button><button type="button" id="asOther" class="${draft.otro?'active':''}">A otra persona</button></div>
+      <div class="grid2 ${draft.otro?'':'hidden'}"><div><label>Nombre asesor</label><input name="asesorNombre" value="${esc(draft.asesorNombre)}"></div><div><label>N° vendedor</label><input name="asesorCodigo" value="${esc(draft.asesorCodigo)}" inputmode="numeric"></div></div>
       <div class="btn-row"><button class="btn" type="submit">✓ Registrar ${draft.tipo}</button></div>
-      <div class="btn-row">
-        <button class="btn secondary" type="button" id="btnFp">➕ Fpuntos</button>
-        <button class="btn secondary" type="button" id="btnFpP">➕ Fpuntos + Pesos $</button>
-      </div>
-      <p class="tiny">Fpuntos / Fpuntos+Pesos usan el área, departamento y asesor de arriba (y el monto para “+ Pesos”).</p>
     </form>
   </div>
 
   <div class="card">
-    <h2>No mix</h2>
-    <p class="sub">Reporta una venta “no mix” por departamento.</p>
-    <label>Departamento</label>
-    <select id="nmDepto">${NOMIX_DEPTOS.map(d=>`<option>${d}</option>`).join("")}</select>
-    <label>Monto</label>
-    <input id="nmMonto" inputmode="numeric" placeholder="$">
+    <h2>${fpBadge()} · Canje de puntos</h2>
+    <p class="sub">Botones independientes: suman por asesor (no van por departamento).</p>
+    <div class="seg"><button type="button" id="fpMe" class="active">Yo (${esc(Store.user.display||'')})</button><button type="button" id="fpOther">A otra persona</button></div>
+    <div class="grid2 hidden" id="fpOtherBox"><div><label>Nombre asesor</label><input id="fpNom"></div><div><label>N° vendedor</label><input id="fpCod" inputmode="numeric"></div></div>
+    <div class="btn-row"><button class="btn dark" id="btnFp">➕ Fpuntos (suma 1)</button></div>
+    <label>Monto Fpuntos + Pesos</label><input id="fppMonto" inputmode="numeric" placeholder="$">
+    <div class="btn-row"><button class="btn dark" id="btnFpP">➕ Fpuntos + Pesos $</button></div>
+  </div>
+
+  <div class="card">
+    <h2>No mix</h2><p class="sub">Venta “no mix” por departamento.</p>
+    <label>Departamento</label><select id="nmDepto">${NOMIX_DEPTOS.map(d=>`<option>${d}</option>`).join("")}</select>
+    <label>Monto</label><input id="nmMonto" inputmode="numeric" placeholder="$">
     <div class="btn-row"><button class="btn dark" id="btnNoMix">Reportar no mix</button></div>
   </div>`;
 
-  function fillDepto(){const a=$("#selArea").value;$("#selDepto").innerHTML=`<option value="">—</option>`+deptos(a).map(d=>`<option ${draft.departamento===d?'selected':''}>${d}</option>`).join("");}
+  const fillDepto=()=>{$("#selDepto").innerHTML=`<option value="">—</option>`+DEPTOS_EN.map(d=>`<option ${draft.departamento===d?'selected':''}>${d}</option>`).join("");};
   fillDepto();
   const sync=()=>{const f=$("#vForm");if(f)Object.assign(draft,Object.fromEntries(new FormData(f)));};
-  $("#selArea").onchange=e=>{draft.area=e.target.value;draft.departamento="";fillDepto();};
+  $("#selArea").onchange=e=>{draft.area=e.target.value;draft.departamento="";renderRegistrar(app);};
   $("#selDepto").onchange=e=>draft.departamento=e.target.value;
   $("#tGar").onclick=()=>{sync();draft.tipo="Garantía";renderRegistrar(app);};
   $("#tSeg").onclick=()=>{sync();draft.tipo="Seguro";renderRegistrar(app);};
@@ -524,390 +369,231 @@ function renderRegistrar(app){
   $("#asOther").onclick=()=>{sync();draft.otro=true;draft.asesorNombre="";draft.asesorCodigo="";renderRegistrar(app);};
   $("#fileBoleta").onchange=async e=>{const f=e.target.files[0];if(f)await procesarBoleta(f);};
 
-  function baseVenta(tipo){sync();return {fecha:todayStr(),tipo,
-    monto:num(draft.monto),area:draft.area,departamento:draft.departamento,
-    producto:clean(draft.producto),codigoProducto:draft.codigoProducto||"",
-    asesorNombre:clean(draft.asesorNombre),asesorCodigo:clean(draft.asesorCodigo),
-    boletaUrl:draft.boletaUrl||"",categoria:tipo==="Garantía"?"GEXT":tipo==="Seguro"?"SEGURO":"OTROS"};}
+  // fpuntos asesor selector
+  let fpOtro=false;
+  $("#fpMe").onclick=()=>{fpOtro=false;$("#fpMe").classList.add("active");$("#fpOther").classList.remove("active");$("#fpOtherBox").classList.add("hidden");};
+  $("#fpOther").onclick=()=>{fpOtro=true;$("#fpOther").classList.add("active");$("#fpMe").classList.remove("active");$("#fpOtherBox").classList.remove("hidden");};
+  const fpAsesor=()=>fpOtro?{nombre:clean($("#fpNom").value),codigo:clean($("#fpCod").value)}:{nombre:Store.user.display||"",codigo:Store.user.codigo||""};
 
-  $("#vForm").onsubmit=async e=>{
-    e.preventDefault();const v=baseVenta(draft.tipo);
-    if(!v.monto)return toast("Ingresa el monto");
-    if(!v.area||!v.departamento)return toast("Selecciona área y departamento");
-    if(!v.asesorNombre)return toast("Falta el asesor");
+  function baseVenta(tipo){sync();return {fecha:todayStr(),tipo,monto:num(draft.monto),area:draft.area,departamento:draft.area===AREA_LB?"":draft.departamento,
+    producto:clean(draft.producto),asesorNombre:clean(draft.asesorNombre),asesorCodigo:clean(draft.asesorCodigo),boletaUrl:draft.boletaUrl||"",
+    categoria:tipo==="Garantía"?"GEXT":tipo==="Seguro"?"SEGURO":"OTROS"};}
+  $("#vForm").onsubmit=async e=>{e.preventDefault();const v=baseVenta(draft.tipo);
+    if(!v.monto)return toast("Ingresa el monto");if(!v.area)return toast("Selecciona el área");
+    if(v.area===AREA_EN&&!v.departamento)return toast("Selecciona el departamento");if(!v.asesorNombre)return toast("Falta el asesor");
     const btn=$("#vForm .btn");btn.disabled=true;btn.textContent="Guardando…";
-    try{await Store.addVenta(v);toast("✓ "+draft.tipo+" registrada");draft=nuevoDraft();renderRegistrar(app);}
-    catch(err){toast("Error: "+(err.message||err));btn.disabled=false;}
-  };
-  $("#btnFp").onclick=async()=>{const v=baseVenta("Fpuntos");v.monto=num(draft.monto);
-    if(!v.area||!v.departamento)return toast("Selecciona área y departamento");
-    if(!v.asesorNombre)return toast("Falta el asesor");
-    try{await Store.addVenta(v);toast("✓ Fpuntos registrado");}catch(err){toast("Error: "+err.message);}};
-  $("#btnFpP").onclick=async()=>{const v=baseVenta("Fpuntos+Pesos");
-    if(!v.monto)return toast("Ingresa el monto para Fpuntos + Pesos");
-    if(!v.area||!v.departamento)return toast("Selecciona área y departamento");
-    try{await Store.addVenta(v);toast("✓ Fpuntos + Pesos registrado");}catch(err){toast("Error: "+err.message);}};
-  $("#btnNoMix").onclick=async()=>{
-    const dep=$("#nmDepto").value,monto=num($("#nmMonto").value);
-    if(!monto)return toast("Ingresa el monto del no mix");
-    const v={fecha:todayStr(),tipo:"No Mix",monto,departamento:dep,area:areaDeDepto(dep)||"",
-      asesorNombre:draft.otro?clean(draft.asesorNombre):(Store.user.display||""),
-      asesorCodigo:draft.otro?clean(draft.asesorCodigo):(Store.user.codigo||""),categoria:"NOMIX"};
-    const btn=$("#btnNoMix");btn.disabled=true;btn.textContent="Guardando…";
-    try{await Store.addVenta(v);toast("✓ No mix reportado");$("#nmMonto").value="";btn.disabled=false;btn.textContent="Reportar no mix";}
-    catch(err){toast("Error: "+err.message);btn.disabled=false;btn.textContent="Reportar no mix";}
-  };
+    try{await Store.addVenta(v);toast("✓ "+draft.tipo+" registrada");draft=nuevoDraft();renderRegistrar(app);}catch(err){toast("Error: "+err.message);btn.disabled=false;}};
+  $("#btnFp").onclick=async()=>{const a=fpAsesor();if(!a.nombre)return toast("Indica el asesor");
+    try{await Store.addVenta({fecha:todayStr(),tipo:"Fpuntos",monto:0,asesorNombre:a.nombre,asesorCodigo:a.codigo,categoria:"FPUNTOS"});toast("✓ Fpuntos +1 ("+a.nombre+")");}catch(err){toast("Error: "+err.message);}};
+  $("#btnFpP").onclick=async()=>{const a=fpAsesor();const m=num($("#fppMonto").value);if(!m)return toast("Ingresa el monto");if(!a.nombre)return toast("Indica el asesor");
+    try{await Store.addVenta({fecha:todayStr(),tipo:"Fpuntos+Pesos",monto:m,asesorNombre:a.nombre,asesorCodigo:a.codigo,categoria:"FPUNTOSPESOS"});toast("✓ Fpuntos + Pesos ("+a.nombre+")");$("#fppMonto").value="";}catch(err){toast("Error: "+err.message);}};
+  $("#btnNoMix").onclick=async()=>{const dep=$("#nmDepto").value,m=num($("#nmMonto").value);if(!m)return toast("Ingresa el monto");
+    const a=draft.otro?{nombre:clean(draft.asesorNombre),codigo:clean(draft.asesorCodigo)}:{nombre:Store.user.display||"",codigo:Store.user.codigo||""};
+    try{await Store.addVenta({fecha:todayStr(),tipo:"No Mix",monto:m,departamento:dep,asesorNombre:a.nombre,asesorCodigo:a.codigo,categoria:"NOMIX"});toast("✓ No mix reportado");$("#nmMonto").value="";}catch(err){toast("Error: "+err.message);}};
 }
-async function procesarBoleta(file){
-  const st=$("#ocrStatus");
-  if(!Store.config.gemini.apiKey){st.innerHTML=`<div class="ocr-note">⚠️ Configura la API key de Gemini en ⚙️ Config para leer la boleta. Por ahora, ingresa a mano.</div>`;
-    try{const u=await Store.uploadBoleta(file);if(u){draft.boletaUrl=u;toast("Boleta adjuntada");}}catch{} return;}
+async function procesarBoleta(file){const st=$("#ocrStatus");
+  if(!Store.config.gemini.apiKey){st.innerHTML=`<div class="ocr-note">⚠️ Configura la API key de Gemini en ⚙️ Config para leer la boleta. Por ahora, ingresa a mano.</div>`;try{const u=await Store.uploadBoleta(file);if(u){draft.boletaUrl=u;toast("Boleta adjuntada");}}catch{}return;}
   st.innerHTML=`<div class="ocr-note">🤖 Leyendo la boleta…</div>`;
-  try{const [data,url]=await Promise.all([leerBoleta(file),Store.uploadBoleta(file).catch(()=>null)]);
-    if(url)draft.boletaUrl=url;verificarBoleta(data);st.innerHTML="";}
-  catch(err){st.innerHTML=`<div class="ocr-note">No pude leer la boleta (${esc(err.message)}). Ingresa a mano.</div>`;}
-}
-function verificarBoleta(data){
-  const dudas=new Set((data.dudas||[]).map(x=>norm(x)));const flag=k=>dudas.has(k)?'field-flag':'';
-  const area=AREAS.includes((data.area||"").toUpperCase())?data.area.toUpperCase():"";
-  const depto=area&&AREAS_DEPTOS[area].includes((data.departamento||"").toUpperCase())?data.departamento.toUpperCase():"";
+  try{const [data,url]=await Promise.all([leerBoleta(file),Store.uploadBoleta(file).catch(()=>null)]);if(url)draft.boletaUrl=url;verificarBoleta(data);st.innerHTML="";}
+  catch(err){st.innerHTML=`<div class="ocr-note">No pude leer la boleta (${esc(err.message)}). Ingresa a mano.</div>`;}}
+function verificarBoleta(data){const dudas=new Set((data.dudas||[]).map(x=>norm(x)));const flag=k=>dudas.has(k)?'field-flag':'';
+  let area=(data.area||"").toUpperCase();if(!AREAS.includes(area))area="";
+  let depto=(area===AREA_EN&&DEPTOS_EN.includes((data.departamento||"").toUpperCase()))?(data.departamento||"").toUpperCase():"";
   const conf=Math.round((data.confianza||0)*100);
   const html=`<div class="modal-bg" id="vBg"><div class="modal"><div class="m-head"><b>Verifica los datos <span class="badge-ai">IA · ${conf}%</span></b><button class="icon-btn" id="vX">✕</button></div>
-    <div class="m-body">
-    <p class="sub">Corrige lo necesario. Lo <span style="color:var(--warn)">resaltado</span> la IA no lo tuvo claro.</p>
-    <div class="seg"><button type="button" id="vGar" class="${(data.tipo!=='Seguro')?'active':''}">Garantía</button><button type="button" id="vSeg" class="${data.tipo==='Seguro'?'active':''}">Seguro</button></div>
-    <div class="grid2">
-      <div><label>Vendedor</label><input id="vNom" class="${flag('vendedor_nombre')}" value="${esc(data.vendedor_nombre||'')}"></div>
-      <div><label>N° vendedor</label><input id="vCod" class="${flag('vendedor_codigo')}" value="${esc(data.vendedor_codigo||'')}"></div>
-    </div>
+    <div class="m-body"><p class="sub">Corrige lo necesario. Lo <span style="color:var(--warn)">resaltado</span> la IA no lo tuvo claro.</p>
+    <div class="seg"><button type="button" id="vGar" class="${data.tipo!=='Seguro'?'active':''}">Garantía</button><button type="button" id="vSeg" class="${data.tipo==='Seguro'?'active':''}">Seguro</button></div>
+    <div class="grid2"><div><label>Vendedor</label><input id="vNom" class="${flag('vendedor_nombre')}" value="${esc(data.vendedor_nombre||'')}"></div><div><label>N° vendedor</label><input id="vCod" class="${flag('vendedor_codigo')}" value="${esc(data.vendedor_codigo||'')}"></div></div>
     <label>Producto</label><input id="vProd" value="${esc(data.producto||'')}">
-    <div class="grid2">
-      <div><label>Monto</label><input id="vMonto" class="${flag('monto')}" inputmode="numeric" value="${data.valor_garantia||data.monto||''}"></div>
-      <div><label>Área</label><select id="vArea"><option value="">—</option>${AREAS.map(a=>`<option ${area===a?'selected':''}>${a}</option>`).join("")}</select></div>
-    </div>
-    <label>Departamento</label><select id="vDepto"><option value="">—</option></select>
+    <div class="grid2"><div><label>Monto</label><input id="vMonto" class="${flag('monto')}" inputmode="numeric" value="${data.valor_garantia||data.monto||''}"></div>
+      <div><label>Área</label><select id="vArea"><option value="">—</option>${AREAS.map(a=>`<option ${area===a?'selected':''}>${a}</option>`).join("")}</select></div></div>
+    <div id="vDeptoWrap"><label>Departamento</label><select id="vDepto"><option value="">—</option></select></div>
     ${data.dudas&&data.dudas.length?`<div class="ocr-note">Revisa: ${data.dudas.map(esc).join(", ")}</div>`:''}
-    <div class="btn-row"><button class="btn" id="vOk">Usar estos datos</button><button class="btn ghost sm" id="vCancel">Cancelar</button></div>
-  </div></div></div>`;
-  document.body.insertAdjacentHTML("beforeend",html);
-  let vtipo=data.tipo==='Seguro'?'Seguro':'Garantía';
-  const close=()=>$("#vBg").remove();
-  const fillD=()=>{const a=$("#vArea").value;$("#vDepto").innerHTML=`<option value="">—</option>`+(AREAS_DEPTOS[a]||[]).map(d=>`<option ${depto===d?'selected':''}>${d}</option>`).join("");};
-  fillD();$("#vArea").onchange=fillD;
-  $("#vX").onclick=close;$("#vCancel").onclick=close;
+    <div class="btn-row"><button class="btn" id="vOk">Usar estos datos</button><button class="btn ghost sm" id="vCancel">Cancelar</button></div></div></div></div>`;
+  document.body.insertAdjacentHTML("beforeend",html);let vtipo=data.tipo==='Seguro'?'Seguro':'Garantía';const close=()=>$("#vBg").remove();
+  const fillD=()=>{const a=$("#vArea").value;$("#vDeptoWrap").classList.toggle("hidden",a!==AREA_EN);$("#vDepto").innerHTML=`<option value="">—</option>`+(a===AREA_EN?DEPTOS_EN:[]).map(d=>`<option ${depto===d?'selected':''}>${d}</option>`).join("");};
+  fillD();$("#vArea").onchange=fillD;$("#vX").onclick=close;$("#vCancel").onclick=close;
   $("#vGar").onclick=()=>{vtipo="Garantía";$("#vGar").classList.add("active");$("#vSeg").classList.remove("active");};
   $("#vSeg").onclick=()=>{vtipo="Seguro";$("#vSeg").classList.add("active");$("#vGar").classList.remove("active");};
-  $("#vOk").onclick=()=>{draft.tipo=vtipo;draft.monto=num($("#vMonto").value);draft.producto=$("#vProd").value;
-    draft.area=$("#vArea").value;draft.departamento=$("#vDepto").value;
-    if($("#vNom").value){draft.otro=true;draft.asesorNombre=$("#vNom").value;draft.asesorCodigo=$("#vCod").value;}
-    close();renderRegistrar($("#app"));toast("Datos cargados, revisa y registra");};
+  $("#vOk").onclick=()=>{draft.tipo=vtipo;draft.monto=num($("#vMonto").value);draft.producto=$("#vProd").value;draft.area=$("#vArea").value;draft.departamento=$("#vDepto").value;
+    if($("#vNom").value){draft.otro=true;draft.asesorNombre=$("#vNom").value;draft.asesorCodigo=$("#vCod").value;}close();renderRegistrar($("#app"));toast("Datos cargados, revisa y registra");};
 }
 
-/* ---------------- helpers de agregación ---------------- */
-function aggVentasDia(fecha){
-  const A={};for(const a of AREAS){A[a]={depts:{}};for(const d of AREAS_DEPTOS[a])A[a].depts[d]={gar:0,seg:0,ases:{}};}
-  Store.ventasCache.forEach(v=>{if(v.fecha!==fecha)return;const cat=v.categoria;if(cat!=="GEXT"&&cat!=="SEGURO")return;
-    const a=v.area,d=v.departamento;if(!A[a]||!A[a].depts[d])return;
-    const cell=A[a].depts[d];const nm=v.asesorNombre||"(s/n)";
-    cell.ases[nm]=cell.ases[nm]||{gar:0,seg:0};
-    if(cat==="GEXT"){cell.gar+=+v.monto||0;cell.ases[nm].gar+=+v.monto||0;}else{cell.seg+=+v.monto||0;cell.ases[nm].seg+=+v.monto||0;}});
-  return A;
+/* ===================== agregación día (ventas registradas) ===================== */
+function metaOf(area,dep){const m=Store.config.metas[metaKey(area,dep)]||{};return {gar:+m.garantia||0,seg:+m.seguro||0};}
+function mesInfo(){const m=Store.config.mes||{};if(!m.inicio||!m.fin)return null;const diasTot=diffDays(m.inicio,m.fin)+1;const hoy=todayStr();
+  const ref=hoy<m.inicio?m.inicio:(hoy>m.fin?m.fin:hoy);const diasRest=Math.max(1,diffDays(ref,m.fin)+1);return {inicio:m.inicio,fin:m.fin,diasTot,diasRest,diasTrans:diasTot-diasRest+1};}
+function aggDia(fecha){
+  const en={};DEPTOS_EN.forEach(d=>en[d]={gar:0,seg:0,ases:{}});
+  const lb={gar:0,seg:0,ases:{}};const nomix={dep:{},ases:{},total:0};const fp={ases:{},total:0};const fpp={ases:{},total:0};
+  Store.ventasCache.forEach(v=>{if(v.fecha!==fecha)return;const nm=v.asesorNombre||"(s/n)";const m=+v.monto||0;
+    if(v.categoria==="GEXT"||v.categoria==="SEGURO"){const isG=v.categoria==="GEXT";
+      if(v.area===AREA_LB){if(isG)lb.gar+=m;else lb.seg+=m;lb.ases[nm]=lb.ases[nm]||{gar:0,seg:0};if(isG)lb.ases[nm].gar+=m;else lb.ases[nm].seg+=m;}
+      else if(en[v.departamento]){const c=en[v.departamento];if(isG)c.gar+=m;else c.seg+=m;c.ases[nm]=c.ases[nm]||{gar:0,seg:0};if(isG)c.ases[nm].gar+=m;else c.ases[nm].seg+=m;}}
+    else if(v.categoria==="NOMIX"){nomix.dep[v.departamento]=(nomix.dep[v.departamento]||0)+m;nomix.ases[nm]=(nomix.ases[nm]||0)+m;nomix.total+=m;}
+    else if(v.categoria==="FPUNTOS"){fp.ases[nm]=(fp.ases[nm]||0)+1;fp.total++;}
+    else if(v.categoria==="FPUNTOSPESOS"){fpp.ases[nm]=(fpp.ases[nm]||0)+m;fpp.total+=m;}});
+  return {en,lb,nomix,fp,fpp};
 }
-function metaDept(area,depto){const m=Store.config.metas[area+"::"+depto]||{garantia:0,seguro:0};return {gar:+m.garantia||0,seg:+m.seguro||0};}
-function mesInfo(){const m=Store.config.mes||{};if(!m.inicio||!m.fin)return null;
-  const diasTot=diffDays(m.inicio,m.fin)+1;const hoy=todayStr();
-  const ref=hoy<m.inicio?m.inicio:(hoy>m.fin?m.fin:hoy);
-  const diasRest=Math.max(1,diffDays(ref,m.fin)+1);
-  return {inicio:m.inicio,fin:m.fin,diasTot,diasRest,diasTrans:diasTot-diasRest+1};}
 
-/* ---------------- REPORTE (día, por área/depto) ---------------- */
+/* ===================== REPORTE (día) ===================== */
 let repDate=todayStr();
-function renderReporte(app){
-  const A=aggVentasDia(repDate);const mi=mesInfo();
-  const diasTot=mi?mi.diasTot:30;
-  let tGar=0,tSeg=0,tMetaDia=0;
-  let rows="";
-  for(const area of AREAS){
-    rows+=`<tr class="area-row"><td>${area}</td><td>Garantía</td><td>Seguro</td><td>Total</td><td>Cumpl.</td></tr>`;
-    for(const d of AREAS_DEPTOS[area]){
-      const c=A[area].depts[d];const tot=c.gar+c.seg;
-      const meta=metaDept(area,d);const metaDia=(meta.gar+meta.seg)/diasTot;
-      const pct=metaDia?Math.round(tot/metaDia*1000)/10:0;const es=estado(pct);
-      tGar+=c.gar;tSeg+=c.seg;tMetaDia+=metaDia;
-      rows+=`<tr><td><b>${d}</b></td><td>${CLP(c.gar)}</td><td>${CLP(c.seg)}</td><td><b>${CLP(tot)}</b></td>
-        <td class="pct${es}">${metaDia?pct+'%':'—'}</td></tr>`;
-    }
-  }
-  const tot=tGar+tSeg;const pctT=tMetaDia?Math.round(tot/tMetaDia*1000)/10:0;const esT=estado(pctT);
-  const falta=Math.max(0,Math.round(tMetaDia-tot));
-  const kpis=`<div class="kpi">
-    <div class="k"><div class="l">Garantía hoy</div><div class="n">${CLP(tGar)}</div></div>
-    <div class="k"><div class="l">Seguro hoy</div><div class="n">${CLP(tSeg)}</div></div>
-    <div class="k"><div class="l">Total hoy</div><div class="n">${CLP(tot)}</div></div>
-    <div class="k"><div class="l">Cumpl. meta diaria</div><div class="n pct${esT}">${tMetaDia?pctT+'%':'—'}</div></div>
-  </div>`;
+function buildFilas(agg,diasTot){ // filas para tabla y fullscreen
+  const filas=[];let tGar=0,tSeg=0,tMetaDia=0;
+  const push=(area,dep,label,c)=>{const meta=metaOf(area,dep);const metaMes=meta.gar+meta.seg;const metaDia=metaMes/diasTot;
+    const tot=c.gar+c.seg;const pct=metaDia?Math.round(tot/metaDia*1000)/10:0;const falta=Math.max(0,Math.round(metaDia-tot));
+    tGar+=c.gar;tSeg+=c.seg;tMetaDia+=metaDia;
+    filas.push({area,label,gar:c.gar,seg:c.seg,metaDia,pct,es:estado(pct),falta,hasMeta:metaDia>0});};
+  filas.push({header:AREA_EN});DEPTOS_EN.forEach(d=>push(AREA_EN,d,d,agg.en[d]));
+  filas.push({header:AREA_LB});push(AREA_LB,"",AREA_LB,agg.lb);
+  const tot=tGar+tSeg;const pctT=tMetaDia?Math.round(tot/tMetaDia*1000)/10:0;
+  return {filas,tGar,tSeg,tot,tMetaDia,pctT,esT:estado(pctT),faltaT:Math.max(0,Math.round(tMetaDia-tot))};
+}
+function renderReporte(app){const agg=aggDia(repDate);const mi=mesInfo();const diasTot=mi?mi.diasTot:30;
+  const R=buildFilas(agg,diasTot);
+  let rows="";R.filas.forEach(f=>{if(f.header){rows+=`<tr class="area-row"><td>${f.header}</td><td>Gtía</td><td>Seguro</td><td>Meta día</td><td>Cumpl.</td><td>Falta</td></tr>`;return;}
+    rows+=`<tr><td><b>${f.label}</b></td><td>${CLP(f.gar)}</td><td>${CLP(f.seg)}</td><td>${f.hasMeta?CLP(f.metaDia):'—'}</td><td class="pct${f.es}">${f.hasMeta?'<span class="sem '+f.es+'"></span>'+f.pct+'%':'—'}</td><td>${f.hasMeta?CLP(f.falta):'—'}</td></tr>`;});
+  const kpis=`<div class="kpi"><div class="k"><div class="l">Garantía hoy</div><div class="n">${CLP(R.tGar)}</div></div>
+    <div class="k"><div class="l">Seguro hoy</div><div class="n">${CLP(R.tSeg)}</div></div>
+    <div class="k"><div class="l">Total hoy</div><div class="n">${CLP(R.tot)}</div></div>
+    <div class="k"><div class="l">Cumpl. meta diaria</div><div class="n pct${R.esT}">${R.tMetaDia?'<span class="sem '+R.esT+'"></span>'+R.pctT+'%':'—'}</div></div></div>`;
 
-  // detalle por asesor (por departamento)
-  let det="";
-  for(const area of AREAS)for(const d of AREAS_DEPTOS[area]){
-    const c=A[area].depts[d];const names=Object.keys(c.ases);if(!names.length)continue;
-    det+=`<tr class="area-row"><td>${area} · ${d}</td><td>Garantía</td><td>Seguro</td><td>Total</td></tr>`;
-    names.forEach(nm=>{const x=c.ases[nm];det+=`<tr class="asesor"><td>${esc(nm)}</td><td>${CLP(x.gar)}</td><td>${CLP(x.seg)}</td><td>${CLP(x.gar+x.seg)}</td></tr>`;});
-  }
-  if(!det)det=`<tr><td colspan="4" class="center muted" style="padding:18px">Sin ventas registradas hoy</td></tr>`;
+  // detalle por asesor (garantía/seguro)
+  let det="";const addAses=(label,ases)=>{const names=Object.keys(ases);if(!names.length)return;
+    det+=`<tr class="area-row"><td>${label}</td><td>Garantía</td><td>Seguro</td><td>Total</td></tr>`;
+    names.forEach(nm=>{const x=ases[nm];det+=`<tr class="asesor"><td>${esc(nm)}</td><td>${CLP(x.gar)}</td><td>${CLP(x.seg)}</td><td>${CLP(x.gar+x.seg)}</td></tr>`;});};
+  DEPTOS_EN.forEach(d=>addAses(AREA_EN+" · "+d,agg.en[d].ases));addAses(AREA_LB,agg.lb.ases);
+  if(!det)det=`<tr><td colspan="4" class="center muted" style="padding:16px">Sin ventas hoy</td></tr>`;
+
+  // no mix
+  const nmDeps=Object.keys(agg.nomix.dep);
+  let nm=nmDeps.length?nmDeps.map(d=>`<tr><td>${esc(d)}</td><td>${CLP(agg.nomix.dep[d])}</td></tr>`).join("")+`<tr class="total"><td>TOTAL NO MIX</td><td>${CLP(agg.nomix.total)}</td></tr>`:`<tr><td colspan="2" class="center muted" style="padding:14px">Sin no mix hoy</td></tr>`;
+
+  // canjes: fpuntos + fpuntos+pesos por asesor
+  const canNames=[...new Set([...Object.keys(agg.fp.ases),...Object.keys(agg.fpp.ases)])];
+  let can=canNames.length?canNames.map(nm2=>`<tr><td>${esc(nm2)}</td><td>${agg.fp.ases[nm2]||0}</td><td>${CLP(agg.fpp.ases[nm2]||0)}</td></tr>`).join("")+`<tr class="total"><td>TOTAL</td><td>${agg.fp.total}</td><td>${CLP(agg.fpp.total)}</td></tr>`:`<tr><td colspan="3" class="center muted" style="padding:14px">Sin canjes hoy</td></tr>`;
 
   app.innerHTML=`
-  <div class="card">
-    <div class="row" style="align-items:center">
-      <div style="flex:1"><input type="date" id="repDate" value="${repDate}"></div>
-      <button class="btn sm" id="btnFull" style="flex:none">🖥️ Reporte</button>
-    </div>
-    ${kpis}
-    ${falta>0?`<p class="tiny" style="margin-top:8px">Falta <b style="color:var(--warn)">${CLP(falta)}</b> para llegar a la meta diaria de hoy.</p>`:(tMetaDia?`<p class="tiny" style="margin-top:8px">✅ Meta diaria cumplida.</p>`:`<p class="tiny" style="margin-top:8px">Define metas y mes comercial en ⚙️ Config para ver el cumplimiento.</p>`)}
-  </div>
-  <div class="card">
-    <h2>Avance del día por área · departamento</h2>
-    <div class="rep-wrap" style="margin-top:10px"><table>
-      <thead><tr><th>Área / Depto</th><th>Garantía</th><th>Seguro</th><th>Total</th><th>Cumpl.</th></tr></thead>
-      <tbody>${rows}
-        <tr class="total"><td>TOTAL TIENDA</td><td>${CLP(tGar)}</td><td>${CLP(tSeg)}</td><td>${CLP(tot)}</td><td class="pct${esT}">${tMetaDia?pctT+'%':'—'}</td></tr>
-        ${falta>0?`<tr class="total"><td>Falta para meta diaria</td><td></td><td></td><td colspan="2">${CLP(falta)}</td></tr>`:''}
-      </tbody></table></div>
-  </div>
-  <div class="card">
-    <h2>Detalle por asesor</h2>
-    <div class="rep-wrap" style="margin-top:10px"><table>
-      <thead><tr><th>Depto / Asesor</th><th>Garantía</th><th>Seguro</th><th>Total</th></tr></thead>
-      <tbody>${det}</tbody></table></div>
-  </div>`;
+  <div class="card"><div class="row" style="align-items:center"><div style="flex:1"><input type="date" id="repDate" value="${repDate}"></div><button class="btn sm" id="btnFull" style="flex:none">🖥️ Reporte</button></div>
+    ${kpis}${R.faltaT>0?`<p class="tiny" style="margin-top:8px">Falta <b style="color:var(--warn)">${CLP(R.faltaT)}</b> para la meta diaria.</p>`:(R.tMetaDia?`<p class="tiny" style="margin-top:8px">✅ Meta diaria cumplida.</p>`:`<p class="tiny" style="margin-top:8px">Define metas y mes comercial en ⚙️ Config.</p>`)}</div>
+  <div class="card"><h2>Avance del día</h2><div class="rep-wrap" style="margin-top:10px"><table>
+    <thead><tr><th>Área / Depto</th><th>Gtía</th><th>Seguro</th><th>Meta día</th><th>Cumpl.</th><th>Falta</th></tr></thead>
+    <tbody>${rows}<tr class="total"><td>TOTAL TIENDA</td><td>${CLP(R.tGar)}</td><td>${CLP(R.tSeg)}</td><td>${R.tMetaDia?CLP(R.tMetaDia):'—'}</td><td class="pct${R.esT}">${R.tMetaDia?'<span class="sem '+R.esT+'"></span>'+R.pctT+'%':'—'}</td><td>${R.tMetaDia?CLP(R.faltaT):'—'}</td></tr></tbody></table></div></div>
+  <div class="card"><h2>Detalle por asesor</h2><div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Depto / Asesor</th><th>Garantía</th><th>Seguro</th><th>Total</th></tr></thead><tbody>${det}</tbody></table></div></div>
+  <div class="card"><h2>No mix</h2><div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Departamento</th><th>Monto</th></tr></thead><tbody>${nm}</tbody></table></div></div>
+  <div class="card"><h2>${fpBadge()} y Fpuntos + Pesos por asesor</h2><div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Asesor</th><th>Fpuntos</th><th>Fpuntos + Pesos</th></tr></thead><tbody>${can}</tbody></table></div></div>`;
   $("#repDate").onchange=e=>{repDate=e.target.value;renderReporte(app);};
-  $("#btnFull").onclick=()=>reporteFull(A,tGar,tSeg,tot,pctT,esT,falta,tMetaDia);
+  $("#btnFull").onclick=()=>reporteFull(R);
 }
-function reporteFull(A,tGar,tSeg,tot,pctT,esT,falta,tMetaDia){
-  let rows="";
-  for(const area of AREAS){
-    rows+=`<tr class="area-row"><td>${area}</td><td>Garantía</td><td>Seguro</td><td>Total</td></tr>`;
-    for(const d of AREAS_DEPTOS[area]){const c=A[area].depts[d];rows+=`<tr><td><b>${d}</b></td><td>${CLP(c.gar)}</td><td>${CLP(c.seg)}</td><td><b>${CLP(c.gar+c.seg)}</b></td></tr>`;}
-  }
+function reporteFull(R){
+  let rows="";R.filas.forEach(f=>{if(f.header){rows+=`<tr class="area-row"><td>${f.header}</td><td>Gtía</td><td>Seguro</td><td>Meta</td><td>Cumpl.</td><td>Falta</td></tr>`;return;}
+    rows+=`<tr><td><b>${f.label}</b></td><td>${CLP(f.gar)}</td><td>${CLP(f.seg)}</td><td>${f.hasMeta?CLP(f.metaDia):'—'}</td><td>${f.hasMeta?'<span class="sem '+f.es+'"></span>'+f.pct+'%':'—'}</td><td>${f.hasMeta?CLP(f.falta):'—'}</td></tr>`;});
   const html=`<div class="fs" id="fs"><button class="fs-close" id="fsX">✕</button>
     <h1>Reporte Electro</h1><div class="fs-date">${fechaLarga(repDate)}</div>
-    <table><thead><tr><th>Área / Depto</th><th>Garantía</th><th>Seguro</th><th>Total</th></tr></thead>
-    <tbody>${rows}
-      <tr class="total"><td>TOTAL TIENDA</td><td>${CLP(tGar)}</td><td>${CLP(tSeg)}</td><td>${CLP(tot)}</td></tr>
-      ${tMetaDia?`<tr class="total"><td>Cumplimiento meta diaria</td><td colspan="3">${pctT}%${falta>0?' · falta '+CLP(falta):' · ✅'}</td></tr>`:''}
-    </tbody></table>
+    <div class="fs-kpis"><div class="k"><div class="l">Garantía</div><div class="n">${CLP(R.tGar)}</div></div><div class="k"><div class="l">Seguro</div><div class="n">${CLP(R.tSeg)}</div></div><div class="k"><div class="l">Total</div><div class="n">${CLP(R.tot)}</div></div><div class="k"><div class="l">Cumpl.</div><div class="n">${R.tMetaDia?R.pctT+'%':'—'} <span class="sem ${R.esT}"></span></div></div></div>
+    <table><thead><tr><th>Área / Depto</th><th>Gtía</th><th>Seguro</th><th>Meta</th><th>Cumpl.</th><th>Falta</th></tr></thead>
+    <tbody>${rows}<tr class="total"><td>TOTAL TIENDA</td><td>${CLP(R.tGar)}</td><td>${CLP(R.tSeg)}</td><td>${R.tMetaDia?CLP(R.tMetaDia):'—'}</td><td>${R.tMetaDia?R.pctT+'%':'—'}</td><td>${R.tMetaDia?CLP(R.faltaT):'—'}</td></tr></tbody></table>
+    ${R.faltaT>0?`<p class="fs-foot">Falta ${CLP(R.faltaT)} para la meta diaria.</p>`:''}
     <div class="fs-foot">Toma la captura de esta pantalla para enviar el reporte.</div></div>`;
-  document.body.insertAdjacentHTML("beforeend",html);
-  $("#fsX").onclick=()=>$("#fs").remove();
+  document.body.insertAdjacentHTML("beforeend",html);$("#fsX").onclick=()=>$("#fs").remove();
 }
 
-/* ---------------- AVANCE (desde Looker) ---------------- */
-function areaAggAvance(av){
-  const A={};for(const a of AREAS){A[a]={depts:{},ases:{}};for(const d of AREAS_DEPTOS[a])A[a].depts[d]={gar:0,seg:0};}
-  (av?.filas||[]).forEach(f=>{
-    const dep=(f.departamento||(f.nivel==='departamento'?f.nombre:"")||"").toUpperCase();
-    let area=(f.area||"").toUpperCase();if(!AREAS.includes(area))area=areaDeDepto(dep)||AREAS[0];
-    const g=+f.gext||0,s=+f.seguro||0;
-    if(f.nivel==='asesor'){const nm=f.nombre||"(s/n)";A[area].ases[nm]=A[area].ases[nm]||{gar:0,seg:0,dep};A[area].ases[nm].gar+=g;A[area].ases[nm].seg+=s;}
-    if(A[area].depts[dep]){A[area].depts[dep].gar+=g;A[area].depts[dep].seg+=s;}
-  });
-  // si sólo vinieron asesores, sumar sus montos al depto
-  for(const a of AREAS){const anyDept=Object.values(A[a].depts).some(x=>x.gar||x.seg);
-    if(!anyDept){for(const nm in A[a].ases){const x=A[a].ases[nm];if(A[a].depts[x.dep]){A[a].depts[x.dep].gar+=x.gar;A[a].depts[x.dep].seg+=x.seg;}}}}
-  return A;
-}
-function renderAvance(app){
-  const av=Store.avancesCache[0]||null;const mi=mesInfo();
-  if(!av){app.innerHTML=`<div class="card"><h2>Avance</h2><p class="sub">Aún no hay avances cargados. Un administrador los sube en ⚙️ Config (archivo HTML/TXT de Looker).</p></div>`;return;}
-  const A=areaAggAvance(av);
-  const diasRest=mi?mi.diasRest:1;
-  let rows="",asesRows="";let TG=0,TS=0,TMg=0,TMs=0;
-  for(const area of AREAS){
-    rows+=`<tr class="area-row"><td>${area}</td><td>Gtía</td><td>Seguro</td><td>Meta</td><td>M.diaria</td><td>Falta</td></tr>`;
-    for(const d of AREAS_DEPTOS[area]){
-      const c=A[area].depts[d];const av2=c.gar+c.seg;const meta=metaDept(area,d);const metaTot=meta.gar+meta.seg;
-      const falta=Math.max(0,metaTot-av2);const md=Math.round(falta/diasRest);
-      TG+=c.gar;TS+=c.seg;TMg+=meta.gar;TMs+=meta.seg;
-      rows+=`<tr><td><b>${d}</b></td><td>${CLP(c.gar)}</td><td>${CLP(c.seg)}</td><td>${CLP(metaTot)}</td><td><b>${CLP(md)}</b></td><td>${CLP(falta)}</td></tr>`;
-    }
-    // asesores del área
-    const names=Object.keys(A[area].ases);
-    if(names.length){asesRows+=`<tr class="area-row"><td>${area}</td><td>Garantía</td><td>Seguro</td><td>Total</td></tr>`;
-      names.forEach(nm=>{const x=A[area].ases[nm];asesRows+=`<tr class="asesor"><td>${esc(nm)}</td><td>${CLP(x.gar)}</td><td>${CLP(x.seg)}</td><td>${CLP(x.gar+x.seg)}</td></tr>`;});}
-  }
+/* ===================== AVANCE (Looker) ===================== */
+function renderAvance(app){const av=Store.avancesCache[0]||null;const mi=mesInfo();const diasRest=mi?mi.diasRest:1;
+  if(!av){app.innerHTML=`<div class="card"><h2>Avance</h2><p class="sub">Aún no hay avances. Un administrador sube los HTML de Looker en ⚙️ Config.</p></div>`;return;}
+  const en={};DEPTOS_EN.forEach(d=>en[d]={gext:0,seguro:0});const lb={gext:0,seguro:0};
+  (av.deptos||[]).forEach(x=>{if(x.area===AREA_LB){lb.gext+=x.gext;lb.seguro+=x.seguro;}else if(en[x.dep]){en[x.dep].gext+=x.gext;en[x.dep].seguro+=x.seguro;}});
+  let rows="",TG=0,TS=0,TMg=0,TMs=0;
+  const push=(area,dep,label,c)=>{const meta=metaOf(area,dep);const metaTot=meta.gar+meta.seg;const av2=c.gext+c.seguro;const falta=Math.max(0,metaTot-av2);const md=Math.round(falta/diasRest);
+    TG+=c.gext;TS+=c.seguro;TMg+=meta.gar;TMs+=meta.seg;
+    rows+=`<tr><td><b>${label}</b></td><td>${CLP(c.gext)}</td><td>${CLP(c.seguro)}</td><td>${CLP(metaTot)}</td><td><b>${CLP(md)}</b></td><td>${CLP(falta)}</td></tr>`;};
+  rows+=`<tr class="area-row"><td>${AREA_EN}</td><td>Gtía</td><td>Seguro</td><td>Meta</td><td>M.diaria</td><td>Falta</td></tr>`;DEPTOS_EN.forEach(d=>push(AREA_EN,d,d,en[d]));
+  rows+=`<tr class="area-row"><td>${AREA_LB}</td><td>Gtía</td><td>Seguro</td><td>Meta</td><td>M.diaria</td><td>Falta</td></tr>`;push(AREA_LB,"",AREA_LB,lb);
   const avT=TG+TS,metaT=TMg+TMs,faltaT=Math.max(0,metaT-avT),mdT=Math.round(faltaT/diasRest);
+  const ases=(av.vendedores||[]).filter(v=>v.gext||v.seguro).sort((a,b)=>(b.gext+b.seguro)-(a.gext+a.seguro));
+  const asesRows=ases.length?ases.map(v=>`<tr class="asesor"><td>${esc(v.nombre)}</td><td>${CLP(v.gext)}</td><td>${CLP(v.seguro)}</td><td>${CLP(v.gext+v.seguro)}</td></tr>`).join(""):`<tr><td colspan="4" class="center muted" style="padding:16px">Sin desglose por asesor</td></tr>`;
   app.innerHTML=`
-  <div class="card">
-    <div class="row" style="align-items:center"><h2 style="flex:1">Avance del mes</h2>
-      <span class="chip acc">${mi?mi.diasRest+' días restantes':'define mes en config'}</span></div>
-    <p class="sub">Fuente: avance Looker del ${esc(av.fecha||'')}. ${mi?`Mes ${esc(mi.inicio)} → ${esc(mi.fin)}.`:''}</p>
-    <div class="kpi">
-      <div class="k"><div class="l">Garantía mes</div><div class="n">${CLP(TG)}</div></div>
-      <div class="k"><div class="l">Seguro mes</div><div class="n">${CLP(TS)}</div></div>
-      <div class="k"><div class="l">Falta para meta</div><div class="n">${CLP(faltaT)}</div></div>
-      <div class="k"><div class="l">Meta diaria</div><div class="n">${CLP(mdT)}</div></div>
-    </div>
-  </div>
-  <div class="card"><h2>Por área · departamento</h2>
-    <div class="rep-wrap" style="margin-top:10px"><table>
-      <thead><tr><th>Área / Depto</th><th>Gtía</th><th>Seguro</th><th>Meta</th><th>M.diaria</th><th>Falta</th></tr></thead>
-      <tbody>${rows}
-        <tr class="total"><td>TOTAL TIENDA</td><td>${CLP(TG)}</td><td>${CLP(TS)}</td><td>${CLP(metaT)}</td><td>${CLP(mdT)}</td><td>${CLP(faltaT)}</td></tr>
-      </tbody></table></div>
-  </div>
-  <div class="card"><h2>Venta por asesor</h2>
-    <div class="rep-wrap" style="margin-top:10px"><table>
-      <thead><tr><th>Área / Asesor</th><th>Garantía</th><th>Seguro</th><th>Total</th></tr></thead>
-      <tbody>${asesRows||`<tr><td colspan="4" class="center muted" style="padding:16px">El avance no trae desglose por asesor</td></tr>`}</tbody></table></div>
-  </div>`;
+  <div class="card"><div class="row" style="align-items:center"><h2 style="flex:1">Avance del mes</h2><span class="chip acc">${mi?mi.diasRest+' días restantes':'define mes'}</span></div>
+    <p class="sub">Looker del ${esc(av.fecha||'')}. ${mi?`Mes ${esc(mi.inicio)} → ${esc(mi.fin)}.`:''}</p>
+    <div class="kpi"><div class="k"><div class="l">Garantía mes</div><div class="n">${CLP(TG)}</div></div><div class="k"><div class="l">Seguro mes</div><div class="n">${CLP(TS)}</div></div><div class="k"><div class="l">Falta meta</div><div class="n">${CLP(faltaT)}</div></div><div class="k"><div class="l">Meta diaria</div><div class="n">${CLP(mdT)}</div></div></div></div>
+  <div class="card"><h2>Por área · departamento</h2><div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Área / Depto</th><th>Gtía</th><th>Seguro</th><th>Meta</th><th>M.diaria</th><th>Falta</th></tr></thead>
+    <tbody>${rows}<tr class="total"><td>TOTAL TIENDA</td><td>${CLP(TG)}</td><td>${CLP(TS)}</td><td>${CLP(metaT)}</td><td>${CLP(mdT)}</td><td>${CLP(faltaT)}</td></tr></tbody></table></div></div>
+  <div class="card"><h2>Venta por asesor</h2><div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Asesor</th><th>Garantía</th><th>Seguro</th><th>Total</th></tr></thead><tbody>${asesRows}</tbody></table></div></div>`;
 }
 
-/* ---------------- CONFIG ---------------- */
-function renderConfig(app){
-  const c=Store.config;const admin=Store.isAdmin();
-  // apariencia (todos)
-  const mode=localStorage.getItem("re_mode")||"dark";
-  let html=`<div class="card"><h2>Apariencia</h2>
-    <div class="seg" style="margin-top:8px"><button id="mDark" class="${mode==='dark'?'active':''}">🌙 Oscuro</button><button id="mLight" class="${mode==='light'?'active':''}">☀️ Claro</button></div>
-    <h3>Color de la app</h3>
-    <div style="display:flex;gap:10px;flex-wrap:wrap">${Object.entries(THEME_PRESETS).map(([n,hex])=>`<div class="swatch ${c.theme.accent===hex?'sel':''}" data-hex="${hex}" title="${n}" style="background:${hex}"></div>`).join("")}</div>
-    <label style="margin-top:12px">Color personalizado</label><input type="color" id="cAccent" value="${c.theme.accent}" style="height:44px;padding:4px">
-    ${admin?'':'<p class="tiny" style="margin-top:10px">Cambiar el color afecta a todos (guardado por admin). Tú sí puedes cambiar claro/oscuro.</p>'}
-  </div>`;
-
-  if(!admin){
-    html+=`<div class="card"><h2>Administración</h2>
-      <p class="sub">Necesitas cuenta de administrador para metas, usuarios y avances.</p>
-      <label>Clave de administrador</label><input id="claimPass" type="password" placeholder="••••••••">
-      <div class="btn-row"><button class="btn" id="claimBtn">Convertirme en administrador</button></div>
-      <p class="tiny">Un admin también puede promover tu cuenta desde Usuarios.</p></div>`;
-    app.innerHTML=html;bindApariencia(c);
-    $("#claimBtn").onclick=async()=>{if($("#claimPass").value!==ADMIN_PASS)return toast("Clave incorrecta");
-      await Store.claimAdmin();toast("Ahora eres administrador");renderConfig(app);};
-    return;
-  }
-
+/* ===================== CONFIG ===================== */
+function renderConfig(app){const c=Store.config;const admin=Store.isAdmin();const mode=localStorage.getItem("re_mode")||"dark";
+  let html=`<div class="card"><h2>Apariencia</h2><div class="seg" style="margin-top:8px"><button id="mDark" class="${mode==='dark'?'active':''}">🌙 Oscuro</button><button id="mLight" class="${mode==='light'?'active':''}">☀️ Claro</button></div>
+    <h3>Color de la app</h3><div style="display:flex;gap:10px;flex-wrap:wrap">${Object.entries(THEME_PRESETS).map(([n,h])=>`<div class="swatch ${c.theme.accent===h?'sel':''}" data-h="${h}" title="${n}" style="background:${h}"></div>`).join("")}</div>
+    <label style="margin-top:12px">Personalizado</label><input type="color" id="cAccent" value="${c.theme.accent}" style="height:44px;padding:4px"></div>`;
+  if(!admin){html+=`<div class="card"><h2>Administración</h2><p class="sub">Necesitas cuenta de administrador para metas, usuarios y avances.</p>
+    <label>Clave de administrador</label><input id="claimPass" type="password" placeholder="••••••••"><div class="btn-row"><button class="btn" id="claimBtn">Convertirme en administrador</button></div></div>`;
+    app.innerHTML=html;bindApar(c);$("#claimBtn").onclick=async()=>{if($("#claimPass").value!==ADMIN_PASS)return toast("Clave incorrecta");await Store.claimAdmin();toast("Ahora eres administrador");renderConfig(app);};return;}
   const mi=mesInfo();
-  html+=`
-  <div class="card"><h2>Mes comercial</h2>
-    <div class="grid2">
-      <div><label>Inicio</label><input id="cMesIni" type="date" value="${esc(c.mes.inicio||'')}"></div>
-      <div><label>Término</label><input id="cMesFin" type="date" value="${esc(c.mes.fin||'')}"></div>
-    </div>
-    ${mi?`<p class="tiny" style="margin-top:8px">Quedan <b style="color:var(--accent)">${mi.diasRest}</b> día(s) para que termine el mes (van ${mi.diasTrans}/${mi.diasTot}).</p>`:''}
-  </div>
-
-  <div class="card"><h2>Metas por departamento</h2>
-    <p class="sub">Meta mensual de garantía y seguro por departamento.</p>
-    <div id="metasBox"></div>
-  </div>
-
-  <div class="card"><h2>Usuarios</h2>
-    <p class="sub">Aprueba cuentas y designa administradores.</p>
-    <div id="usersBox">Cargando…</div>
-  </div>
-
-  <div class="card"><h2>Subir avance de Looker</h2>
-    <p class="sub">Sube el HTML o TXT descargado de Looker; la IA lo lee y lo verificas antes de guardar.</p>
+  html+=`<div class="card"><h2>Mes comercial</h2><div class="grid2"><div><label>Inicio</label><input id="cMesIni" type="date" value="${esc(c.mes.inicio||'')}"></div><div><label>Término</label><input id="cMesFin" type="date" value="${esc(c.mes.fin||'')}"></div></div>
+    ${mi?`<p class="tiny" style="margin-top:8px">Quedan <b style="color:var(--accent)">${mi.diasRest}</b> día(s) para que termine el mes (van ${mi.diasTrans}/${mi.diasTot}).</p>`:''}</div>
+  <div class="card"><h2>Metas</h2><p class="sub">Garantía por departamento. Solo <b>Connect</b> lleva meta de seguro. Línea Blanca va sola.</p><div id="metasBox"></div></div>
+  <div class="card"><h2>Usuarios</h2><p class="sub">Aprueba cuentas y designa administradores.</p><div id="usersBox">Cargando…</div></div>
+  <div class="card"><h2>Subir avance de Looker</h2><p class="sub">Sube los HTML de Looker (Venta x Vendedor y/o Venta x Departamento). Puedes elegir ambos a la vez. <b>No usa IA.</b></p>
     <label>Fecha del avance</label><input type="date" id="avFecha" value="${todayStr()}">
-    <label class="btn secondary" style="cursor:pointer;margin-top:10px">📄 Elegir archivo (.html/.txt/.csv)<input id="avFile" type="file" accept=".html,.htm,.txt,.csv" class="hidden"></label>
-    <div id="avStatus"></div><div id="avTabla"></div>
-    <div id="avList" style="margin-top:12px"></div>
-  </div>
-
-  <div class="card"><h2>Extracción de boletas (IA · Gemini)</h2>
-    <label>API key</label><input id="cGemKey" type="password" value="${esc(c.gemini.apiKey||'')}" placeholder="AIza…">
-    <label>Modelo</label><input id="cGemModel" value="${esc(c.gemini.model||'gemini-2.0-flash')}">
-    <p class="tiny">Gratis en aistudio.google.com/apikey</p>
-  </div>
-
-  <div class="card"><h2>Firebase</h2>
-    <p class="tiny">Lo ideal: pega tu config UNA vez en la constante <b>FIREBASE_CONFIG</b> arriba de index.html y súbelo al repo. También puedes pegarlo aquí:</p>
-    <label>JSON de firebaseConfig</label><textarea id="fbJson" placeholder='{"apiKey":"…","projectId":"…", …}'></textarea>
-  </div>
-
+    <label class="btn secondary" style="cursor:pointer;margin-top:10px">📄 Elegir archivo(s) (.html)<input id="avFile" type="file" accept=".html,.htm,.txt" multiple class="hidden"></label>
+    <div id="avStatus"></div><div id="avPrev"></div><div id="avList" style="margin-top:12px"></div></div>
+  <div class="card"><h2>Extracción de boletas (IA · Gemini)</h2><label>API key</label><input id="cGemKey" type="password" value="${esc(c.gemini.apiKey||'')}" placeholder="AIza…"><label>Modelo</label><input id="cGemModel" value="${esc(c.gemini.model||'gemini-2.0-flash')}"><p class="tiny">Solo se usa para leer boletas (no para Looker). Gratis en aistudio.google.com/apikey</p></div>
+  <div class="card"><h2>Firebase</h2><p class="tiny">Recomendado: pega tu config UNA vez en la constante <b>FIREBASE_CONFIG</b> arriba de index.html y súbelo al repo. O pega aquí el <b>firebaseConfig</b> (acepto el bloque completo):</p><textarea id="fbJson" placeholder='apiKey: "…", authDomain: "…", projectId: "…", …'></textarea></div>
   <div class="btn-row"><button class="btn" id="cfgSave">Guardar configuración</button></div>`;
-  app.innerHTML=html;bindApariencia(c);
+  app.innerHTML=html;bindApar(c);
 
-  // metas
-  function drawMetas(){$("#metasBox").innerHTML=AREAS.map(a=>`
-    <h3>${a}</h3>${AREAS_DEPTOS[a].map(d=>{const m=metaDept(a,d);return `
-      <div class="row" style="align-items:center;margin-bottom:6px">
-        <div style="flex:1.2;font-size:13px;font-weight:700">${d}</div>
-        <input data-k="${a}::${d}" data-t="garantia" inputmode="numeric" value="${m.gar}" placeholder="Garantía">
-        <input data-k="${a}::${d}" data-t="seguro" inputmode="numeric" value="${m.seg}" placeholder="Seguro">
-      </div>`;}).join("")}`).join("");}
+  function drawMetas(){$("#metasBox").innerHTML=`<h3>${AREA_EN}</h3>`+DEPTOS_EN.map(d=>{const m=metaOf(AREA_EN,d);const seg=SEGURO_DEPTS.has(d);
+    return `<div class="row" style="align-items:center;margin-bottom:6px"><div style="flex:1.1;font-size:13px;font-weight:700">${d}</div>
+      <input data-k="${metaKey(AREA_EN,d)}" data-t="garantia" inputmode="numeric" value="${m.gar}" placeholder="Garantía">
+      ${seg?`<input data-k="${metaKey(AREA_EN,d)}" data-t="seguro" inputmode="numeric" value="${m.seg}" placeholder="Seguro">`:`<div style="flex:1"></div>`}</div>`;}).join("")
+    +`<h3>${AREA_LB}</h3><div class="row" style="align-items:center"><div style="flex:1.1;font-size:13px;font-weight:700">Línea Blanca (garantía)</div><input data-k="${AREA_LB}" data-t="garantia" inputmode="numeric" value="${metaOf(AREA_LB,'').gar}" placeholder="Garantía"><div style="flex:1"></div></div>`;}
   drawMetas();
 
-  // usuarios
-  Store.subscribeUsers(list=>{const box=$("#usersBox");if(!box)return;
-    const pend=list.filter(u=>u.estado!=="activo"),act=list.filter(u=>u.estado==="activo");
+  Store.subscribeUsers(list=>{const box=$("#usersBox");if(!box)return;const pend=list.filter(u=>u.estado!=="activo"),act=list.filter(u=>u.estado==="activo");
     box.innerHTML=(pend.length?`<h3>Pendientes</h3>`+pend.map(u=>`<div class="list-item"><div class="li-main"><div class="t">${esc(u.display)} <span class="chip warn">pendiente</span></div><div class="s">${esc(u.username)} · N° ${esc(u.codigo||'')}</div></div><button class="btn sm" data-appr="${u.uid}">Aprobar</button></div>`).join(""):'')
-      +`<h3>Activos</h3>`+(act.length?act.map(u=>`<div class="list-item"><div class="li-main"><div class="t">${esc(u.display)} ${u.rol==='admin'?'<span class="chip acc">admin</span>':''}</div><div class="s">${esc(u.username)} · N° ${esc(u.codigo||'')}</div></div><button class="btn ghost sm" data-rol="${u.uid}" data-cur="${u.rol}">${u.rol==='admin'?'Quitar admin':'Hacer admin'}</button></div>`).join(""):'<p class="tiny">Sin usuarios activos.</p>');
-    $$("#usersBox [data-appr]").forEach(b=>b.onclick=async()=>{await Store.setUser(b.dataset.appr,{estado:"activo"});toast("Usuario aprobado");});
-    $$("#usersBox [data-rol]").forEach(b=>b.onclick=async()=>{await Store.setUser(b.dataset.rol,{rol:b.dataset.cur==='admin'?'user':'admin'});toast("Rol actualizado");});
-  });
+      +`<h3>Activos</h3>`+(act.length?act.map(u=>`<div class="list-item"><div class="li-main"><div class="t">${esc(u.display)} ${u.rol==='admin'?'<span class="chip acc">admin</span>':''}</div><div class="s">${esc(u.username)} · N° ${esc(u.codigo||'')}</div></div><button class="btn ghost sm" data-rol="${u.uid}" data-cur="${u.rol}">${u.rol==='admin'?'Quitar admin':'Hacer admin'}</button></div>`).join(""):'<p class="tiny">Sin usuarios.</p>');
+    $$("#usersBox [data-appr]").forEach(b=>b.onclick=async()=>{await Store.setUser(b.dataset.appr,{estado:"activo"});toast("Aprobado");});
+    $$("#usersBox [data-rol]").forEach(b=>b.onclick=async()=>{await Store.setUser(b.dataset.rol,{rol:b.dataset.cur==='admin'?'user':'admin'});toast("Rol actualizado");});});
 
-  // avances list + upload
-  Store.subscribeAvances(list=>{const el=$("#avList");if(!el)return;
-    el.innerHTML=list.length?`<h3>Avances cargados</h3>`+list.slice(0,8).map(a=>`<div class="list-item"><div class="li-main"><div class="t">${esc(a.fecha||'')}</div><div class="s">${(a.filas||[]).length} fila(s)</div></div><button class="icon-btn" data-dela="${a.id}">🗑</button></div>`).join(""):'';
+  Store.subscribeAvances(list=>{const el=$("#avList");if(!el)return;el.innerHTML=list.length?`<h3>Avances cargados</h3>`+list.slice(0,8).map(a=>`<div class="list-item"><div class="li-main"><div class="t">${esc(a.fecha||'')}</div><div class="s">${(a.deptos||[]).length} depto(s) · ${(a.vendedores||[]).length} asesor(es)</div></div><button class="icon-btn" data-dela="${a.id}">🗑</button></div>`).join(""):'';
     $$("#avList [data-dela]").forEach(b=>b.onclick=async()=>{if(confirm("¿Eliminar avance?"))await Store.deleteAvance(b.dataset.dela);});});
-  let avFilas=[];
-  $("#avFile").onchange=async e=>{const f=e.target.files[0];if(!f)return;const st=$("#avStatus");
-    if(!c.gemini.apiKey){st.innerHTML=`<div class="ocr-note">⚠️ Configura la API key de Gemini primero.</div>`;return;}
-    st.innerHTML=`<div class="ocr-note">🤖 Leyendo…</div>`;
-    try{let t=await f.text();if(/\.html?$/i.test(f.name)||/<table|<td/i.test(t))t=htmlATexto(t);
-      const data=await leerAvanceLooker(t);
-      avFilas=(data.filas||[]).map(x=>({nivel:x.nivel==='departamento'?'departamento':'asesor',nombre:x.nombre||'',
-        area:(AREAS.includes((x.area||'').toUpperCase())?x.area.toUpperCase():areaDeDepto((x.departamento||'').toUpperCase())||AREAS[0]),
-        departamento:(x.departamento||(x.nivel==='departamento'?x.nombre:''))||'',gext:+x.gext||0,seguro:+x.seguro||0}));
-      st.innerHTML=`<div class="ocr-note">${avFilas.length} fila(s). Revisa y guarda.${data.dudas&&data.dudas.length?' Dudas: '+data.dudas.map(esc).join(', '):''}</div>`;drawAv();}
-    catch(err){st.innerHTML=`<div class="ocr-note">No pude leer (${esc(err.message)}).</div>`;}};
-  function drawAv(){if(!avFilas.length){$("#avTabla").innerHTML="";return;}
-    $("#avTabla").innerHTML=`<div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Nivel</th><th>Nombre</th><th>Área</th><th>Depto</th><th>Gtía</th><th>Seguro</th><th></th></tr></thead><tbody>${avFilas.map((f,i)=>`<tr>
-      <td><select data-i="${i}" data-f="nivel"><option value="asesor" ${f.nivel==='asesor'?'selected':''}>asesor</option><option value="departamento" ${f.nivel==='departamento'?'selected':''}>depto</option></select></td>
-      <td><input data-i="${i}" data-f="nombre" value="${esc(f.nombre)}" style="min-width:110px"></td>
-      <td><select data-i="${i}" data-f="area">${AREAS.map(a=>`<option ${f.area===a?'selected':''}>${a}</option>`).join("")}</select></td>
-      <td><input data-i="${i}" data-f="departamento" value="${esc(f.departamento)}" style="min-width:100px"></td>
-      <td><input data-i="${i}" data-f="gext" inputmode="numeric" value="${f.gext}" style="min-width:80px"></td>
-      <td><input data-i="${i}" data-f="seguro" inputmode="numeric" value="${f.seguro}" style="min-width:80px"></td>
-      <td><button class="icon-btn" data-del="${i}">🗑</button></td></tr>`).join("")}</tbody></table></div>
-      <div class="btn-row"><button class="btn" id="avSave">Guardar avance</button></div>`;
-    $$("#avTabla [data-i]").forEach(el=>el.onchange=()=>{const f=avFilas[+el.dataset.i],k=el.dataset.f;f[k]=(k==='gext'||k==='seguro')?num(el.value):el.value;});
-    $$("#avTabla [data-del]").forEach(b=>b.onclick=()=>{avFilas.splice(+b.dataset.del,1);drawAv();});
-    $("#avSave").onclick=async()=>{const btn=$("#avSave");btn.disabled=true;btn.textContent="Guardando…";
-      try{await Store.addAvance({fecha:$("#avFecha").value||todayStr(),fuente:"looker",filas:avFilas});toast("Avance guardado ✓");avFilas=[];$("#avTabla").innerHTML="";}
-      catch(err){toast("Error: "+err.message);btn.disabled=false;btn.textContent="Guardar avance";}};
-  }
 
-  $("#cfgSave").onclick=async()=>{
-    c.mes={inicio:$("#cMesIni").value,fin:$("#cMesFin").value};
-    $$("#metasBox [data-k]").forEach(inp=>{const k=inp.dataset.k;c.metas[k]=c.metas[k]||{garantia:0,seguro:0};c.metas[k][inp.dataset.t]=num(inp.value);});
-    c.gemini.apiKey=$("#cGemKey").value.trim();c.gemini.model=$("#cGemModel").value.trim()||"gemini-2.0-flash";
-    c.theme.accent=$("#cAccent").value;
-    const jt=$("#fbJson").value.trim();if(jt){try{c.firebase=Object.assign(c.firebase,JSON.parse(jt));}catch{return toast("JSON de Firebase inválido");}}
+  let parsed=null;
+  $("#avFile").onchange=async e=>{const files=[...e.target.files];if(!files.length)return;const st=$("#avStatus");st.innerHTML=`<div class="ocr-note">Leyendo ${files.length} archivo(s)…</div>`;
+    try{const texts=await Promise.all(files.map(f=>f.text()));parsed=parseLookerFiles(texts);
+      if(!parsed.deptos.length&&!parsed.vendedores.length){st.innerHTML=`<div class="ocr-note">No encontré tablas de Looker en el archivo. ¿Es el HTML descargado de Looker?</div>`;return;}
+      st.innerHTML=`<div class="ocr-note">✓ ${parsed.deptos.length} depto(s) y ${parsed.vendedores.length} asesor(es) detectados.</div>`;
+      // preview deptos agrupados
+      const en={};DEPTOS_EN.forEach(d=>en[d]={g:0,s:0});const lb={g:0,s:0};parsed.deptos.forEach(x=>{if(x.area===AREA_LB){lb.g+=x.gext;lb.s+=x.seguro;}else if(en[x.dep]){en[x.dep].g+=x.gext;en[x.dep].s+=x.seguro;}});
+      let pr=DEPTOS_EN.map(d=>`<tr><td>${d}</td><td>${CLP(en[d].g)}</td><td>${CLP(en[d].s)}</td></tr>`).join("")+`<tr><td>${AREA_LB}</td><td>${CLP(lb.g)}</td><td>${CLP(lb.s)}</td></tr>`;
+      $("#avPrev").innerHTML=`<div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Depto</th><th>GEXT</th><th>Seguro</th></tr></thead><tbody>${pr}</tbody></table></div><div class="btn-row"><button class="btn" id="avSave">Guardar avance</button></div>`;
+      $("#avSave").onclick=async()=>{const btn=$("#avSave");btn.disabled=true;btn.textContent="Guardando…";
+        try{await Store.addAvance({fecha:$("#avFecha").value||todayStr(),fuente:"looker",deptos:parsed.deptos.map(x=>({area:x.area,dep:x.dep,raw:x.raw,gext:x.gext,seguro:x.seguro})),vendedores:parsed.vendedores});toast("Avance guardado ✓");$("#avPrev").innerHTML="";$("#avStatus").innerHTML="";parsed=null;}
+        catch(err){toast("Error: "+err.message);btn.disabled=false;btn.textContent="Guardar avance";}};
+    }catch(err){st.innerHTML=`<div class="ocr-note">Error leyendo: ${esc(err.message)}</div>`;}};
+
+  $("#cfgSave").onclick=async()=>{c.mes={inicio:$("#cMesIni").value,fin:$("#cMesFin").value};
+    $$("#metasBox [data-k]").forEach(inp=>{const k=inp.dataset.k;c.metas[k]=c.metas[k]||{};c.metas[k][inp.dataset.t]=num(inp.value);});
+    c.gemini.apiKey=$("#cGemKey").value.trim();c.gemini.model=$("#cGemModel").value.trim()||"gemini-2.0-flash";c.theme.accent=$("#cAccent").value;
+    const jt=$("#fbJson").value.trim();if(jt){const fb=parseFirebaseBlock(jt);if(!fb)return toast("No pude leer la config de Firebase");c.firebase=Object.assign(c.firebase,fb);}
     await Store.saveConfig(c);applyTheme();toast("Configuración guardada ✓");
-    if(c.firebase.apiKey&&c.firebase.projectId&&Store.mode!=="firebase"&&confirm("Firebase configurado. ¿Recargar para conectar?"))location.reload();
-  };
+    if(c.firebase.apiKey&&c.firebase.projectId&&Store.mode!=="firebase"&&confirm("Firebase configurado. ¿Recargar para conectar?"))location.reload();};
 }
-function bindApariencia(c){
-  $("#mDark").onclick=()=>{localStorage.setItem("re_mode","dark");applyTheme();$("#mDark").classList.add("active");$("#mLight").classList.remove("active");};
-  $("#mLight").onclick=()=>{localStorage.setItem("re_mode","light");applyTheme();$("#mLight").classList.add("active");$("#mDark").classList.remove("active");};
-  $$(".swatch").forEach(s=>s.onclick=async()=>{c.theme.accent=s.dataset.hex;$("#cAccent").value=s.dataset.hex;$$(".swatch").forEach(x=>x.classList.remove("sel"));s.classList.add("sel");applyThemeAccent(s.dataset.hex);if(Store.isAdmin())await Store.saveConfig(c);});
-  $("#cAccent").oninput=e=>{c.theme.accent=e.target.value;applyThemeAccent(e.target.value);};
-}
-function applyThemeAccent(hex){document.documentElement.style.setProperty("--accent",hex);document.documentElement.style.setProperty("--on-accent",lum(hex)>0.6?"#151a08":"#ffffff");}
+function parseFirebaseBlock(t){try{return JSON.parse(t);}catch{}
+  const obj={};["apiKey","authDomain","projectId","storageBucket","messagingSenderId","appId"].forEach(k=>{const m=t.match(new RegExp(k+"\\s*[:=]\\s*[\"']([^\"']+)[\"']"));if(m)obj[k]=m[1];});
+  return obj.apiKey?obj:null;}
+function bindApar(c){$("#mDark").onclick=()=>{localStorage.setItem("re_mode","dark");applyTheme();renderConfig($("#app"));};
+  $("#mLight").onclick=()=>{localStorage.setItem("re_mode","light");applyTheme();renderConfig($("#app"));};
+  $$("#app .swatch").forEach(s=>s.onclick=async()=>{c.theme.accent=s.dataset.h;$("#cAccent").value=s.dataset.h;$$("#app .swatch").forEach(x=>x.classList.remove("sel"));s.classList.add("sel");applyThemeAccent(s.dataset.h);Store.lsSet("re4_config",c);if(Store.isAdmin())await Store.saveConfig(c);});
+  $("#cAccent").oninput=e=>{c.theme.accent=e.target.value;applyThemeAccent(e.target.value);};}
 
-/* =========================================================================
-   Arranque
-   ========================================================================= */
-function updateModePill(){const on=Store.mode==="firebase";$("#modeText").textContent=on?"en línea":"local";$("#modeDot").classList.toggle("online",on);}
-(async function(){
-  await Store.init();applyTheme();updateModePill();
+/* ===================== arranque ===================== */
+(async function(){await Store.init();applyTheme();
   await Store.restoreSession();
-  Store.subscribeVentas(()=>{if(CURRENT==="reporte")renderReporte($("#app"));});
-  Store.subscribeAvances(()=>{if(CURRENT==="avance")renderAvance($("#app"));});
-  render();
+  Store.subscribeVentas(()=>{updateHeader();if(CURRENT==="reporte")renderReporte($("#app"));});
+  Store.subscribeAvances(()=>{updateHeader();if(CURRENT==="avance")renderAvance($("#app"));});
+  updateHeader();render();
   if("serviceWorker" in navigator){try{navigator.serviceWorker.register("sw.js");}catch{}}
 })();
 </script>
