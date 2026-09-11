@@ -157,7 +157,7 @@ const ADMIN_PASS="connect2025";
 function metaKey(area,dep){return area+"::"+dep;}
 function metasSeed(){const m={};DEPTOS_EN.forEach(d=>{m[metaKey(AREA_EN,d)]=SEGURO_DEPTS.has(d)?{garantia:0,seguro:0}:{garantia:0};});DEPTOS_LB.forEach(d=>{m[metaKey(AREA_LB,d)]={garantia:0};});return m;}
 const DEFAULT_CONFIG={mes:{inicio:"",fin:""},metas:metasSeed(),theme:{accent:"#aad503"},
-  gemini:{apiKey:"",model:"gemini-2.0-flash"},firebase:{apiKey:"",authDomain:"",projectId:"",storageBucket:"",messagingSenderId:"",appId:""}};
+  gemini:{apiKey:"",model:"gemini-2.5-flash"},firebase:{apiKey:"",authDomain:"",projectId:"",storageBucket:"",messagingSenderId:"",appId:""}};
 
 /* utils */
 const $=(s,e=document)=>e.querySelector(s), $$=(s,e=document)=>[...e.querySelectorAll(s)];
@@ -270,7 +270,8 @@ async function leerBoleta(file){const g=Store.config.gemini;if(!g.apiKey)throw n
   const prompt=`Lees una BOLETA de Falabella (Chile), imagen o PDF. Extrae SOLO lo que veas. Devuelve EXCLUSIVAMENTE JSON:
 {"vendedor_nombre":string|null,"vendedor_codigo":string|null,"producto":string|null,"monto":number|null,"valor_garantia":number|null,"tipo":"Garantía"|"Seguro"|null,"area":string|null,"departamento":string|null,"confianza":number,"dudas":[string]}
 El vendedor viene como "VENDEDOR:<codigo> <APELLIDO>". Montos enteros en pesos. Sugiere area y departamento de: ${deptTxt}. Si no puedes, null y agrégalo a "dudas".`;
-  const url=`https://generativelanguage.googleapis.com/v1beta/models/${g.model||"gemini-2.0-flash"}:generateContent?key=${encodeURIComponent(g.apiKey)}`;
+  const model=(g.model&&!/^gemini-2\.0/.test(g.model))?g.model:"gemini-2.5-flash";
+  const url=`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(g.apiKey)}`;
   const r=await fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({contents:[{parts:[{text:prompt},{inline_data:{mime_type:file.type||"image/jpeg",data:b64}}]}],generationConfig:{temperature:0.1,response_mime_type:"application/json"}})});
   if(!r.ok)throw new Error("Gemini "+r.status+": "+(await r.text()).slice(0,140));
   const j=await r.json();const t=j?.candidates?.[0]?.content?.parts?.[0]?.text||"{}";try{return JSON.parse(t);}catch{const m=t.match(/\{[\s\S]*\}/);return m?JSON.parse(m[0]):{};}}
@@ -613,7 +614,7 @@ function renderConfig(app){const c=Store.config;const admin=Store.isAdmin();cons
     <label>Fecha del avance</label><input type="date" id="avFecha" value="${todayStr()}">
     <label class="btn secondary" style="cursor:pointer;margin-top:10px">📄 Elegir archivo(s) (.html)<input id="avFile" type="file" accept=".html,.htm,.txt" multiple class="hidden"></label>
     <div id="avStatus"></div><div id="avPrev"></div><div id="avList" style="margin-top:12px"></div></div>
-  <div class="card"><h2>Extracción de boletas (IA · Gemini)</h2><label>API key</label><input id="cGemKey" type="password" value="${esc(c.gemini.apiKey||'')}" placeholder="AIza…"><label>Modelo</label><input id="cGemModel" value="${esc(c.gemini.model||'gemini-2.0-flash')}"><p class="tiny">Solo se usa para leer boletas (no para Looker). Gratis en aistudio.google.com/apikey</p></div>
+  <div class="card"><h2>Extracción de boletas (IA · Gemini)</h2><label>API key</label><input id="cGemKey" type="password" value="${esc(c.gemini.apiKey||'')}" placeholder="AIza…"><label>Modelo</label><input id="cGemModel" value="${esc(c.gemini.model||'gemini-2.5-flash')}"><p class="tiny">Solo se usa para leer boletas (no para Looker). Gratis en aistudio.google.com/apikey</p></div>
   <div class="btn-row"><button class="btn" id="cfgSave">Guardar configuración</button></div>`;
   app.innerHTML=html;bindApar(c);
 
@@ -653,7 +654,7 @@ function renderConfig(app){const c=Store.config;const admin=Store.isAdmin();cons
 
   $("#cfgSave").onclick=async()=>{c.mes={inicio:$("#cMesIni").value,fin:$("#cMesFin").value};
     $$("#metasBox [data-k]").forEach(inp=>{const k=inp.dataset.k;c.metas[k]=c.metas[k]||{};c.metas[k][inp.dataset.t]=num(inp.value);});
-    c.gemini.apiKey=$("#cGemKey").value.trim();c.gemini.model=$("#cGemModel").value.trim()||"gemini-2.0-flash";c.theme.accent=$("#cAccent").value;
+    c.gemini.apiKey=$("#cGemKey").value.trim();c.gemini.model=$("#cGemModel").value.trim()||"gemini-2.5-flash";c.theme.accent=$("#cAccent").value;
     await Store.saveConfig(c);applyTheme();toast("Configuración guardada ✓");};
 }
 function bindApar(c){$("#mDark").onclick=()=>{localStorage.setItem("re_mode","dark");applyTheme();renderConfig($("#app"));};
