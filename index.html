@@ -204,11 +204,11 @@ const Store={mode:"local",db:null,auth:null,storage:null,user:null,config:null,
   emailFor(u){return u+"@reporteelectro.app";},
   usernameOf(n,a){return (norm(n)+"."+norm(a)).replace(/[^a-z0-9.]/g,"").replace(/\.+/g,".");},
   async countUsers(){if(this.mode==="firebase"){const s=await this.db.collection("usuarios").limit(1).get();return s.size;}return Object.keys(this.lsGet("re4_users",{})).length;},
-  async signUp({nombre,apellido,codigo,clave}){const username=this.usernameOf(nombre,apellido);const first=(await this.countUsers())===0;
-    const prof={nombre:clean(nombre),apellido:clean(apellido),codigo:clean(codigo),username,display:clean(nombre)+" "+clean(apellido),rol:first?"admin":"user",estado:first?"activo":"pendiente",createdAt:Date.now()};
-    if(this.mode==="firebase"){const cred=await this.auth.createUserWithEmailAndPassword(this.emailFor(username),clave);prof.uid=cred.user.uid;
-      await this.db.collection("usuarios").doc(cred.user.uid).set(prof);if(prof.estado!=="activo")await this.auth.signOut();else this.user=prof;}
-    else{const users=this.lsGet("re4_users",{});if(users[username])throw new Error("Ese usuario ya existe.");prof.uid="local_"+uid();prof.clave=clave;users[username]=prof;this.lsSet("re4_users",users);if(prof.estado==="activo"){this.lsSet("re4_session",prof.uid);this.user=prof;}}
+  async signUp({nombre,apellido,codigo,clave}){const username=this.usernameOf(nombre,apellido);
+    const mkProf=(first)=>({nombre:clean(nombre),apellido:clean(apellido),codigo:clean(codigo),username,display:clean(nombre)+" "+clean(apellido),rol:first?"admin":"user",estado:first?"activo":"pendiente",createdAt:Date.now()});
+    if(this.mode==="firebase"){const cred=await this.auth.createUserWithEmailAndPassword(this.emailFor(username),clave);const first=(await this.countUsers())===0;const prof=mkProf(first);prof.uid=cred.user.uid;
+      await this.db.collection("usuarios").doc(cred.user.uid).set(prof);if(prof.estado!=="activo")await this.auth.signOut();else this.user=prof;return prof;}
+    const first=(await this.countUsers())===0;const prof=mkProf(first);const users=this.lsGet("re4_users",{});if(users[username])throw new Error("Ese usuario ya existe.");prof.uid="local_"+uid();prof.clave=clave;users[username]=prof;this.lsSet("re4_users",users);if(prof.estado==="activo"){this.lsSet("re4_session",prof.uid);this.user=prof;}
     return prof;},
   async signIn({username,clave}){username=norm(username).replace(/\s+/g,".");
     if(this.mode==="firebase"){const cred=await this.auth.signInWithEmailAndPassword(this.emailFor(username),clave);const d=await this.db.collection("usuarios").doc(cred.user.uid).get();const p=d.exists?d.data():null;
