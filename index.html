@@ -369,8 +369,8 @@ function renderRegistrar(app){if(!draft)draft=nuevoDraft();
     <p class="sub">Botones independientes: suman +1 por asesor (no van por departamento ni monto).</p>
     <div class="seg"><button type="button" id="fpMe" class="active">Yo (${esc(Store.user.display||'')})</button><button type="button" id="fpOther">A otra persona</button></div>
     <div class="grid2 hidden" id="fpOtherBox"><div><label>Nombre asesor</label><input id="fpNom"></div><div><label>N° vendedor</label><input id="fpCod" inputmode="numeric"></div></div>
-    <div class="btn-row"><button class="btn dark" id="btnFp">${fpBadge()} &nbsp;+1</button></div>
-    <div class="btn-row"><button class="btn dark" id="btnFpP">${fpBadge2()} &nbsp;+1</button></div>
+    <div class="btn-row"><button class="btn secondary" id="btnFp">${fpBadge()} &nbsp;+1</button></div>
+    <div class="btn-row"><button class="btn secondary" id="btnFpP">${fpBadge2()} &nbsp;+1</button></div>
   </div>
 
   <div class="card">
@@ -379,7 +379,7 @@ function renderRegistrar(app){if(!draft)draft=nuevoDraft();
     <div class="grid2 hidden" id="nmOtherBox"><div><label>Nombre asesor</label><input id="nmNom"></div><div><label>N° vendedor</label><input id="nmCod" inputmode="numeric"></div></div>
     <label>Departamento</label><select id="nmDepto">${NOMIX_DEPTOS.map(d=>`<option>${d}</option>`).join("")}</select>
     <label>Monto</label><input id="nmMonto" inputmode="numeric" placeholder="$">
-    <div class="btn-row"><button class="btn dark" id="btnNoMix">Reportar no mix</button></div>
+    <div class="btn-row"><button class="btn secondary" id="btnNoMix">Reportar no mix</button></div>
   </div>`;
 
   const fillDepto=()=>{$("#selDepto").innerHTML=`<option value="">—</option>`+DEPTOS_EN.map(d=>`<option ${draft.departamento===d?'selected':''}>${d}</option>`).join("");};
@@ -421,7 +421,12 @@ function renderRegistrar(app){if(!draft)draft=nuevoDraft();
     try{await Store.addVenta({fecha:todayStr(),tipo:"No Mix",monto:m,departamento:dep,asesorNombre:a.nombre,asesorCodigo:a.codigo,categoria:"NOMIX"});toast("✓ No mix reportado ("+a.nombre+")");$("#nmMonto").value="";}catch(err){toast("Error: "+err.message);}};
 }
 async function procesarBoleta(file){const st=$("#ocrStatus");
-  if(!Store.config.gemini.apiKey){st.innerHTML=`<div class="ocr-note">⚠️ Configura la API key de Gemini en ⚙️ Config para leer la boleta. Por ahora, ingresa a mano.</div>`;try{const u=await Store.uploadBoleta(file);if(u){draft.boletaUrl=u;toast("Boleta adjuntada");}}catch{}return;}
+  if(!Store.config.gemini.apiKey){
+    if(Store.mode!=="firebase"||!Store.storage){st.innerHTML=`<div class="ocr-note">⚠️ Para adjuntar boletas activa Firebase Storage. Por ahora ingresa a mano.</div>`;return;}
+    st.innerHTML=`<div class="ocr-note">Subiendo boleta…</div>`;
+    try{const u=await Store.uploadBoleta(file);if(u){draft.boletaUrl=u;st.innerHTML=`<div class="ocr-note">✓ Boleta adjuntada (${esc(file.name)}). Completa los datos e ingresa.</div>`;toast("Boleta adjuntada");}else st.innerHTML=`<div class="ocr-note">No se pudo adjuntar la boleta.</div>`;}
+    catch(err){st.innerHTML=`<div class="ocr-note">Error al subir: ${esc(err.message)} · revisa que Storage esté activo y las reglas publicadas.</div>`;}
+    return;}
   st.innerHTML=`<div class="ocr-note">🤖 Leyendo la boleta…</div>`;
   try{const [data,url]=await Promise.all([leerBoleta(file),Store.uploadBoleta(file).catch(()=>null)]);if(url)draft.boletaUrl=url;verificarBoleta(data);st.innerHTML="";}
   catch(err){st.innerHTML=`<div class="ocr-note">No pude leer la boleta (${esc(err.message)}). Ingresa a mano.</div>`;}}
@@ -512,17 +517,25 @@ function renderReporte(app){const agg=aggDia(repDate);const mi=mesInfo();const d
   <div class="card"><h2>No mix</h2><div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Asesor</th><th>Departamento</th><th>Monto</th></tr></thead><tbody>${nm}</tbody></table></div></div>
   <div class="card"><h2>${fpBadge()} y Fpuntos + Pesos por asesor</h2><div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Asesor</th><th>Fpuntos</th><th>Fpuntos + Pesos</th></tr></thead><tbody>${can}</tbody></table></div></div>`;
   $("#repDate").onchange=e=>{repDate=e.target.value;renderReporte(app);};
-  $("#btnFull").onclick=()=>reporteFull(R);
+  $("#btnFull").onclick=()=>reporteFull(R,agg);
 }
-function reporteFull(R){
+function reporteFull(R,agg){
   let rows="";R.filas.forEach(f=>{if(f.header){rows+=`<tr class="area-row"><td>${f.header}</td><td>Garantía</td><td>Seguro</td><td>Meta</td><td>Cumpl.</td><td>Falta</td></tr>`;return;}
     rows+=`<tr><td><b>${f.label}</b></td><td>${CLP(f.gar)}</td><td>${SEGURO_DEPTS.has(f.label)?CLP(f.seg):'—'}</td><td>${f.hasMeta?CLP(f.metaDia):'—'}</td><td>${f.hasMeta?'<span class="sem '+f.es+'"></span>'+f.pct+'%':'—'}</td><td>${f.hasMeta?CLP(f.falta):'—'}</td></tr>`;});
+  let nmRows="",canRows="";
+  if(agg){
+    nmRows=agg.nomix.items.length?agg.nomix.items.map(x=>`<tr><td>${esc(x.asesor)}</td><td>${esc(x.dep)}</td><td>${CLP(x.monto)}</td></tr>`).join("")+`<tr class="total"><td>TOTAL NO MIX</td><td></td><td>${CLP(agg.nomix.total)}</td></tr>`:`<tr><td colspan="3" class="center muted">Sin no mix hoy</td></tr>`;
+    const canNames=[...new Set([...Object.keys(agg.fp.ases),...Object.keys(agg.fpp.ases)])];
+    canRows=canNames.length?canNames.map(n=>`<tr><td>${esc(n)}</td><td>${agg.fp.ases[n]||0}</td><td>${agg.fpp.ases[n]||0}</td></tr>`).join("")+`<tr class="total"><td>TOTAL</td><td>${agg.fp.total}</td><td>${agg.fpp.total}</td></tr>`:`<tr><td colspan="3" class="center muted">Sin canjes hoy</td></tr>`;
+  }
   const html=`<div class="fs" id="fs"><button class="fs-close" id="fsX">✕</button>
     <h1>Reporte Electro</h1><div class="fs-date">${fechaLarga(repDate)}</div>
     <div class="fs-kpis"><div class="k"><div class="l">Garantía</div><div class="n">${CLP(R.tGar)}</div></div><div class="k"><div class="l">Seguro</div><div class="n">${CLP(R.tSeg)}</div></div><div class="k"><div class="l">Total</div><div class="n">${CLP(R.tot)}</div></div><div class="k"><div class="l">Cumpl.</div><div class="n">${R.tMetaDia?R.pctT+'%':'—'} <span class="sem ${R.esT}"></span></div></div></div>
     <table><thead><tr><th>Área / Depto</th><th>Garantía</th><th>Seguro</th><th>Meta</th><th>Cumpl.</th><th>Falta</th></tr></thead>
     <tbody>${rows}<tr class="total"><td>TOTAL TIENDA</td><td>${CLP(R.tGar)}</td><td>${CLP(R.tSeg)}</td><td>${R.tMetaDia?CLP(R.tMetaDia):'—'}</td><td>${R.tMetaDia?R.pctT+'%':'—'}</td><td>${R.tMetaDia?CLP(R.faltaT):'—'}</td></tr></tbody></table>
-    ${R.faltaT>0?`<p class="fs-foot">Falta ${CLP(R.faltaT)} para la meta diaria.</p>`:''}</div>`;
+    ${R.faltaT>0?`<p class="fs-foot">Falta ${CLP(R.faltaT)} para la meta diaria.</p>`:''}
+    ${agg?`<h2 style="margin-top:22px">No mix</h2><table><thead><tr><th>Asesor</th><th>Departamento</th><th>Monto</th></tr></thead><tbody>${nmRows}</tbody></table>
+    <h2 style="margin-top:22px">Canjes · Fpuntos y Fpuntos + Pesos</h2><table><thead><tr><th>Asesor</th><th>Fpuntos</th><th>Fpuntos + Pesos</th></tr></thead><tbody>${canRows}</tbody></table>`:''}</div>`;
   document.body.insertAdjacentHTML("beforeend",html);$("#fsX").onclick=()=>$("#fs").remove();
 }
 
@@ -586,7 +599,6 @@ function renderConfig(app){const c=Store.config;const admin=Store.isAdmin();cons
     <label class="btn secondary" style="cursor:pointer;margin-top:10px">📄 Elegir archivo(s) (.html)<input id="avFile" type="file" accept=".html,.htm,.txt" multiple class="hidden"></label>
     <div id="avStatus"></div><div id="avPrev"></div><div id="avList" style="margin-top:12px"></div></div>
   <div class="card"><h2>Extracción de boletas (IA · Gemini)</h2><label>API key</label><input id="cGemKey" type="password" value="${esc(c.gemini.apiKey||'')}" placeholder="AIza…"><label>Modelo</label><input id="cGemModel" value="${esc(c.gemini.model||'gemini-2.0-flash')}"><p class="tiny">Solo se usa para leer boletas (no para Looker). Gratis en aistudio.google.com/apikey</p></div>
-  <div class="card"><h2>Firebase</h2><p class="tiny">Recomendado: pega tu config UNA vez en la constante <b>FIREBASE_CONFIG</b> arriba de index.html y súbelo al repo. O pega aquí el <b>firebaseConfig</b> (acepto el bloque completo):</p><textarea id="fbJson" placeholder='apiKey: "…", authDomain: "…", projectId: "…", …'></textarea></div>
   <div class="btn-row"><button class="btn" id="cfgSave">Guardar configuración</button></div>`;
   app.innerHTML=html;bindApar(c);
 
@@ -627,13 +639,8 @@ function renderConfig(app){const c=Store.config;const admin=Store.isAdmin();cons
   $("#cfgSave").onclick=async()=>{c.mes={inicio:$("#cMesIni").value,fin:$("#cMesFin").value};
     $$("#metasBox [data-k]").forEach(inp=>{const k=inp.dataset.k;c.metas[k]=c.metas[k]||{};c.metas[k][inp.dataset.t]=num(inp.value);});
     c.gemini.apiKey=$("#cGemKey").value.trim();c.gemini.model=$("#cGemModel").value.trim()||"gemini-2.0-flash";c.theme.accent=$("#cAccent").value;
-    const jt=$("#fbJson").value.trim();if(jt){const fb=parseFirebaseBlock(jt);if(!fb)return toast("No pude leer la config de Firebase");c.firebase=Object.assign(c.firebase,fb);}
-    await Store.saveConfig(c);applyTheme();toast("Configuración guardada ✓");
-    if(c.firebase.apiKey&&c.firebase.projectId&&Store.mode!=="firebase"&&confirm("Firebase configurado. ¿Recargar para conectar?"))location.reload();};
+    await Store.saveConfig(c);applyTheme();toast("Configuración guardada ✓");};
 }
-function parseFirebaseBlock(t){try{return JSON.parse(t);}catch{}
-  const obj={};["apiKey","authDomain","projectId","storageBucket","messagingSenderId","appId"].forEach(k=>{const m=t.match(new RegExp(k+"\\s*[:=]\\s*[\"']([^\"']+)[\"']"));if(m)obj[k]=m[1];});
-  return obj.apiKey?obj:null;}
 function bindApar(c){$("#mDark").onclick=()=>{localStorage.setItem("re_mode","dark");applyTheme();renderConfig($("#app"));};
   $("#mLight").onclick=()=>{localStorage.setItem("re_mode","light");applyTheme();renderConfig($("#app"));};
   $$("#app .swatch").forEach(s=>s.onclick=async()=>{c.theme.accent=s.dataset.h;$("#cAccent").value=s.dataset.h;$$("#app .swatch").forEach(x=>x.classList.remove("sel"));s.classList.add("sel");applyThemeAccent(s.dataset.h);Store.lsSet("re4_config",c);if(Store.isAdmin())await Store.saveConfig(c);});
