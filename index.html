@@ -246,8 +246,22 @@ const Store={mode:"local",db:null,auth:null,storage:null,user:null,config:null,
   async deleteAvance(id){if(this.mode==="firebase")await this.db.collection("avances").doc(id).delete();else{const arr=this.lsGet("re4_avances",[]).filter(x=>x.id!==id);this.lsSet("re4_avances",arr);this._emitA();}},
   subscribeAvances(cb){this.onAvances=cb;if(this.mode==="firebase"){this.db.collection("avances").orderBy("ts","desc").onSnapshot(s=>{this.avancesCache=s.docs.map(d=>Object.assign({id:d.id},d.data()));cb(this.avancesCache);});}else this._emitA();},
   _emitA(){this.avancesCache=this.lsGet("re4_avances",[]).sort((a,b)=>b.ts-a.ts);if(this.onAvances)this.onAvances(this.avancesCache);},
-  async uploadBoleta(file){if(this.mode==="firebase"&&this.storage){const p=`boletas/${this.user.uid}/${Date.now()}`;const r=this.storage.ref().child(p);await r.put(file);return await r.getDownloadURL();}return null;}
+  async uploadBoleta(file){
+    if(this.mode==="firebase"&&this.storage){const p=`boletas/${this.user.uid}/${Date.now()}`;const r=this.storage.ref().child(p);await r.put(file);return await r.getDownloadURL();}
+    // Sin Storage (plan gratis): comprime la imagen y guarda como dataURL en Firestore (< 1MB por doc).
+    if(/^image\//.test(file.type))return await comprimirImagen(file);
+    if(file.size<=850*1024)return await new Promise(res=>{const fr=new FileReader();fr.onload=()=>res(fr.result);fr.onerror=()=>res(null);fr.readAsDataURL(file);});
+    throw new Error("Archivo muy grande para guardar sin Storage (máx ~850KB si no es imagen)");
+  }
 };
+function comprimirImagen(file){return new Promise((res,rej)=>{const fr=new FileReader();fr.onerror=()=>rej(new Error("no se pudo leer la imagen"));
+  fr.onload=()=>{const img=new Image();img.onerror=()=>rej(new Error("imagen inválida"));
+    img.onload=()=>{const max=1100;let{width:w,height:h}=img;if(w>max||h>max){const s=max/Math.max(w,h);w=Math.round(w*s);h=Math.round(h*s);}
+      const cv=document.createElement("canvas");cv.width=w;cv.height=h;cv.getContext("2d").drawImage(img,0,0,w,h);
+      let q=0.72,url=cv.toDataURL("image/jpeg",q);while(url.length>900*1024&&q>0.35){q-=0.1;url=cv.toDataURL("image/jpeg",q);}
+      res(url);};
+    img.src=fr.result;};
+  fr.readAsDataURL(file);});}
 
 /* ===================== IA (solo boletas) ===================== */
 function fileToB64(f){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(",")[1]);r.onerror=rej;r.readAsDataURL(f);});}
@@ -423,10 +437,10 @@ function renderRegistrar(app){if(!draft)draft=nuevoDraft();
 }
 async function procesarBoleta(file){const st=$("#ocrStatus");
   if(!Store.config.gemini.apiKey){
-    if(Store.mode!=="firebase"||!Store.storage){st.innerHTML=`<div class="ocr-note">⚠️ Para adjuntar boletas activa Firebase Storage. Por ahora ingresa a mano.</div>`;return;}
-    st.innerHTML=`<div class="ocr-note">Subiendo boleta…</div>`;
+    if(Store.mode!=="firebase"){st.innerHTML=`<div class="ocr-note">⚠️ Conéctate en línea para adjuntar boletas. Por ahora ingresa a mano.</div>`;return;}
+    st.innerHTML=`<div class="ocr-note">Procesando boleta…</div>`;
     try{const u=await Store.uploadBoleta(file);if(u){draft.boletaUrl=u;st.innerHTML=`<div class="ocr-note">✓ Boleta adjuntada (${esc(file.name)}). Completa los datos e ingresa.</div>`;toast("Boleta adjuntada");}else st.innerHTML=`<div class="ocr-note">No se pudo adjuntar la boleta.</div>`;}
-    catch(err){st.innerHTML=`<div class="ocr-note">Error al subir: ${esc(err.message)} · revisa que Storage esté activo y las reglas publicadas.</div>`;}
+    catch(err){st.innerHTML=`<div class="ocr-note">Error: ${esc(err.message)}</div>`;}
     return;}
   st.innerHTML=`<div class="ocr-note">🤖 Leyendo la boleta…</div>`;
   try{const [data,url]=await Promise.all([leerBoleta(file),Store.uploadBoleta(file).catch(()=>null)]);if(url)draft.boletaUrl=url;verificarBoleta(data);st.innerHTML="";}
