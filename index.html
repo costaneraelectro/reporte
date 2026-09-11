@@ -164,6 +164,8 @@ const clean=s=>(s||"").toString().trim();
 const norm=s=>clean(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
 const CLP=n=>(n<0?"-$":"$")+Math.abs(Math.round(+n||0)).toLocaleString("es-CL");
 const num=v=>Math.round(+String(v).replace(/[^\d-]/g,""))||0;
+const JEFES=["isabel de lourd matus","pablo andres hernandez","yesenia yasmin gonzalez","miguel angel moraga"];
+const esJefe=nombre=>{const n=norm(nombre);return !!n&&JEFES.some(j=>n.includes(j)||j.includes(n));};
 const looknum=s=>{const n=parseInt(String(s||"").replace(/[^\d-]/g,""),10);return isNaN(n)?0:n;};
 const todayStr=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");};
 function fechaLarga(s){const [y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d).toLocaleDateString("es-CL",{weekday:"long",day:"numeric",month:"long",year:"numeric"});}
@@ -224,6 +226,8 @@ const Store={mode:"local",db:null,auth:null,storage:null,user:null,config:null,
   async setUser(u2,patch){if(this.mode==="firebase")await this.db.collection("usuarios").doc(u2).update(patch);
     else{const users=this.lsGet("re4_users",{});const k=Object.keys(users).find(x=>users[x].uid===u2);if(k){Object.assign(users[k],patch);this.lsSet("re4_users",users);this._emitU();}}
     if(this.user&&this.user.uid===u2)Object.assign(this.user,patch);},
+  async deleteUser(u2){if(this.mode==="firebase")await this.db.collection("usuarios").doc(u2).delete();
+    else{const users=this.lsGet("re4_users",{});const k=Object.keys(users).find(x=>users[x].uid===u2);if(k){delete users[k];this.lsSet("re4_users",users);this._emitU();}}},
   async claimAdmin(){await this.setUser(this.user.uid,{rol:"admin",estado:"activo"});},
   async addVenta(v){v.registradoPor=this.user.uid;v.registradoPorNombre=this.user.display||"";v.ts=Date.now();
     if(this.mode==="firebase"){const r=await this.db.collection("ventas").add(v);v.id=r.id;}else{v.id=uid();const a=this.lsGet("re4_ventas",[]);a.push(v);this.lsSet("re4_ventas",a);this._emitV();}return v;},
@@ -478,14 +482,14 @@ function buildFilas(agg,diasTot){ // filas para tabla y fullscreen
 function renderReporte(app){const agg=aggDia(repDate);const mi=mesInfo();const diasTot=mi?mi.diasTot:30;
   const R=buildFilas(agg,diasTot);
   let rows="";R.filas.forEach(f=>{if(f.header){rows+=`<tr class="area-row"><td>${f.header}</td><td>Garantía</td><td>Seguro</td><td>Meta día</td><td>Cumpl.</td><td>Falta</td></tr>`;return;}
-    rows+=`<tr><td><b>${f.label}</b></td><td>${CLP(f.gar)}</td><td>${CLP(f.seg)}</td><td>${f.hasMeta?CLP(f.metaDia):'—'}</td><td class="pct${f.es}">${f.hasMeta?'<span class="sem '+f.es+'"></span>'+f.pct+'%':'—'}</td><td>${f.hasMeta?CLP(f.falta):'—'}</td></tr>`;});
+    rows+=`<tr><td><b>${f.label}</b></td><td>${CLP(f.gar)}</td><td>${SEGURO_DEPTS.has(f.label)?CLP(f.seg):'—'}</td><td>${f.hasMeta?CLP(f.metaDia):'—'}</td><td class="pct${f.es}">${f.hasMeta?'<span class="sem '+f.es+'"></span>'+f.pct+'%':'—'}</td><td>${f.hasMeta?CLP(f.falta):'—'}</td></tr>`;});
   const kpis=`<div class="kpi"><div class="k"><div class="l">Garantía hoy</div><div class="n">${CLP(R.tGar)}</div></div>
     <div class="k"><div class="l">Seguro hoy</div><div class="n">${CLP(R.tSeg)}</div></div>
     <div class="k"><div class="l">Total hoy</div><div class="n">${CLP(R.tot)}</div></div>
     <div class="k"><div class="l">Cumpl. meta diaria</div><div class="n pct${R.esT}">${R.tMetaDia?'<span class="sem '+R.esT+'"></span>'+R.pctT+'%':'—'}</div></div></div>`;
 
   // detalle por asesor (garantía/seguro)
-  let det="";const addAses=(label,ases)=>{const names=Object.keys(ases);if(!names.length)return;
+  let det="";const addAses=(label,ases)=>{const names=Object.keys(ases).filter(nm=>!esJefe(nm));if(!names.length)return;
     det+=`<tr class="area-row"><td>${label}</td><td>Garantía</td><td>Seguro</td><td>Total</td></tr>`;
     names.forEach(nm=>{const x=ases[nm];det+=`<tr class="asesor"><td>${esc(nm)}</td><td>${CLP(x.gar)}</td><td>${CLP(x.seg)}</td><td>${CLP(x.gar+x.seg)}</td></tr>`;});};
   DEPTOS_EN.forEach(d=>addAses(AREA_EN+" · "+d,agg.en[d].ases));addAses(AREA_LB,agg.lb.ases);
@@ -512,14 +516,13 @@ function renderReporte(app){const agg=aggDia(repDate);const mi=mesInfo();const d
 }
 function reporteFull(R){
   let rows="";R.filas.forEach(f=>{if(f.header){rows+=`<tr class="area-row"><td>${f.header}</td><td>Garantía</td><td>Seguro</td><td>Meta</td><td>Cumpl.</td><td>Falta</td></tr>`;return;}
-    rows+=`<tr><td><b>${f.label}</b></td><td>${CLP(f.gar)}</td><td>${CLP(f.seg)}</td><td>${f.hasMeta?CLP(f.metaDia):'—'}</td><td>${f.hasMeta?'<span class="sem '+f.es+'"></span>'+f.pct+'%':'—'}</td><td>${f.hasMeta?CLP(f.falta):'—'}</td></tr>`;});
+    rows+=`<tr><td><b>${f.label}</b></td><td>${CLP(f.gar)}</td><td>${SEGURO_DEPTS.has(f.label)?CLP(f.seg):'—'}</td><td>${f.hasMeta?CLP(f.metaDia):'—'}</td><td>${f.hasMeta?'<span class="sem '+f.es+'"></span>'+f.pct+'%':'—'}</td><td>${f.hasMeta?CLP(f.falta):'—'}</td></tr>`;});
   const html=`<div class="fs" id="fs"><button class="fs-close" id="fsX">✕</button>
     <h1>Reporte Electro</h1><div class="fs-date">${fechaLarga(repDate)}</div>
     <div class="fs-kpis"><div class="k"><div class="l">Garantía</div><div class="n">${CLP(R.tGar)}</div></div><div class="k"><div class="l">Seguro</div><div class="n">${CLP(R.tSeg)}</div></div><div class="k"><div class="l">Total</div><div class="n">${CLP(R.tot)}</div></div><div class="k"><div class="l">Cumpl.</div><div class="n">${R.tMetaDia?R.pctT+'%':'—'} <span class="sem ${R.esT}"></span></div></div></div>
     <table><thead><tr><th>Área / Depto</th><th>Garantía</th><th>Seguro</th><th>Meta</th><th>Cumpl.</th><th>Falta</th></tr></thead>
     <tbody>${rows}<tr class="total"><td>TOTAL TIENDA</td><td>${CLP(R.tGar)}</td><td>${CLP(R.tSeg)}</td><td>${R.tMetaDia?CLP(R.tMetaDia):'—'}</td><td>${R.tMetaDia?R.pctT+'%':'—'}</td><td>${R.tMetaDia?CLP(R.faltaT):'—'}</td></tr></tbody></table>
-    ${R.faltaT>0?`<p class="fs-foot">Falta ${CLP(R.faltaT)} para la meta diaria.</p>`:''}
-    <div class="fs-foot">Toma la captura de esta pantalla para enviar el reporte.</div></div>`;
+    ${R.faltaT>0?`<p class="fs-foot">Falta ${CLP(R.faltaT)} para la meta diaria.</p>`:''}</div>`;
   document.body.insertAdjacentHTML("beforeend",html);$("#fsX").onclick=()=>$("#fs").remove();
 }
 
@@ -533,16 +536,22 @@ function renderAvance(app){
   const en={};DEPTOS_EN.forEach(d=>en[d]={gext:0,seguro:0});const lb={};DEPTOS_LB.forEach(d=>lb[d]={gext:0,seguro:0});
   (deptosSrc.deptos||[]).forEach(x=>{if(x.area===AREA_LB){if(lb[x.dep]){lb[x.dep].gext+=x.gext;lb[x.dep].seguro+=x.seguro;}else{lb["LINEA BLANCA"].gext+=x.gext;lb["LINEA BLANCA"].seguro+=x.seguro;}}else if(en[x.dep]){en[x.dep].gext+=x.gext;en[x.dep].seguro+=x.seguro;}});
   let rows="",TG=0,TS=0,TMg=0,TMs=0;
-  const push=(area,dep,label,c)=>{const meta=metaOf(area,dep);const metaTot=meta.gar+meta.seg;const av2=c.gext+c.seguro;const falta=Math.max(0,metaTot-av2);const md=Math.round(falta/diasRest);const pct=metaTot?Math.round(av2/metaTot*1000)/10:0;const es=estado(pct);
+  const push=(area,dep,label,c)=>{const meta=metaOf(area,dep);const seg=SEGURO_DEPTS.has(dep);
     TG+=c.gext;TS+=c.seguro;TMg+=meta.gar;TMs+=meta.seg;
-    rows+=`<tr><td><b>${label}</b></td><td>${CLP(c.gext)}</td><td>${CLP(c.seguro)}</td><td>${CLP(metaTot)}</td><td class="pct${es}">${metaTot?'<span class="sem '+es+'"></span>'+pct+'%':'—'}</td><td>${CLP(falta)}</td></tr>`;};
+    if(seg){const metaTot=meta.gar+meta.seg;const falta=Math.max(0,metaTot-(c.gext+c.seguro));
+      const pctG=meta.gar?Math.round(c.gext/meta.gar*1000)/10:0;const esG=estado(pctG);
+      const pctS=meta.seg?Math.round(c.seguro/meta.seg*1000)/10:0;const esS=estado(pctS);
+      const cumpl=`<div class="pct${esG}"><span class="sem ${esG}"></span>Gar ${meta.gar?pctG+'%':'—'}</div><div class="pct${esS}" style="margin-top:2px"><span class="sem ${esS}"></span>Seg ${meta.seg?pctS+'%':'—'}</div>`;
+      rows+=`<tr><td><b>${label}</b></td><td>${CLP(c.gext)}</td><td>${CLP(c.seguro)}</td><td>${CLP(metaTot)}</td><td>${cumpl}</td><td>${CLP(falta)}</td></tr>`;
+    }else{const metaTot=meta.gar;const falta=Math.max(0,metaTot-c.gext);const pct=metaTot?Math.round(c.gext/metaTot*1000)/10:0;const es=estado(pct);
+      rows+=`<tr><td><b>${label}</b></td><td>${CLP(c.gext)}</td><td>—</td><td>${CLP(metaTot)}</td><td class="pct${es}">${metaTot?'<span class="sem '+es+'"></span>'+pct+'%':'—'}</td><td>${CLP(falta)}</td></tr>`;}};
   rows+=`<tr class="area-row"><td>${AREA_EN}</td><td>Garantía</td><td>Seguro</td><td>Meta</td><td>Cumpl.</td><td>Falta</td></tr>`;DEPTOS_EN.forEach(d=>push(AREA_EN,d,d,en[d]));
   rows+=`<tr class="area-row"><td>${AREA_LB}</td><td>Garantía</td><td>Seguro</td><td>Meta</td><td>Cumpl.</td><td>Falta</td></tr>`;DEPTOS_LB.forEach(d=>push(AREA_LB,d,d,lb[d]));
   const avT=TG+TS,metaT=TMg+TMs,faltaT=Math.max(0,metaT-avT),mdT=Math.round(faltaT/diasRest);
   const pctMes=metaT?Math.round(avT/metaT*1000)/10:0;const esMes=estado(pctMes);
   const proy=(mi&&mi.diasTrans>0)?Math.round(avT/mi.diasTrans*mi.diasTot):0;
   const pctProy=metaT?Math.round(proy/metaT*1000)/10:0;
-  const ases=(vendSrc.vendedores||[]).filter(v=>v.gext||v.seguro).sort((a,b)=>(b.gext+b.seguro)-(a.gext+a.seguro));
+  const ases=(vendSrc.vendedores||[]).filter(v=>(v.gext||v.seguro)&&!esJefe(v.nombre)).sort((a,b)=>(b.gext+b.seguro)-(a.gext+a.seguro));
   const asesRows=ases.length?ases.map(v=>`<tr class="asesor"><td>${esc(v.nombre)}</td><td>${CLP(v.gext)}</td><td>${CLP(v.seguro)}</td><td>${CLP(v.gext+v.seguro)}</td></tr>`).join(""):`<tr><td colspan="4" class="center muted" style="padding:16px">Sin desglose por asesor</td></tr>`;
   app.innerHTML=`
   <div class="card"><div class="row" style="align-items:center"><h2 style="flex:1">Avance del mes</h2><span class="chip acc">${mi?mi.diasRest+' días restantes':'configura el mes en ⚙️'}</span></div>
@@ -583,17 +592,20 @@ function renderConfig(app){const c=Store.config;const admin=Store.isAdmin();cons
 
   function drawMetas(){const rowEN=d=>{const m=metaOf(AREA_EN,d);const seg=SEGURO_DEPTS.has(d);
     return `<div class="row" style="align-items:center;margin-bottom:6px"><div style="flex:1.1;font-size:13px;font-weight:700">${d}</div>
-      <input data-k="${metaKey(AREA_EN,d)}" data-t="garantia" inputmode="numeric" value="${m.gar}" placeholder="Garantía">
-      ${seg?`<input data-k="${metaKey(AREA_EN,d)}" data-t="seguro" inputmode="numeric" value="${m.seg}" placeholder="Seguro">`:`<div style="flex:1"></div>`}</div>`;};
-    const rowLB=d=>{const m=metaOf(AREA_LB,d);return `<div class="row" style="align-items:center;margin-bottom:6px"><div style="flex:1.1;font-size:13px;font-weight:700">${d}</div><input data-k="${metaKey(AREA_LB,d)}" data-t="garantia" inputmode="numeric" value="${m.gar}" placeholder="Garantía"><div style="flex:1"></div></div>`;};
-    $("#metasBox").innerHTML=`<h3>${AREA_EN}</h3>`+DEPTOS_EN.map(rowEN).join("")+`<h3>${AREA_LB}</h3>`+DEPTOS_LB.map(rowLB).join("");}
+      <input class="meta-inp" data-k="${metaKey(AREA_EN,d)}" data-t="garantia" inputmode="numeric" value="${CLP(m.gar)}" placeholder="Garantía">
+      ${seg?`<input class="meta-inp" data-k="${metaKey(AREA_EN,d)}" data-t="seguro" inputmode="numeric" value="${CLP(m.seg)}" placeholder="Seguro">`:`<div style="flex:1"></div>`}</div>`;};
+    const rowLB=d=>{const m=metaOf(AREA_LB,d);return `<div class="row" style="align-items:center;margin-bottom:6px"><div style="flex:1.1;font-size:13px;font-weight:700">${d}</div><input class="meta-inp" data-k="${metaKey(AREA_LB,d)}" data-t="garantia" inputmode="numeric" value="${CLP(m.gar)}" placeholder="Garantía"><div style="flex:1"></div></div>`;};
+    $("#metasBox").innerHTML=`<h3>${AREA_EN}</h3>`+DEPTOS_EN.map(rowEN).join("")+`<h3>${AREA_LB}</h3>`+DEPTOS_LB.map(rowLB).join("");
+    $$("#metasBox .meta-inp").forEach(inp=>inp.oninput=()=>{const p=inp.selectionStart,old=inp.value;inp.value=CLP(num(inp.value));inp.selectionStart=inp.selectionEnd=Math.max(0,p+(inp.value.length-old.length));});}
   drawMetas();
 
   Store.subscribeUsers(list=>{const box=$("#usersBox");if(!box)return;const pend=list.filter(u=>u.estado!=="activo"),act=list.filter(u=>u.estado==="activo");
-    box.innerHTML=(pend.length?`<h3>Pendientes</h3>`+pend.map(u=>`<div class="list-item"><div class="li-main"><div class="t">${esc(u.display)} <span class="chip warn">pendiente</span></div><div class="s">${esc(u.username)} · N° ${esc(u.codigo||'')}</div></div><button class="btn sm" data-appr="${u.uid}">Aprobar</button></div>`).join(""):'')
-      +`<h3>Activos</h3>`+(act.length?act.map(u=>`<div class="list-item"><div class="li-main"><div class="t">${esc(u.display)} ${u.rol==='admin'?'<span class="chip acc">admin</span>':''}</div><div class="s">${esc(u.username)} · N° ${esc(u.codigo||'')}</div></div><button class="btn ghost sm" data-rol="${u.uid}" data-cur="${u.rol}">${u.rol==='admin'?'Quitar admin':'Hacer admin'}</button></div>`).join(""):'<p class="tiny">Sin usuarios.</p>');
+    const delBtn=u=>u.uid===Store.user.uid?'':`<button class="btn ghost sm" data-del="${u.uid}" data-name="${esc(u.display)}">Eliminar</button>`;
+    box.innerHTML=(pend.length?`<h3>Pendientes</h3>`+pend.map(u=>`<div class="list-item"><div class="li-main"><div class="t">${esc(u.display)} <span class="chip warn">pendiente</span></div><div class="s">${esc(u.username)} · N° ${esc(u.codigo||'')}</div></div><div class="btn-row" style="margin:0"><button class="btn sm" data-appr="${u.uid}">Aprobar</button>${delBtn(u)}</div></div>`).join(""):'')
+      +`<h3>Activos</h3>`+(act.length?act.map(u=>`<div class="list-item"><div class="li-main"><div class="t">${esc(u.display)} ${u.rol==='admin'?'<span class="chip acc">admin</span>':''}</div><div class="s">${esc(u.username)} · N° ${esc(u.codigo||'')}</div></div><div class="btn-row" style="margin:0"><button class="btn ghost sm" data-rol="${u.uid}" data-cur="${u.rol}">${u.rol==='admin'?'Quitar admin':'Hacer admin'}</button>${delBtn(u)}</div></div>`).join(""):'<p class="tiny">Sin usuarios.</p>');
     $$("#usersBox [data-appr]").forEach(b=>b.onclick=async()=>{await Store.setUser(b.dataset.appr,{estado:"activo"});toast("Aprobado");});
-    $$("#usersBox [data-rol]").forEach(b=>b.onclick=async()=>{await Store.setUser(b.dataset.rol,{rol:b.dataset.cur==='admin'?'user':'admin'});toast("Rol actualizado");});});
+    $$("#usersBox [data-rol]").forEach(b=>b.onclick=async()=>{await Store.setUser(b.dataset.rol,{rol:b.dataset.cur==='admin'?'user':'admin'});toast("Rol actualizado");});
+    $$("#usersBox [data-del]").forEach(b=>b.onclick=async()=>{if(!confirm("¿Eliminar a "+b.dataset.name+"? (borra su perfil; su acceso de Firebase Auth se elimina aparte en la consola)"))return;try{await Store.deleteUser(b.dataset.del);toast("Usuario eliminado");}catch(err){toast("Error: "+err.message);}});});
 
   Store.subscribeAvances(list=>{const el=$("#avList");if(!el)return;el.innerHTML=list.length?`<h3>Avances cargados</h3>`+list.slice(0,8).map(a=>`<div class="list-item"><div class="li-main"><div class="t">${esc(a.fecha||'')}</div><div class="s">${(a.deptos||[]).length} depto(s) · ${(a.vendedores||[]).length} asesor(es)</div></div><button class="icon-btn" data-dela="${a.id}">🗑</button></div>`).join(""):'';
     $$("#avList [data-dela]").forEach(b=>b.onclick=async()=>{if(confirm("¿Eliminar avance?"))await Store.deleteAvance(b.dataset.dela);});});
