@@ -232,6 +232,8 @@ const Store={mode:"local",db:null,auth:null,storage:null,user:null,config:null,
   async claimAdmin(){await this.setUser(this.user.uid,{rol:"admin",estado:"activo"});},
   async addVenta(v){v.registradoPor=this.user.uid;v.registradoPorNombre=this.user.display||"";v.ts=Date.now();
     if(this.mode==="firebase"){const r=await this.db.collection("ventas").add(v);v.id=r.id;}else{v.id=uid();const a=this.lsGet("re4_ventas",[]);a.push(v);this.lsSet("re4_ventas",a);this._emitV();}return v;},
+  async deleteVenta(id){if(this.mode==="firebase")await this.db.collection("ventas").doc(id).delete();
+    else{const a=this.lsGet("re4_ventas",[]).filter(x=>x.id!==id);this.lsSet("re4_ventas",a);this._emitV();}},
   subscribeVentas(cb){this.onVentas=cb;if(this.mode==="firebase"){this.db.collection("ventas").orderBy("ts","desc").onSnapshot(s=>{this.ventasCache=s.docs.map(d=>Object.assign({id:d.id},d.data()));cb(this.ventasCache);});}else this._emitV();},
   _emitV(){this.ventasCache=this.lsGet("re4_ventas",[]).sort((a,b)=>b.ts-a.ts);if(this.onVentas)this.onVentas(this.ventasCache);},
   async addAvance(a){a.importadoPor=this.user.uid;a.ts=Date.now();
@@ -268,7 +270,8 @@ function fileToB64(f){return new Promise((res,rej)=>{const r=new FileReader();r.
 async function leerBoleta(file){const g=Store.config.gemini;if(!g.apiKey)throw new Error("Falta la API key de Gemini (⚙️ Config).");
   const b64=await fileToB64(file);const deptTxt=AREA_EN+": "+DEPTOS_EN.join(", ")+" | "+AREA_LB+" (sin departamentos)";
   const prompt=`Lees una BOLETA de Falabella (Chile), imagen o PDF. Extrae SOLO lo que veas. Devuelve EXCLUSIVAMENTE JSON:
-{"vendedor_nombre":string|null,"vendedor_codigo":string|null,"producto":string|null,"monto":number|null,"valor_garantia":number|null,"tipo":"Garantía"|"Seguro"|null,"area":string|null,"departamento":string|null,"confianza":number,"dudas":[string]}
+{"vendedor_nombre":string|null,"vendedor_codigo":string|null,"producto":string|null,"monto":number|null,"valor_garantia":number|null,"tipo":"Garantía"|"Seguro"|null,"area":string|null,"departamento":string|null,"fecha":string|null,"confianza":number,"dudas":[string]}
+La "fecha" es la fecha de emisión de la boleta en formato YYYY-MM-DD (null si no la ves).
 El vendedor viene como "VENDEDOR:<codigo> <APELLIDO>". Montos enteros en pesos. Sugiere area y departamento de: ${deptTxt}. Si no puedes, null y agrégalo a "dudas".`;
   const body=JSON.stringify({contents:[{parts:[{text:prompt},{inline_data:{mime_type:file.type||"image/jpeg",data:b64}}]}],generationConfig:{temperature:0.1,response_mime_type:"application/json"}});
   const cands=[];if(g.model&&!/^gemini-2\.0/.test(g.model))cands.push(g.model);
@@ -378,8 +381,8 @@ function renderAuth(app){app.innerHTML=`
 /* ===================== REGISTRAR ===================== */
 let draft=null;
 function nuevoDraft(){return {tipo:"Garantía",monto:"",area:"",departamento:"",producto:"",asesorNombre:Store.user.display||"",asesorCodigo:Store.user.codigo||"",otro:false,boletaUrl:""};}
-function fpBadge(){return `<img src="fpuntos.svg" class="fplogo" alt="Fpuntos">`;}
-function fpBadge2(){return `<span class="fpbadge"><img src="fpuntos.svg" class="fplogo" alt="Fpuntos"><span style="color:var(--accent);font-weight:900">+ Pesos</span></span>`;}
+function fpBadge(){return `<span class="fpbadge">CANJE <img src="fpuntos.svg" class="fplogo" alt="Fpuntos"></span>`;}
+function fpBadge2(){return `<span class="fpbadge">CANJE <img src="fpuntos.svg" class="fplogo" alt="Fpuntos"><span style="color:var(--accent);font-weight:900">+ Pesos $</span></span>`;}
 function renderRegistrar(app){if(!draft)draft=nuevoDraft();
   const esLB=draft.area===AREA_LB;
   app.innerHTML=`
@@ -474,8 +477,10 @@ function verificarBoleta(data){const dudas=new Set((data.dudas||[]).map(x=>norm(
   let depto=(area===AREA_EN&&DEPTOS_EN.includes((data.departamento||"").toUpperCase()))?(data.departamento||"").toUpperCase():"";
   const conf=Math.round((data.confianza||0)*100);
   const vend=vendedorPorCodigo(data.vendedor_codigo);if(vend){const fn=formatVendedor(vend);if(fn)data.vendedor_nombre=fn;}
+  const bFecha=clean(data.fecha||"");const fechaAlerta=bFecha&&bFecha!==todayStr();
   const html=`<div class="modal-bg" id="vBg"><div class="modal"><div class="m-head"><b>Verifica los datos <span class="badge-ai">IA · ${conf}%</span></b><button class="icon-btn" id="vX">✕</button></div>
     <div class="m-body"><p class="sub">Corrige lo necesario. Lo <span style="color:var(--warn)">resaltado</span> la IA no lo tuvo claro.</p>
+    ${fechaAlerta?`<div class="ocr-note" style="border-color:var(--warn);color:var(--warn)">⚠️ La boleta es del <b>${esc(bFecha)}</b>, distinta a hoy (${todayStr()}). Verifica antes de registrar.</div>`:''}
     <div class="seg"><button type="button" id="vGar" class="${data.tipo!=='Seguro'?'active':''}">Garantía</button><button type="button" id="vSeg" class="${data.tipo==='Seguro'?'active':''}">Seguro</button></div>
     <div class="grid2"><div><label>Vendedor</label><input id="vNom" class="${flag('vendedor_nombre')}" value="${esc(data.vendedor_nombre||'')}"></div><div><label>N° vendedor</label><input id="vCod" class="${flag('vendedor_codigo')}" value="${esc(data.vendedor_codigo||'')}"></div></div>
     <label>Producto</label><input id="vProd" value="${esc(data.producto||'')}">
@@ -547,6 +552,11 @@ function renderReporte(app){const agg=aggDia(repDate);const mi=mesInfo();const d
   const canNames=[...new Set([...Object.keys(agg.fp.ases),...Object.keys(agg.fpp.ases)])];
   let can=canNames.length?canNames.map(nm2=>`<tr><td>${esc(nm2)}</td><td>${agg.fp.ases[nm2]||0}</td><td>${agg.fpp.ases[nm2]||0}</td></tr>`).join("")+`<tr class="total"><td>TOTAL</td><td>${agg.fp.total}</td><td>${agg.fpp.total}</td></tr>`:`<tr><td colspan="3" class="center muted" style="padding:14px">Sin canjes hoy</td></tr>`;
 
+  // registros individuales del día (garantía/seguro) — el admin puede eliminar mal ingresados
+  const admin=Store.isAdmin();
+  const regs=Store.ventasCache.filter(v=>v.fecha===repDate&&(v.categoria==="GEXT"||v.categoria==="SEGURO")).sort((a,b)=>(b.ts||0)-(a.ts||0));
+  let regRows=regs.length?regs.map(v=>`<tr><td>${esc(v.asesorNombre||'')}</td><td>${v.categoria==="GEXT"?"Garantía":"Seguro"}</td><td>${esc(v.departamento||v.area||'')}</td><td>${CLP(v.monto)}</td>${admin?`<td><button class="icon-btn" data-delv="${v.id}" title="Eliminar">🗑</button></td>`:''}</tr>`).join(""):`<tr><td colspan="${admin?5:4}" class="center muted" style="padding:14px">Sin registros este día</td></tr>`;
+
   app.innerHTML=`
   <div class="card"><div class="row" style="align-items:center"><div style="flex:1"><input type="date" id="repDate" value="${repDate}"></div><button class="btn sm" id="btnFull" style="flex:none">🖥️ Reporte</button></div>
     ${kpis}${R.faltaT>0?`<p class="tiny" style="margin-top:8px">Falta <b style="color:var(--warn)">${CLP(R.faltaT)}</b> para la meta diaria.</p>`:(R.tMetaDia?`<p class="tiny" style="margin-top:8px">✅ Meta diaria cumplida.</p>`:`<p class="tiny" style="margin-top:8px">Define metas y mes comercial en ⚙️ Config.</p>`)}</div>
@@ -554,10 +564,12 @@ function renderReporte(app){const agg=aggDia(repDate);const mi=mesInfo();const d
     <thead><tr><th>Área / Depto</th><th>Garantía</th><th>Seguro</th><th>Meta día</th><th>Cumpl.</th><th>Falta</th></tr></thead>
     <tbody>${rows}<tr class="total"><td>TOTAL TIENDA</td><td>${CLP(R.tGar)}</td><td>${CLP(R.tSeg)}</td><td>${R.tMetaDia?CLP(R.tMetaDia):'—'}</td><td class="pct${R.esT}">${R.tMetaDia?'<span class="sem '+R.esT+'"></span>'+R.pctT+'%':'—'}</td><td>${R.tMetaDia?CLP(R.faltaT):'—'}</td></tr></tbody></table></div></div>
   <div class="card"><h2>Detalle por asesor</h2><div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Depto / Asesor</th><th>Garantía</th><th>Seguro</th><th>Total</th></tr></thead><tbody>${det}</tbody></table></div></div>
+  <div class="card"><h2>Registros del día${admin?' <span class="tiny" style="font-weight:400">· admin puede eliminar</span>':''}</h2><div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Asesor</th><th>Tipo</th><th>Depto</th><th>Monto</th>${admin?'<th></th>':''}</tr></thead><tbody>${regRows}</tbody></table></div></div>
   <div class="card"><h2>No mix</h2><div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Asesor</th><th>Departamento</th><th>Monto</th></tr></thead><tbody>${nm}</tbody></table></div></div>
-  <div class="card"><h2>${fpBadge()} y Fpuntos + Pesos por asesor</h2><div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Asesor</th><th>Fpuntos</th><th>Fpuntos + Pesos</th></tr></thead><tbody>${can}</tbody></table></div></div>`;
+  <div class="card"><h2>${fpBadge()} y ${fpBadge2()} por asesor</h2><div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Asesor</th><th>Canje</th><th>Canje + Pesos $</th></tr></thead><tbody>${can}</tbody></table></div></div>`;
   $("#repDate").onchange=e=>{repDate=e.target.value;renderReporte(app);};
   $("#btnFull").onclick=()=>reporteFull(R,agg);
+  if(admin)$$("#app [data-delv]").forEach(b=>b.onclick=async()=>{if(confirm("¿Eliminar este registro mal ingresado?")){try{await Store.deleteVenta(b.dataset.delv);toast("Registro eliminado");}catch(err){toast("Error: "+err.message);}}});
 }
 function reporteFull(R,agg){
   let rows="";R.filas.forEach(f=>{if(f.header){rows+=`<tr class="area-row"><td>${f.header}</td><td>Garantía</td><td>Seguro</td><td>Meta</td><td>Cumpl.</td><td>Falta</td></tr>`;return;}
@@ -575,7 +587,7 @@ function reporteFull(R,agg){
     <tbody>${rows}<tr class="total"><td>TOTAL TIENDA</td><td>${CLP(R.tGar)}</td><td>${CLP(R.tSeg)}</td><td>${R.tMetaDia?CLP(R.tMetaDia):'—'}</td><td>${R.tMetaDia?R.pctT+'%':'—'}</td><td>${R.tMetaDia?CLP(R.faltaT):'—'}</td></tr></tbody></table>
     ${R.faltaT>0?`<p class="fs-foot">Falta ${CLP(R.faltaT)} para la meta diaria.</p>`:''}
     ${agg?`<h2 style="margin-top:22px">No mix</h2><table><thead><tr><th>Asesor</th><th>Departamento</th><th>Monto</th></tr></thead><tbody>${nmRows}</tbody></table>
-    <h2 style="margin-top:22px">Canjes · Fpuntos y Fpuntos + Pesos</h2><table><thead><tr><th>Asesor</th><th>Fpuntos</th><th>Fpuntos + Pesos</th></tr></thead><tbody>${canRows}</tbody></table>`:''}</div>`;
+    <h2 style="margin-top:22px">${fpBadge()} y ${fpBadge2()} por asesor</h2><table><thead><tr><th>Asesor</th><th>Canje</th><th>Canje + Pesos $</th></tr></thead><tbody>${canRows}</tbody></table>`:''}</div>`;
   document.body.insertAdjacentHTML("beforeend",html);$("#fsX").onclick=()=>$("#fs").remove();
 }
 
