@@ -247,7 +247,7 @@ const Store={mode:"local",db:null,auth:null,storage:null,user:null,config:null,
   subscribeAvances(cb){this.onAvances=cb;if(this.mode==="firebase"){this.db.collection("avances").orderBy("ts","desc").onSnapshot(s=>{this.avancesCache=s.docs.map(d=>Object.assign({id:d.id},d.data()));cb(this.avancesCache);});}else this._emitA();},
   _emitA(){this.avancesCache=this.lsGet("re4_avances",[]).sort((a,b)=>b.ts-a.ts);if(this.onAvances)this.onAvances(this.avancesCache);},
   async uploadBoleta(file){
-    if(this.mode==="firebase"&&this.storage){const p=`boletas/${this.user.uid}/${Date.now()}`;const r=this.storage.ref().child(p);await r.put(file);return await r.getDownloadURL();}
+    if(this.mode==="firebase"&&this.storage){try{const p=`boletas/${this.user.uid}/${Date.now()}`;const r=this.storage.ref().child(p);await r.put(file);return await r.getDownloadURL();}catch(e){/* Storage no activo (plan gratis): sigue al fallback */}}
     // Sin Storage (plan gratis): comprime la imagen y guarda como dataURL en Firestore (< 1MB por doc).
     if(/^image\//.test(file.type))return await comprimirImagen(file);
     if(file.size<=850*1024)return await new Promise(res=>{const fr=new FileReader();fr.onload=()=>res(fr.result);fr.onerror=()=>res(null);fr.readAsDataURL(file);});
