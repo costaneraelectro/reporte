@@ -203,6 +203,7 @@ const Store={mode:"local",db:null,auth:null,storage:null,user:null,config:null,
   loadScript(src){return new Promise((res,rej)=>{const s=document.createElement("script");s.src=src;s.onload=res;s.onerror=rej;document.head.appendChild(s);});},
   async initFirebase(fc){if(!window.firebase){const b="https://www.gstatic.com/firebasejs/10.14.1/";for(const f of ["firebase-app-compat.js","firebase-auth-compat.js","firebase-firestore-compat.js","firebase-storage-compat.js"])await this.loadScript(b+f);}
     if(!firebase.apps.length)firebase.initializeApp(fc);this.db=firebase.firestore();this.auth=firebase.auth();try{this.storage=firebase.storage();}catch{this.storage=null;}
+    try{await this.db.enablePersistence({synchronizeTabs:true});}catch(e){/* varias pestañas o navegador sin soporte: sigue sin cache offline */}
     try{const d=await this.db.collection("config").doc("app").get();if(d.exists){this.config=Object.assign(this.config,d.data());this.config.metas=Object.assign(metasSeed(),this.config.metas||{});this.lsSet("re4_config",this.config);}}catch(e){}},
   emailFor(u){return u+"@reporteelectro.app";},
   usernameOf(n,a){return (norm(n)+"."+norm(a)).replace(/[^a-z0-9.]/g,"").replace(/\.+/g,".");},
@@ -231,9 +232,15 @@ const Store={mode:"local",db:null,auth:null,storage:null,user:null,config:null,
     else{const users=this.lsGet("re4_users",{});const k=Object.keys(users).find(x=>users[x].uid===u2);if(k){delete users[k];this.lsSet("re4_users",users);this._emitU();}}},
   async claimAdmin(){await this.setUser(this.user.uid,{rol:"admin",estado:"activo"});},
   async addVenta(v){v.registradoPor=this.user.uid;v.registradoPorNombre=this.user.display||"";v.ts=Date.now();
-    if(this.mode==="firebase"){const r=await this.db.collection("ventas").add(v);v.id=r.id;}else{v.id=uid();const a=this.lsGet("re4_ventas",[]);a.push(v);this.lsSet("re4_ventas",a);this._emitV();}return v;},
+    if(this.mode==="firebase"){
+      // La imagen (dataURL) va en colección aparte para que 'ventas' quede liviano y el reporte cargue rápido.
+      if(v.boletaUrl&&/^data:/.test(v.boletaUrl)){try{const rb=await this.db.collection("boletas").add({img:v.boletaUrl,uid:this.user.uid,ts:v.ts});v.boletaId=rb.id;}catch(e){}delete v.boletaUrl;}
+      const r=await this.db.collection("ventas").add(v);v.id=r.id;
+    }else{v.id=uid();const a=this.lsGet("re4_ventas",[]);a.push(v);this.lsSet("re4_ventas",a);this._emitV();}return v;},
   async deleteVenta(id){if(this.mode==="firebase")await this.db.collection("ventas").doc(id).delete();
     else{const a=this.lsGet("re4_ventas",[]).filter(x=>x.id!==id);this.lsSet("re4_ventas",a);this._emitV();}},
+  async updateVenta(id,patch){if(this.mode==="firebase")await this.db.collection("ventas").doc(id).update(patch);
+    else{const a=this.lsGet("re4_ventas",[]);const v=a.find(x=>x.id===id);if(v){Object.assign(v,patch);this.lsSet("re4_ventas",a);this._emitV();}}},
   subscribeVentas(cb){this.onVentas=cb;if(this.mode==="firebase"){this.db.collection("ventas").orderBy("ts","desc").onSnapshot(s=>{this.ventasCache=s.docs.map(d=>Object.assign({id:d.id},d.data()));cb(this.ventasCache);});}else this._emitV();},
   _emitV(){this.ventasCache=this.lsGet("re4_ventas",[]).sort((a,b)=>b.ts-a.ts);if(this.onVentas)this.onVentas(this.ventasCache);},
   async addAvance(a){a.importadoPor=this.user.uid;a.ts=Date.now();
@@ -268,12 +275,15 @@ function comprimirImagen(file){return new Promise((res,rej)=>{const fr=new FileR
 /* ===================== IA (solo boletas) ===================== */
 function fileToB64(f){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(",")[1]);r.onerror=rej;r.readAsDataURL(f);});}
 async function leerBoleta(file){const g=Store.config.gemini;if(!g.apiKey)throw new Error("Falta la API key de Gemini (⚙️ Config).");
-  const b64=await fileToB64(file);const deptTxt=AREA_EN+": "+DEPTOS_EN.join(", ")+" | "+AREA_LB+" (sin departamentos)";
+  let b64,mime=file.type||"image/jpeg";
+  if(/^image\//.test(file.type)){const durl=await comprimirImagen(file);b64=durl.split(",")[1];mime="image/jpeg";} // comprime para acelerar la subida a Gemini
+  else b64=await fileToB64(file);
+  const deptTxt=AREA_EN+": "+DEPTOS_EN.join(", ")+" | "+AREA_LB+" (sin departamentos)";
   const prompt=`Lees una BOLETA de Falabella (Chile), imagen o PDF. Extrae SOLO lo que veas. Devuelve EXCLUSIVAMENTE JSON:
 {"vendedor_nombre":string|null,"vendedor_codigo":string|null,"producto":string|null,"monto":number|null,"valor_garantia":number|null,"tipo":"Garantía"|"Seguro"|null,"area":string|null,"departamento":string|null,"fecha":string|null,"confianza":number,"dudas":[string]}
 La "fecha" es la fecha de emisión de la boleta en formato YYYY-MM-DD (null si no la ves).
 El vendedor viene como "VENDEDOR:<codigo> <APELLIDO>". Montos enteros en pesos. Sugiere area y departamento de: ${deptTxt}. Si no puedes, null y agrégalo a "dudas".`;
-  const body=JSON.stringify({contents:[{parts:[{text:prompt},{inline_data:{mime_type:file.type||"image/jpeg",data:b64}}]}],generationConfig:{temperature:0.1,response_mime_type:"application/json"}});
+  const body=JSON.stringify({contents:[{parts:[{text:prompt},{inline_data:{mime_type:mime,data:b64}}]}],generationConfig:{temperature:0.1,response_mime_type:"application/json"}});
   const cands=[];if(g.model&&!/^gemini-2\.0/.test(g.model))cands.push(g.model);
   ["gemini-flash-latest","gemini-2.5-flash","gemini-2.5-flash-lite","gemini-flash-lite-latest","gemini-2.0-flash-001"].forEach(m=>{if(!cands.includes(m))cands.push(m);});
   const sleep=ms=>new Promise(r=>setTimeout(r,ms));
@@ -389,7 +399,7 @@ function renderRegistrar(app){if(!draft)draft=nuevoDraft();
   <div class="card">
     <h2>Registrar garantía / seguro</h2>
     <p class="sub">Saca o sube la boleta para autocompletar, o ingresa a mano. Verificas antes de sumar.</p>
-    <div class="btn-row"><label class="btn secondary" style="cursor:pointer">📷 Sacar / subir boleta<input id="fileBoleta" type="file" accept="image/*,application/pdf" capture="environment" class="hidden"></label></div>
+    <div class="btn-row"><label class="btn secondary" style="cursor:pointer">📷 Tomar foto<input id="fileFoto" type="file" accept="image/*" capture="environment" class="hidden"></label><label class="btn secondary" style="cursor:pointer">📎 Subir archivo<input id="fileArch" type="file" accept="image/*,application/pdf" class="hidden"></label></div>
     <div id="ocrStatus"></div>
     <h3>Tipo</h3>
     <div class="seg"><button type="button" id="tGar" class="${draft.tipo==='Garantía'?'active':''}">Garantía</button><button type="button" id="tSeg" class="${draft.tipo==='Seguro'?'active':''}">Seguro</button></div>
@@ -433,7 +443,8 @@ function renderRegistrar(app){if(!draft)draft=nuevoDraft();
   $("#tSeg").onclick=()=>{sync();draft.tipo="Seguro";renderRegistrar(app);};
   $("#asMe").onclick=()=>{sync();draft.otro=false;draft.asesorNombre=Store.user.display||"";draft.asesorCodigo=Store.user.codigo||"";renderRegistrar(app);};
   $("#asOther").onclick=()=>{sync();draft.otro=true;draft.asesorNombre="";draft.asesorCodigo="";renderRegistrar(app);};
-  $("#fileBoleta").onchange=async e=>{const f=e.target.files[0];if(f)await procesarBoleta(f);};
+  $("#fileFoto").onchange=async e=>{const f=e.target.files[0];if(f)await procesarBoleta(f);};
+  $("#fileArch").onchange=async e=>{const f=e.target.files[0];if(f)await procesarBoleta(f);};
 
   // fpuntos asesor selector
   let fpOtro=false;
@@ -469,9 +480,11 @@ async function procesarBoleta(file){const st=$("#ocrStatus");
     try{const u=await Store.uploadBoleta(file);if(u){draft.boletaUrl=u;st.innerHTML=`<div class="ocr-note">✓ Boleta adjuntada (${esc(file.name)}). Completa los datos e ingresa.</div>`;toast("Boleta adjuntada");}else st.innerHTML=`<div class="ocr-note">No se pudo adjuntar la boleta.</div>`;}
     catch(err){st.innerHTML=`<div class="ocr-note">Error: ${esc(err.message)}</div>`;}
     return;}
-  st.innerHTML=`<div class="ocr-note">🤖 Leyendo la boleta…</div>`;
-  try{const [data,url]=await Promise.all([leerBoleta(file),Store.uploadBoleta(file).catch(()=>null)]);if(url)draft.boletaUrl=url;verificarBoleta(data);st.innerHTML="";}
-  catch(err){st.innerHTML=`<div class="ocr-note">No pude leer la boleta (${esc(err.message)}). Ingresa a mano.</div>`;}}
+  const t0=Date.now();let seg=0;
+  st.innerHTML=`<div class="ocr-note">🤖 Analizando la boleta… <b id="ocrSeg">0s</b><br><span class="tiny">Puedes esperar el aviso; te avisamos al terminar.</span></div>`;
+  const timer=setInterval(()=>{seg=Math.round((Date.now()-t0)/1000);const el=$("#ocrSeg");if(el)el.textContent=seg+"s";},1000);
+  try{const [data,url]=await Promise.all([leerBoleta(file),Store.uploadBoleta(file).catch(()=>null)]);clearInterval(timer);if(url)draft.boletaUrl=url;st.innerHTML=`<div class="ocr-note">✓ Boleta analizada en ${Math.round((Date.now()-t0)/1000)}s. Revisa y suma.</div>`;toast("✓ Boleta lista, revisa y suma");verificarBoleta(data);}
+  catch(err){clearInterval(timer);st.innerHTML=`<div class="ocr-note">No pude leer la boleta (${esc(err.message)}). Ingresa a mano.</div>`;toast("No se pudo leer la boleta");}}
 function verificarBoleta(data){const dudas=new Set((data.dudas||[]).map(x=>norm(x)));const flag=k=>dudas.has(k)?'field-flag':'';
   let area=(data.area||"").toUpperCase();if(!AREAS.includes(area))area="";
   let depto=(area===AREA_EN&&DEPTOS_EN.includes((data.departamento||"").toUpperCase()))?(data.departamento||"").toUpperCase():"";
@@ -552,10 +565,14 @@ function renderReporte(app){const agg=aggDia(repDate);const mi=mesInfo();const d
   const canNames=[...new Set([...Object.keys(agg.fp.ases),...Object.keys(agg.fpp.ases)])];
   let can=canNames.length?canNames.map(nm2=>`<tr><td>${esc(nm2)}</td><td>${agg.fp.ases[nm2]||0}</td><td>${agg.fpp.ases[nm2]||0}</td></tr>`).join("")+`<tr class="total"><td>TOTAL</td><td>${agg.fp.total}</td><td>${agg.fpp.total}</td></tr>`:`<tr><td colspan="3" class="center muted" style="padding:14px">Sin canjes hoy</td></tr>`;
 
-  // registros individuales del día (garantía/seguro) — el admin puede eliminar mal ingresados
+  // registros individuales del día (todas las categorías) — el admin edita monto o elimina
   const admin=Store.isAdmin();
-  const regs=Store.ventasCache.filter(v=>v.fecha===repDate&&(v.categoria==="GEXT"||v.categoria==="SEGURO")).sort((a,b)=>(b.ts||0)-(a.ts||0));
-  let regRows=regs.length?regs.map(v=>`<tr><td>${esc(v.asesorNombre||'')}</td><td>${v.categoria==="GEXT"?"Garantía":"Seguro"}</td><td>${esc(v.departamento||v.area||'')}</td><td>${CLP(v.monto)}</td>${admin?`<td><button class="icon-btn" data-delv="${v.id}" title="Eliminar">🗑</button></td>`:''}</tr>`).join(""):`<tr><td colspan="${admin?5:4}" class="center muted" style="padding:14px">Sin registros este día</td></tr>`;
+  const TIPO={GEXT:"Garantía",SEGURO:"Seguro",NOMIX:"No mix",FPUNTOS:"Canje",FPUNTOSPESOS:"Canje + Pesos $"};
+  const conMonto={GEXT:1,SEGURO:1,NOMIX:1};
+  const regs=Store.ventasCache.filter(v=>v.fecha===repDate).sort((a,b)=>(b.ts||0)-(a.ts||0));
+  let regRows=regs.length?regs.map(v=>{const montoCel=(v.categoria==="FPUNTOS"||v.categoria==="FPUNTOSPESOS")?"+1":CLP(v.monto);
+    const acc=admin?`<td style="white-space:nowrap">${conMonto[v.categoria]?`<button class="icon-btn" data-editv="${v.id}" data-monto="${v.monto||0}" title="Editar monto">✏️</button>`:''}<button class="icon-btn" data-delv="${v.id}" title="Eliminar">🗑</button></td>`:'';
+    return `<tr><td>${esc(v.asesorNombre||'')}</td><td>${TIPO[v.categoria]||v.categoria||''}</td><td>${esc(v.departamento||v.area||'')}</td><td>${montoCel}</td>${acc}</tr>`;}).join(""):`<tr><td colspan="${admin?5:4}" class="center muted" style="padding:14px">Sin registros este día</td></tr>`;
 
   app.innerHTML=`
   <div class="card"><div class="row" style="align-items:center"><div style="flex:1"><input type="date" id="repDate" value="${repDate}"></div><button class="btn sm" id="btnFull" style="flex:none">🖥️ Reporte</button></div>
@@ -564,12 +581,15 @@ function renderReporte(app){const agg=aggDia(repDate);const mi=mesInfo();const d
     <thead><tr><th>Área / Depto</th><th>Garantía</th><th>Seguro</th><th>Meta día</th><th>Cumpl.</th><th>Falta</th></tr></thead>
     <tbody>${rows}<tr class="total"><td>TOTAL TIENDA</td><td>${CLP(R.tGar)}</td><td>${CLP(R.tSeg)}</td><td>${R.tMetaDia?CLP(R.tMetaDia):'—'}</td><td class="pct${R.esT}">${R.tMetaDia?'<span class="sem '+R.esT+'"></span>'+R.pctT+'%':'—'}</td><td>${R.tMetaDia?CLP(R.faltaT):'—'}</td></tr></tbody></table></div></div>
   <div class="card"><h2>Detalle por asesor</h2><div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Depto / Asesor</th><th>Garantía</th><th>Seguro</th><th>Total</th></tr></thead><tbody>${det}</tbody></table></div></div>
-  <div class="card"><h2>Registros del día${admin?' <span class="tiny" style="font-weight:400">· admin puede eliminar</span>':''}</h2><div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Asesor</th><th>Tipo</th><th>Depto</th><th>Monto</th>${admin?'<th></th>':''}</tr></thead><tbody>${regRows}</tbody></table></div></div>
+  <div class="card"><h2>Registros del día</h2><div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Asesor</th><th>Tipo</th><th>Depto</th><th>Monto</th>${admin?'<th></th>':''}</tr></thead><tbody>${regRows}</tbody></table></div></div>
   <div class="card"><h2>No mix</h2><div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Asesor</th><th>Departamento</th><th>Monto</th></tr></thead><tbody>${nm}</tbody></table></div></div>
   <div class="card"><h2>${fpBadge()} y ${fpBadge2()} por asesor</h2><div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Asesor</th><th>Canje</th><th>Canje + Pesos $</th></tr></thead><tbody>${can}</tbody></table></div></div>`;
   $("#repDate").onchange=e=>{repDate=e.target.value;renderReporte(app);};
   $("#btnFull").onclick=()=>reporteFull(R,agg);
-  if(admin)$$("#app [data-delv]").forEach(b=>b.onclick=async()=>{if(confirm("¿Eliminar este registro mal ingresado?")){try{await Store.deleteVenta(b.dataset.delv);toast("Registro eliminado");}catch(err){toast("Error: "+err.message);}}});
+  if(admin){
+    $$("#app [data-delv]").forEach(b=>b.onclick=async()=>{if(confirm("¿Eliminar este registro?")){try{await Store.deleteVenta(b.dataset.delv);toast("Registro eliminado");}catch(err){toast("Error: "+err.message);}}});
+    $$("#app [data-editv]").forEach(b=>b.onclick=async()=>{const nv=prompt("Nuevo monto:",b.dataset.monto);if(nv===null)return;try{await Store.updateVenta(b.dataset.editv,{monto:num(nv)});toast("Monto actualizado");}catch(err){toast("Error: "+err.message);}});
+  }
 }
 function reporteFull(R,agg){
   let rows="";R.filas.forEach(f=>{if(f.header){rows+=`<tr class="area-row"><td>${f.header}</td><td>Garantía</td><td>Seguro</td><td>Meta</td><td>Cumpl.</td><td>Falta</td></tr>`;return;}
