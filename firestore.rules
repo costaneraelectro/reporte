@@ -2,39 +2,44 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Perfiles de usuario: cualquiera con sesión iniciada puede leerlos
-    // (para mostrar nombres en el reporte); cada quien solo edita el suyo.
-    match /usuarios/{uid} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null && request.auth.uid == uid;
+    // ¿el que hace la petición es administrador y está activo?
+    function esAdmin() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/usuarios/$(request.auth.uid))
+        && get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol == 'admin'
+        && get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.estado == 'activo';
     }
 
-    // Ventas: son el reporte compartido del equipo.
-    //  - cualquier usuario con sesión puede leerlas y crear nuevas
-    //  - solo quien la registró puede editarla o borrarla
+    // Usuarios: cualquiera con sesión puede leerlos.
+    //  - creas TU propio perfil (queda 'pendiente' hasta que un admin lo apruebe;
+    //    el primer usuario del sistema puede quedar 'activo'/'admin')
+    //  - un admin puede aprobar cuentas y designar administradores
+    match /usuarios/{uid} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null && request.auth.uid == uid;
+      allow update, delete: if esAdmin()
+                    || (request.auth != null && request.auth.uid == uid);
+    }
+
+    // Ventas registradas por los asesores (garantía, seguro, fpuntos, no mix).
     match /ventas/{id} {
       allow read:   if request.auth != null;
       allow create: if request.auth != null
                     && request.resource.data.registradoPor == request.auth.uid;
-      allow update, delete: if request.auth != null
-                    && resource.data.registradoPor == request.auth.uid;
+      allow update, delete: if esAdmin()
+                    || (request.auth != null && resource.data.registradoPor == request.auth.uid);
     }
 
-    // Avances importados desde Looker (snapshots por fecha, compartidos).
+    // Avances importados desde Looker: los sube un administrador.
     match /avances/{id} {
-      allow read:   if request.auth != null;
-      allow create: if request.auth != null
-                    && request.resource.data.importadoPor == request.auth.uid;
-      allow update, delete: if request.auth != null
-                    && resource.data.importadoPor == request.auth.uid;
+      allow read:  if request.auth != null;
+      allow write: if esAdmin();
     }
 
-    // Configuración compartida (metas, jefes, clave de Gemini, etc.).
-    // La protege la clave "connect2025" dentro de la app.
-    // Si quieres endurecerlo, restringe la escritura a UIDs de administradores.
+    // Configuración compartida (mes comercial, metas, colores, claves): solo admin escribe.
     match /config/{doc} {
       allow read:  if request.auth != null;
-      allow write: if request.auth != null;
+      allow write: if esAdmin();
     }
   }
 }

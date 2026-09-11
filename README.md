@@ -1,115 +1,59 @@
 # Reporte Electro
 
 App web/móvil (PWA) para registrar y seguir la venta de **garantía extendida**, **Seguro Connect**,
-No Mix, Attach, canjes de puntos y puntos + pesos, y armar el **reporte por área → departamento → asesor**
-con el **resumen por jefe** listo para tomar captura y enviar.
+**Fpuntos**, **Fpuntos + Pesos** y **No Mix**, y armar el reporte por **área → departamento → asesor**.
 
-Todo vive en un solo archivo (`index.html`): jerarquías, inventario (2.502 productos), lógica y reporte.
-Funciona **sin instalar nada**; para que sea **multiusuario en línea** se conecta a **Firebase** y para
-**leer boletas con IA** usa **Google Gemini**. Ambos se activan pegando sus credenciales en ⚙️ Config.
+Todo vive en un solo archivo (`index.html`). Funciona sin instalar nada; para que sea **multiusuario en
+línea** se conecta a **Firebase**, y para **leer boletas con IA** usa **Google Gemini** (opcional).
 
----
+## Pestañas
+
+- **Registrar** — Garantía o Seguro (foto/PDF de boleta con IA o manual), botones **Fpuntos** y
+  **Fpuntos + Pesos $**, y tarjeta **No Mix** (departamento + monto). Puedes registrar a tu nombre o **a otra persona**.
+- **Reporte** — Avance **del día** por área y departamento (garantía, seguro, total, cumplimiento) +
+  **Total tienda** con lo que falta para la meta diaria + detalle por asesor. Botón **🖥️ Reporte** = vista
+  a pantalla completa con **fondo blanco** para tomar captura y enviar.
+- **Avance** — Se alimenta del **HTML/TXT de Looker** que sube un admin. Muestra avance del mes por área
+  y departamento, **meta**, **meta diaria** y **falta**, más la venta por asesor.
+- **Config** — Apariencia (claro/oscuro y colores), y para **administradores**: mes comercial, metas,
+  usuarios, subir avances, clave de Gemini y Firebase.
+
+## Cuentas y roles
+
+- Registro con **nombre, apellido, número de vendedor y clave (repetida)**. Se inicia sesión con **usuario = `nombre.apellido`**.
+- Al registrarse, la cuenta queda **pendiente**; un **administrador** la aprueba en Config → Usuarios.
+- El **primer usuario** que se registra queda como **administrador** automáticamente.
+- Un admin designa a otros administradores. (Respaldo: en Config, un usuario puede volverse admin con la clave `connect2025`.)
 
 ## Probar ya (modo local)
 
-1. Abre `index.html` (o publícalo, ver abajo).
-2. Regístrate con nombre, apellido y una clave.
-3. Registra ventas y mira el Reporte.
+Abre `index.html`. El primer registro será admin. Los datos quedan **solo en ese dispositivo** hasta conectar Firebase.
 
-> En modo local los datos quedan **solo en ese dispositivo**. Para compartir entre usuarios, activa Firebase.
+## Conectar Firebase (multiusuario en línea)
 
-## Estructura
+1. Crea un proyecto en <https://console.firebase.google.com>.
+2. **Authentication → Sign-in method →** habilita **Correo/contraseña**.
+3. **Firestore Database →** crear (producción) → pestaña **Reglas** → pega `firestore.rules` → Publicar.
+4. *(Opcional, fotos de boleta)* **Storage →** crear → pega `storage.rules` → Publicar.
+5. **⚙️ Configuración del proyecto → Tus apps → Web `</>`** → copia el objeto `firebaseConfig`.
+6. **Déjalo fijo (recomendado):** pega esos valores en la constante **`FIREBASE_CONFIG`** al inicio de
+   `index.html` y sube el cambio al repo. Así queda en línea siempre, sin pegar nada en la UI.
+   *(Alternativa: pegar el JSON en Config → Firebase, solo para tu dispositivo.)*
+7. **Authentication → Settings → Dominios autorizados:** agrega el dominio donde lo publiques
+   (ej. `tuusuario.github.io`).
 
-| Archivo | Qué es |
-|---|---|
-| `index.html` | La app completa (datos embebidos incluidos). |
-| `manifest.json`, `sw.js`, `icon-*.png` | Para instalarla como app (PWA). |
-| `firestore.rules` | Reglas de seguridad de Firestore (pégalas en la consola de Firebase). |
-| `storage.rules` | Reglas de Storage para las fotos de boletas. |
+## Leer boletas con IA (Gemini)
 
----
+Config → *Extracción de boletas* → pega una API key gratis de <https://aistudio.google.com/apikey>.
+Al sacar/subir la boleta, la IA extrae vendedor, código, producto, monto y sugiere área/departamento;
+**siempre** muestra un formulario para verificar/editar antes de registrar.
 
-## 1) Activar multiusuario en línea (Firebase)
+## Publicar
 
-1. Entra a <https://console.firebase.google.com> → **Agregar proyecto** (ej: `reporte-electro`).
-2. **Authentication** → Comenzar → habilita **Correo/contraseña**.
-3. **Firestore Database** → Crear base de datos (modo producción) → pega el contenido de `firestore.rules` en la pestaña **Reglas** → Publicar.
-4. **Storage** → Comenzar → pega `storage.rules` → Publicar. *(opcional, solo si quieres guardar la foto de la boleta.)*
-5. **Configuración del proyecto** (⚙️) → *Tus apps* → **Web** (`</>`) → registra la app y copia el objeto `firebaseConfig`.
-6. Abre la app → ⚙️ **Config** (clave `connect2025`) → pega esa config (campo por campo o el JSON completo) → **Guardar** → **Recargar**.
+- **GitHub Pages:** Settings → Pages → Deploy from branch → `main` (raíz).
+- **Firebase Hosting:** `firebase init hosting` + `firebase deploy`.
 
-Cuando el indicador arriba diga **“en línea”**, todos los usuarios verán el mismo reporte.
+## Archivos
 
-> Los usuarios inician sesión con **nombre + apellido + clave**. Internamente se crea un correo
-> tipo `nombre.apellido@reporteelectro.app` (no necesitan un email real).
-
-## 2) Activar lectura de boletas con IA (Gemini)
-
-1. Consigue una API key gratis en <https://aistudio.google.com/apikey>.
-2. ⚙️ **Config** → pega la key en *Extracción de boletas (IA · Gemini)* → Guardar.
-3. Al registrar una venta, usa **📷 Foto / archivo boleta**: la IA extrae vendedor, código, producto,
-   monto y valor de garantía. **Siempre** aparece un formulario para **verificar y editar** antes de sumar;
-   lo que la IA no tuvo claro queda resaltado y lo puedes ingresar manual.
-
-> Seguridad: la key viaja desde el navegador. Es una key de uso interno; restríngela en
-> Google Cloud (APIs y servicios → Credenciales → *Application restrictions* por dominio y
-> *API restrictions* a “Generative Language API”).
-
-## 3) Publicar en línea
-
-Cualquier hosting estático sirve. Dos opciones fáciles:
-
-- **GitHub Pages:** Settings → Pages → Deploy from branch → `main` / carpeta raíz. Queda en
-  `https://<usuario>.github.io/<repo>/`.
-- **Firebase Hosting:** `firebase init hosting` (carpeta pública = esta) y `firebase deploy`.
-
----
-
-## Cómo se calcula el reporte
-
-- Cada venta tiene un **tipo**; el tipo define una **categoría**: `GEXT` (Garantía Extendida),
-  `SEGURO` (Seguro Connect) u `OTROS` (No Mix / Attach / Canje de Puntos / Puntos + Pesos).
-- El **producto/subclase** define **departamento** y **área** (mapeo de jerarquías embebido; editable por overrides).
-- El **resumen por jefe** suma las ventas de los departamentos que cada jefe cubre (configurable en ⚙️),
-  compara contra el **Plan GExt / Plan Seguro** y muestra el **cumplimiento** con semáforo
-  (🟢 ≥100% · 🟡 ≥80% · 🔴 <80%).
-- El **detalle** desglosa por área → departamento → asesor.
-
-Jerarquías y elegibilidad salen de los archivos oficiales (subclases elegibles + inventario).
-Para actualizar el inventario o el mapeo, se regenera el bloque de datos de `index.html`.
-
-### Fuentes del reporte
-
-En la vista **Reporte** puedes elegir la fuente:
-
-- **Registradas:** suma las ventas cargadas en la app (tiempo real, día a día).
-- **Avance Looker:** usa el último **avance importado** con fecha ≤ la seleccionada.
-
-**Importar avances de Looker:** en Reporte → *⬆️ Importar avances de Looker*. Sube el **HTML** o
-**TXT/CSV** que descargas de Looker con los avances por departamento y/o asesor; la IA (Gemini) lo lee,
-lo muestra en una tabla **editable** para que verifiques, y al guardar queda como snapshot con fecha.
-Así se va armando el reporte global día a día sin tipear a mano.
-
-### Metas diarias (mes comercial)
-
-En ⚙️ Config defines la **fecha de inicio y término del mes comercial**. El reporte calcula, por jefe
-y total, la **meta diaria = (plan del mes − avance del mes) ÷ días que faltan**, y muestra cuántos
-días quedan por vender.
-
----
-
-## Traspasar este repo a `costaneraelectro/reporte`
-
-Este proyecto se creó como repo de prueba. Para llevarlo al repo definitivo:
-
-```bash
-# 1) Clona este repo de prueba
-git clone <URL-de-este-repo> reporte-electro && cd reporte-electro
-
-# 2) Apunta al repo definitivo y súbelo
-git remote set-url origin https://github.com/costaneraelectro/reporte.git
-git push -u origin main
-```
-
-O, si prefieres copiar solo los archivos: copia todo el contenido de esta carpeta a un clon de
-`costaneraelectro/reporte`, haz commit y push. Luego activa GitHub Pages en ese repo.
+`index.html` (app), `manifest.json`, `sw.js`, `icon-180.png`, `icon-512.png`,
+`firestore.rules`, `storage.rules`.
