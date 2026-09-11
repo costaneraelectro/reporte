@@ -94,6 +94,7 @@
   .swatch{width:32px;height:32px;border-radius:9px;border:2px solid transparent;cursor:pointer}.swatch.sel{border-color:var(--text)}
   .fpbadge{display:inline-flex;align-items:center;gap:6px;font-weight:900}
   .fpring{width:22px;height:22px;border-radius:50%;background:conic-gradient(#00a94f 0 25%,#0072ce 0 50%,#e4002b 0 75%,#ff7f00 0 100%);-webkit-mask:radial-gradient(circle 6px,transparent 98%,#000);mask:radial-gradient(circle 6px,transparent 98%,#000)}
+  .fplogo{height:30px;width:auto;vertical-align:middle;display:inline-block}
 
   .fs{position:fixed;inset:0;background:#fff;color:#111;z-index:200;overflow:auto;padding:16px}
   .fs .fs-close{position:fixed;top:12px;right:12px;background:#111;color:#fff;border:none;width:40px;height:40px;border-radius:12px;font-size:18px;cursor:pointer;z-index:210}
@@ -339,8 +340,8 @@ function renderAuth(app){app.innerHTML=`
 /* ===================== REGISTRAR ===================== */
 let draft=null;
 function nuevoDraft(){return {tipo:"Garantía",monto:"",area:"",departamento:"",producto:"",asesorNombre:Store.user.display||"",asesorCodigo:Store.user.codigo||"",otro:false,boletaUrl:""};}
-function fpBadge(){return `<span class="fpbadge"><span class="fpring"></span>Fpuntos</span>`;}
-function fpBadge2(){return `<span class="fpbadge"><span class="fpring"></span>Fpuntos <span style="color:var(--accent)">+ Pesos</span></span>`;}
+function fpBadge(){return `<img src="fpuntos.svg" class="fplogo" alt="Fpuntos">`;}
+function fpBadge2(){return `<span class="fpbadge"><img src="fpuntos.svg" class="fplogo" alt="Fpuntos"><span style="color:var(--accent);font-weight:900">+ Pesos</span></span>`;}
 function renderRegistrar(app){if(!draft)draft=nuevoDraft();
   const esLB=draft.area===AREA_LB;
   app.innerHTML=`
