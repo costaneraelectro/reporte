@@ -7,6 +7,9 @@
 <title>Reporte Electro</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#0f1210; --bg2:#151a13; --card:#1a2016; --card2:#212a1b; --line:#2c3626;
@@ -16,10 +19,11 @@
     --radius:16px; --shadow:0 10px 28px rgba(0,0,0,.35); --safe-b:env(safe-area-inset-bottom,0px);
   }
   *{box-sizing:border-box} html,body{margin:0;padding:0}
-  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  body{font-family:'Poppins',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
     background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;
     padding-bottom:calc(78px + var(--safe-b));transition:background .2s,color .2s}
   a{color:var(--accent)}
+  .spin{animation:respin .6s linear}@keyframes respin{to{transform:rotate(360deg)}}
   .app{max-width:820px;margin:0 auto;padding:14px 15px 0} .hidden{display:none!important}
 
   .topbar{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:8px;padding:10px 13px;
@@ -119,6 +123,7 @@
   <div class="brand"><img src="icon-180.png" alt="RE"><div>Reporte Electro<small>Garantía · Seguro</small></div></div>
   <div class="spacer"></div>
   <span class="pill" id="updPill"><span class="dot" id="modeDot"></span><span id="updText">—</span></span>
+  <button class="icon-btn" id="btnRefresh" title="Actualizar">🔄</button>
   <button class="icon-btn" id="btnBrush" title="Color de la app">🖌️</button>
   <button class="icon-btn" id="btnTheme" title="Claro/oscuro">🌙</button>
   <button class="icon-btn" id="btnLogout" title="Cerrar sesión">⎋</button>
@@ -146,7 +151,7 @@ const FIREBASE_CONFIG = {
 
 const AREA_EN="ELECTRO NEGRO", AREA_LB="LINEA BLANCA";
 const AREAS=[AREA_EN,AREA_LB];
-const DEPTOS_EN=["AUDIO","COMPUTACION","CONNECT","VIDEOJUEGOS","FOTOGRAFIA"]; // Electro Negro con departamentos
+const DEPTOS_EN=["CONNECT","AUDIO","COMPUTACION","VIDEOJUEGOS","FOTOGRAFIA"]; // Electro Negro con departamentos (Connect primero)
 const DEPTOS_LB=["ELECTRODOMESTICOS","CUIDADO PERSONAL","LINEA BLANCA"];      // Línea Blanca: metas y avance por depto
 const SEGURO_DEPTS=new Set(["CONNECT"]); // solo Connect lleva meta de seguro
 const NOMIX_DEPTOS=["VIDEO","AUDIO","COMPUTACION Y HOGAR","TELEFONIA","ELECTRODOMESTICOS","LINEA BLANCA","DECO",
@@ -345,6 +350,7 @@ $("#nav").addEventListener("click",e=>{const b=e.target.closest("button");if(b)g
 $("#btnLogout").addEventListener("click",async()=>{if(confirm("¿Cerrar sesión?")){await Store.signOut();location.reload();}});
 $("#btnTheme").addEventListener("click",toggleTheme);
 $("#btnBrush").addEventListener("click",modalBrocha);
+$("#btnRefresh").addEventListener("click",()=>{const b=$("#btnRefresh");b.classList.add("spin");updateHeader();render();setTimeout(()=>b.classList.remove("spin"),600);toast("Actualizado");});
 function render(){const app=$("#app");if(!Store.user){$("#nav").classList.add("hidden");renderAuth(app);return;}
   $("#nav").classList.remove("hidden");({registrar:renderRegistrar,reporte:renderReporte,avance:renderAvance,config:renderConfig}[CURRENT]||renderRegistrar)(app);}
 function updateHeader(){const on=Store.mode==="firebase";$("#modeDot").classList.toggle("online",on);
@@ -394,21 +400,23 @@ function nuevoDraft(){return {tipo:"Garantía",monto:"",area:"",departamento:"",
 function fpBadge(){return `<span class="fpbadge">CANJE <img src="fpuntos.svg" class="fplogo" alt="Fpuntos"></span>`;}
 function fpBadge2(){return `<span class="fpbadge">CANJE <img src="fpuntos.svg" class="fplogo" alt="Fpuntos"><span style="color:var(--accent);font-weight:900">+ Pesos $</span></span>`;}
 function renderRegistrar(app){if(!draft)draft=nuevoDraft();
-  const esLB=draft.area===AREA_LB;
+  if(draft.tipo==="Seguro")draft.area=AREA_EN; // Línea Blanca no vende seguros
+  const esLB=draft.area===AREA_LB;const esSeguro=draft.tipo==="Seguro";
   app.innerHTML=`
   <div class="card">
     <h2>Registrar garantía / seguro</h2>
-    <p class="sub">Saca o sube la boleta para autocompletar, o ingresa a mano. Verificas antes de sumar.</p>
-    <div class="btn-row"><label class="btn secondary" style="cursor:pointer">📷 Tomar foto<input id="fileFoto" type="file" accept="image/*" capture="environment" class="hidden"></label><label class="btn secondary" style="cursor:pointer">📎 Subir archivo<input id="fileArch" type="file" accept="image/*,application/pdf" class="hidden"></label></div>
-    <div id="ocrStatus"></div>
+    <p class="sub">Ingresa los datos y suma.</p>
     <h3>Tipo</h3>
     <div class="seg"><button type="button" id="tGar" class="${draft.tipo==='Garantía'?'active':''}">Garantía</button><button type="button" id="tSeg" class="${draft.tipo==='Seguro'?'active':''}">Seguro</button></div>
     <form id="vForm">
       <label>Monto</label><input name="monto" inputmode="numeric" value="${esc(draft.monto)}" placeholder="$" required>
+      ${esSeguro?`
+      <label>Departamento (Electro Negro)</label><select name="departamento" id="selDepto"><option value="">—</option></select>
+      `:`
       <div class="grid2">
         <div><label>Área</label><select name="area" id="selArea"><option value="">—</option>${AREAS.map(a=>`<option ${draft.area===a?'selected':''}>${a}</option>`).join("")}</select></div>
         <div id="deptoWrap" class="${esLB?'hidden':''}"><label>Departamento</label><select name="departamento" id="selDepto"><option value="">—</option></select></div>
-      </div>
+      </div>`}
       <h3>Asesor</h3>
       <div class="seg"><button type="button" id="asMe" class="${!draft.otro?'active':''}">Yo (${esc(Store.user.display||'')})</button><button type="button" id="asOther" class="${draft.otro?'active':''}">A otra persona</button></div>
       <div class="grid2 ${draft.otro?'':'hidden'}"><div><label>Nombre asesor</label><input name="asesorNombre" value="${esc(draft.asesorNombre)}"></div><div><label>N° vendedor</label><input name="asesorCodigo" value="${esc(draft.asesorCodigo)}" inputmode="numeric"></div></div>
@@ -437,14 +445,12 @@ function renderRegistrar(app){if(!draft)draft=nuevoDraft();
   const fillDepto=()=>{$("#selDepto").innerHTML=`<option value="">—</option>`+DEPTOS_EN.map(d=>`<option ${draft.departamento===d?'selected':''}>${d}</option>`).join("");};
   fillDepto();
   const sync=()=>{const f=$("#vForm");if(f)Object.assign(draft,Object.fromEntries(new FormData(f)));};
-  $("#selArea").onchange=e=>{draft.area=e.target.value;draft.departamento="";renderRegistrar(app);};
+  {const sa=$("#selArea");if(sa)sa.onchange=e=>{draft.area=e.target.value;draft.departamento="";renderRegistrar(app);};}
   $("#selDepto").onchange=e=>draft.departamento=e.target.value;
   $("#tGar").onclick=()=>{sync();draft.tipo="Garantía";renderRegistrar(app);};
-  $("#tSeg").onclick=()=>{sync();draft.tipo="Seguro";renderRegistrar(app);};
+  $("#tSeg").onclick=()=>{sync();draft.tipo="Seguro";draft.area=AREA_EN;renderRegistrar(app);};
   $("#asMe").onclick=()=>{sync();draft.otro=false;draft.asesorNombre=Store.user.display||"";draft.asesorCodigo=Store.user.codigo||"";renderRegistrar(app);};
   $("#asOther").onclick=()=>{sync();draft.otro=true;draft.asesorNombre="";draft.asesorCodigo="";renderRegistrar(app);};
-  $("#fileFoto").onchange=async e=>{const f=e.target.files[0];if(f)await procesarBoleta(f);};
-  $("#fileArch").onchange=async e=>{const f=e.target.files[0];if(f)await procesarBoleta(f);};
 
   // fpuntos asesor selector
   let fpOtro=false;
@@ -544,7 +550,7 @@ function buildFilas(agg,diasTot){ // filas para tabla y fullscreen
 }
 function renderReporte(app){const agg=aggDia(repDate);const mi=mesInfo();const diasTot=mi?mi.diasTot:30;
   const R=buildFilas(agg,diasTot);
-  let rows="";R.filas.forEach(f=>{if(f.header){rows+=`<tr class="area-row"><td>${f.header}</td><td>Garantía</td><td>Seguro</td><td>Meta día</td><td>Cumpl.</td><td>Falta</td></tr>`;return;}
+  let rows="";R.filas.forEach(f=>{if(f.header){rows+=`<tr class="area-row"><td>${f.header}</td><td>Garantía</td><td>${f.header===AREA_LB?'':'Seguro'}</td><td>Meta día</td><td>Cumpl.</td><td>Falta</td></tr>`;return;}
     rows+=`<tr><td><b>${f.label}</b></td><td>${CLP(f.gar)}</td><td>${SEGURO_DEPTS.has(f.label)?CLP(f.seg):'—'}</td><td>${f.hasMeta?CLP(f.metaDia):'—'}</td><td class="pct${f.es}">${f.hasMeta?'<span class="sem '+f.es+'"></span>'+f.pct+'%':'—'}</td><td>${f.hasMeta?CLP(f.falta):'—'}</td></tr>`;});
   const kpis=`<div class="kpi"><div class="k"><div class="l">Garantía hoy</div><div class="n">${CLP(R.tGar)}</div></div>
     <div class="k"><div class="l">Seguro hoy</div><div class="n">${CLP(R.tSeg)}</div></div>
@@ -592,7 +598,7 @@ function renderReporte(app){const agg=aggDia(repDate);const mi=mesInfo();const d
   }
 }
 function reporteFull(R,agg){
-  let rows="";R.filas.forEach(f=>{if(f.header){rows+=`<tr class="area-row"><td>${f.header}</td><td>Garantía</td><td>Seguro</td><td>Meta</td><td>Cumpl.</td><td>Falta</td></tr>`;return;}
+  let rows="";R.filas.forEach(f=>{if(f.header){rows+=`<tr class="area-row"><td>${f.header}</td><td>Garantía</td><td>${f.header===AREA_LB?'':'Seguro'}</td><td>Meta</td><td>Cumpl.</td><td>Falta</td></tr>`;return;}
     rows+=`<tr><td><b>${f.label}</b></td><td>${CLP(f.gar)}</td><td>${SEGURO_DEPTS.has(f.label)?CLP(f.seg):'—'}</td><td>${f.hasMeta?CLP(f.metaDia):'—'}</td><td>${f.hasMeta?'<span class="sem '+f.es+'"></span>'+f.pct+'%':'—'}</td><td>${f.hasMeta?CLP(f.falta):'—'}</td></tr>`;});
   let nmRows="",canRows="";
   if(agg){
@@ -631,7 +637,7 @@ function renderAvance(app){
     }else{const metaTot=meta.gar;const falta=Math.max(0,metaTot-c.gext);const pct=metaTot?Math.round(c.gext/metaTot*1000)/10:0;const es=estado(pct);
       rows+=`<tr><td><b>${label}</b></td><td>${CLP(c.gext)}</td><td>—</td><td>${CLP(metaTot)}</td><td class="pct${es}">${metaTot?'<span class="sem '+es+'"></span>'+pct+'%':'—'}</td><td>${CLP(falta)}</td></tr>`;}};
   rows+=`<tr class="area-row"><td>${AREA_EN}</td><td>Garantía</td><td>Seguro</td><td>Meta</td><td>Cumpl.</td><td>Falta</td></tr>`;DEPTOS_EN.forEach(d=>push(AREA_EN,d,d,en[d]));
-  rows+=`<tr class="area-row"><td>${AREA_LB}</td><td>Garantía</td><td>Seguro</td><td>Meta</td><td>Cumpl.</td><td>Falta</td></tr>`;DEPTOS_LB.forEach(d=>push(AREA_LB,d,d,lb[d]));
+  rows+=`<tr class="area-row"><td>${AREA_LB}</td><td>Garantía</td><td></td><td>Meta</td><td>Cumpl.</td><td>Falta</td></tr>`;DEPTOS_LB.forEach(d=>push(AREA_LB,d,d,lb[d]));
   const avT=TG+TS,metaT=TMg+TMs,faltaT=Math.max(0,metaT-avT),mdT=Math.round(faltaT/diasRest);
   const pctMes=metaT?Math.round(avT/metaT*1000)/10:0;const esMes=estado(pctMes);
   const proy=(mi&&mi.diasTrans>0)?Math.round(avT/mi.diasTrans*mi.diasTot):0;
