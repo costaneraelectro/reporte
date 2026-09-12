@@ -1,6 +1,6 @@
 /* Service worker mínimo para que Reporte Electro sea instalable (PWA).
    Estrategia: network-first para no dejar la app pegada en una versión vieja. */
-const CACHE = 'reporte-electro-v4';
+const CACHE = 'reporte-electro-v5';
 const ASSETS = ['./', './index.html', './manifest.json', './icon-180.png', './icon-512.png', './fpuntos.svg', './epa.svg'];
 
 self.addEventListener('install', e => {

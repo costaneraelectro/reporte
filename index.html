@@ -246,11 +246,12 @@ const Store={mode:"local",db:null,auth:null,storage:null,user:null,config:null,
     if(this.mode==="firebase"){
       // La imagen (dataURL) va en colección aparte para que 'ventas' quede liviano y el reporte cargue rápido.
       if(v.boletaUrl&&/^data:/.test(v.boletaUrl)){try{const rb=await this.db.collection("boletas").add({img:v.boletaUrl,uid:this.user.uid,ts:v.ts});v.boletaId=rb.id;}catch(e){}delete v.boletaUrl;}
-      const r=await this.db.collection("ventas").add(v);v.id=r.id;
+      // No esperamos el ack del servidor: el onSnapshot refleja al instante (evita que quede "Guardando…" si la red tarda).
+      const ref=this.db.collection("ventas").doc();v.id=ref.id;ref.set(v).catch(e=>toast("No se pudo guardar en línea"));
     }else{v.id=uid();const a=this.lsGet("re4_ventas",[]);a.push(v);this.lsSet("re4_ventas",a);this._emitV();}return v;},
-  async deleteVenta(id){if(this.mode==="firebase")await this.db.collection("ventas").doc(id).delete();
+  async deleteVenta(id){if(this.mode==="firebase")this.db.collection("ventas").doc(id).delete().catch(e=>toast("No se pudo eliminar"));
     else{const a=this.lsGet("re4_ventas",[]).filter(x=>x.id!==id);this.lsSet("re4_ventas",a);this._emitV();}},
-  async updateVenta(id,patch){if(this.mode==="firebase")await this.db.collection("ventas").doc(id).update(patch);
+  async updateVenta(id,patch){if(this.mode==="firebase")this.db.collection("ventas").doc(id).update(patch).catch(e=>toast("No se pudo editar"));
     else{const a=this.lsGet("re4_ventas",[]);const v=a.find(x=>x.id===id);if(v){Object.assign(v,patch);this.lsSet("re4_ventas",a);this._emitV();}}},
   subscribeVentas(cb){this.onVentas=cb;if(this.mode==="firebase"){this.db.collection("ventas").orderBy("ts","desc").onSnapshot(s=>{this.ventasCache=s.docs.map(d=>Object.assign({id:d.id},d.data()));cb(this.ventasCache);});}else this._emitV();},
   _emitV(){this.ventasCache=this.lsGet("re4_ventas",[]).sort((a,b)=>b.ts-a.ts);if(this.onVentas)this.onVentas(this.ventasCache);},
