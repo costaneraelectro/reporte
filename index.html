@@ -79,6 +79,21 @@
   .kpi{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .kpi .k{background:var(--input);border:1px solid var(--line);border-radius:12px;padding:12px}
   .kpi .k .n{font-size:20px;font-weight:900} .kpi .k .l{font-size:10.5px;color:var(--muted2);text-transform:uppercase;letter-spacing:.5px}
+  .reg-card details>summary{cursor:pointer;list-style:none;font-size:15px;padding:2px 0}
+  .reg-card details>summary::-webkit-details-marker{display:none}
+  table.reg-mini th,table.reg-mini td{font-size:11px;padding:5px 7px}
+  table.reg-mini .icon-btn{width:26px;height:26px;font-size:13px;border-radius:8px}
+  @media(max-width:480px){
+    .topbar{padding:8px 10px;gap:6px}
+    .brand{font-size:13px;gap:7px} .brand img{width:28px;height:28px} .brand small{font-size:9px}
+    .pill{font-size:10px;padding:4px 7px} .icon-btn{width:32px;height:32px;font-size:14px;border-radius:9px}
+    .card{padding:12px;margin:10px 0;border-radius:13px}
+    .card h2{font-size:15px}
+    table{font-size:12px} th,td{padding:7px 8px}
+    .kpi{gap:8px} .kpi .k{padding:10px} .kpi .k .n{font-size:16px} .kpi .k .l{font-size:9.5px}
+    .btn{padding:12px 12px;font-size:14px}
+    input,select,textarea{font-size:16px}
+  }
 
   .sem{width:11px;height:11px;border-radius:50%;display:inline-block;margin-right:5px;vertical-align:middle}
   .sem.ok{background:var(--ok)}.sem.warn{background:var(--warn)}.sem.bad{background:var(--bad)}
@@ -638,9 +653,10 @@ function renderReporte(app){const agg=aggDia(repDate);const mi=mesInfo();const d
     <thead><tr><th>Área / Depto</th><th>Garantía</th><th>Seguro</th><th>Meta día</th><th>Cumpl.</th><th>Falta</th></tr></thead>
     <tbody>${rows}<tr class="total"><td>TOTAL TIENDA</td><td>${CLP(R.tGar)}</td><td>${CLP(R.tSeg)}</td><td>${R.tMetaDia?CLP(R.tMetaDia):'—'}</td><td class="pct${R.esT}">${R.tMetaDia?'<span class="sem '+R.esT+'"></span>'+R.pctT+'%':'—'}</td><td>${R.tMetaDia?CLP(R.faltaT):'—'}</td></tr></tbody></table></div></div>
   <div class="card"><h2>Detalle por asesor</h2><div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Depto / Asesor</th><th>Garantía</th><th>Seguro</th><th>Total</th></tr></thead><tbody>${det}</tbody></table></div></div>
-  <div class="card"><h2>Registros del día</h2><div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Asesor</th><th>Tipo</th><th>Depto</th><th>Monto</th>${admin?'<th></th>':''}</tr></thead><tbody>${regRows}</tbody></table></div></div>
   <div class="card"><h2>No mix</h2><div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Asesor</th><th>Departamento</th><th>Monto</th></tr></thead><tbody>${nm}</tbody></table></div></div>
-  <div class="card"><h2>${fpBadge()} y ${fpBadge2()} por asesor</h2><div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Asesor</th><th>Canje</th><th>Fpuntos + $ Pesos</th></tr></thead><tbody>${can}</tbody></table></div></div>`;
+  <div class="card"><h2>${fpBadge()} y ${fpBadge2()} por asesor</h2><div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Asesor</th><th>Canje</th><th>Fpuntos + $ Pesos</th></tr></thead><tbody>${can}</tbody></table></div></div>
+  <div class="card reg-card"><details><summary><b>Registros del día</b> <span class="tiny">(${regs.length}) — tocar para editar/eliminar</span></summary>
+    <div class="rep-wrap" style="margin-top:10px"><table class="reg-mini"><thead><tr><th>Asesor</th><th>Tipo</th><th>Depto</th><th>Monto</th>${admin?'<th></th>':''}</tr></thead><tbody>${regRows}</tbody></table></div></details></div>`;
   $("#repDate").onchange=e=>{repDate=e.target.value;renderReporte(app);};
   $("#btnFull").onclick=()=>reporteFull(R,agg);
   $("#btnImg").onclick=()=>descargarReporteImg(R,det);
