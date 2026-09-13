@@ -126,9 +126,9 @@
   .fs .fs-kpis{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:8px 0 12px}
   .fs .fs-kpis .k{background:#f3f6ea;border-radius:10px;padding:8px 12px;text-align:center;min-width:96px}
   .fs .fs-kpis .k .n{font-weight:900;font-size:16px}.fs .fs-kpis .k .l{font-size:10px;color:#666;text-transform:uppercase}
-  .fs table{background:#fff;color:#111;border:1px solid #ddd;table-layout:fixed}
-  .fs th,.fs td{border-bottom:1px solid #e5e5e5;padding:7px;font-size:12px;overflow:hidden;text-overflow:ellipsis}
-  .fs th:first-child,.fs td:first-child{width:26%}
+  .fs table{background:#fff;color:#111;border:1px solid #ddd;width:100%}
+  .fs th,.fs td{border-bottom:1px solid #e5e5e5;padding:7px;font-size:12px;white-space:nowrap}
+  @media(max-width:480px){.fs{padding:12px}.fs h1{font-size:19px}.fs .fs-date{font-size:12px}.fs th,.fs td{font-size:10px;padding:4px 5px}.fs .fs-kpis .k{min-width:0;padding:6px 8px}.fs .fs-kpis .k .n{font-size:13px}}
   .fs thead th{background:#f3f6ea;color:#333}
   .fs tr.area-row td{background:#eaf3c6;color:#1a1f14;font-weight:800}
   .fs tr.total td{background:#111;color:#fff;font-weight:900}
@@ -484,7 +484,6 @@ function renderRegistrar(app){if(!draft)draft=nuevoDraft();
 
   <div class="card">
     <h2>Canje de puntos</h2>
-    <p class="sub">Botones independientes: suman +1 por asesor (no van por departamento ni monto).</p>
     <div class="seg"><button type="button" id="fpMe" class="active">Yo (${esc(Store.user.display||'')})</button><button type="button" id="fpOther">A otra persona</button></div>
     <div class="hidden" id="fpOtherBox">
       ${listaVendedores().length?`<label>Asesor</label><select id="fpPick">${opcionesAsesor("")}</select>`:''}
@@ -501,9 +500,20 @@ function renderRegistrar(app){if(!draft)draft=nuevoDraft();
       ${listaVendedores().length?`<label>Asesor</label><select id="nmPick">${opcionesAsesor("")}</select>`:''}
       <div class="grid2"><div><label>Nombre asesor</label><input id="nmNom"></div><div><label>N° vendedor</label><input id="nmCod" inputmode="numeric"></div></div>
     </div>
-    <label>Departamento</label><select id="nmDepto">${DEPTOS_EN.map(d=>`<option>${d}</option>`).join("")}</select>
+    <label>Departamento</label><select id="nmDepto">${DEPTOS_ALL.map(d=>`<option>${d}</option>`).join("")}</select>
     <label>Monto</label><input id="nmMonto" inputmode="numeric" placeholder="$">
     <div class="btn-row"><button class="btn secondary" id="btnNoMix">Reportar no mix</button></div>
+  </div>
+
+  <div class="card">
+    <h2><img src="logo-falabella.png" alt="" style="height:20px;vertical-align:middle;margin-right:6px">Registro Exchange</h2>
+    <div class="seg"><button type="button" id="exMe" class="active">Yo (${esc(Store.user.display||'')})</button><button type="button" id="exOther">A otra persona</button></div>
+    <div class="hidden" id="exOtherBox">
+      ${listaVendedores().length?`<label>Asesor</label><select id="exPick">${opcionesAsesor("")}</select>`:''}
+      <div class="grid2"><div><label>Nombre asesor</label><input id="exNom"></div><div><label>N° vendedor</label><input id="exCod" inputmode="numeric"></div></div>
+    </div>
+    <div class="grid2"><div><label>#ID Trade In</label><input id="exId" placeholder="ID Trade In"></div><div><label>Folio bolsa</label><input id="exFolio" placeholder="Folio bolsa"></div></div>
+    <div class="btn-row"><button class="btn secondary" id="btnEx">Reportar Exchange</button></div>
   </div>`;
 
   const deptoList=esSeguro?DEPTOS_EN:DEPTOS_ALL;
@@ -544,6 +554,15 @@ function renderRegistrar(app){if(!draft)draft=nuevoDraft();
   const nmAsesor=()=>nmOtro?{nombre:clean($("#nmNom").value),codigo:clean($("#nmCod").value)}:{nombre:Store.user.display||"",codigo:Store.user.codigo||""};
   $("#btnNoMix").onclick=async()=>{const dep=$("#nmDepto").value,m=num($("#nmMonto").value);if(!m)return toast("Ingresa el monto");const a=nmAsesor();if(!a.nombre)return toast("Indica el asesor");
     try{await Store.addVenta({fecha:todayStr(),tipo:"No Mix",monto:m,departamento:dep,asesorNombre:a.nombre,asesorCodigo:a.codigo,categoria:"NOMIX"});toast("✓ No mix reportado ("+a.nombre+")");$("#nmMonto").value="";}catch(err){toast("Error: "+err.message);}};
+
+  // exchange asesor selector
+  let exOtro=false;
+  $("#exMe").onclick=()=>{exOtro=false;$("#exMe").classList.add("active");$("#exOther").classList.remove("active");$("#exOtherBox").classList.add("hidden");};
+  $("#exOther").onclick=()=>{exOtro=true;$("#exOther").classList.add("active");$("#exMe").classList.remove("active");$("#exOtherBox").classList.remove("hidden");};
+  {const ep=$("#exPick");if(ep)ep.onchange=e=>{const o=e.target.selectedOptions[0];$("#exNom").value=o?(o.dataset.nom||""):"";$("#exCod").value=e.target.value;};}
+  const exAsesor=()=>exOtro?{nombre:clean($("#exNom").value),codigo:clean($("#exCod").value)}:{nombre:Store.user.display||"",codigo:Store.user.codigo||""};
+  $("#btnEx").onclick=async()=>{const id=clean($("#exId").value),folio=clean($("#exFolio").value);if(!id&&!folio)return toast("Ingresa ID Trade In o Folio");const a=exAsesor();if(!a.nombre)return toast("Indica el asesor");
+    try{await Store.addVenta({fecha:todayStr(),tipo:"Exchange",monto:0,idTradeIn:id,folioBolsa:folio,asesorNombre:a.nombre,asesorCodigo:a.codigo,categoria:"EXCHANGE"});toast("✓ Exchange reportado ("+a.nombre+")");$("#exId").value="";$("#exFolio").value="";}catch(err){toast("Error: "+err.message);}};
 }
 async function procesarBoleta(file){const st=$("#ocrStatus");
   if(!Store.config.gemini.apiKey){
@@ -639,8 +658,11 @@ function renderReporte(app){const agg=aggDia(repDate);const mi=mesInfo();const d
 
   // registros individuales del día (todas las categorías) — el admin edita monto o elimina
   const admin=Store.isAdmin();
-  const TIPO={GEXT:"Garantía",SEGURO:"Seguro",NOMIX:"No mix",FPUNTOS:"Canje",FPUNTOSPESOS:"Fpuntos + $ Pesos"};
+  const TIPO={GEXT:"Garantía",SEGURO:"Seguro",NOMIX:"No mix",FPUNTOS:"Canje",FPUNTOSPESOS:"Fpuntos + $ Pesos",EXCHANGE:"Exchange"};
   const conMonto={GEXT:1,SEGURO:1,NOMIX:1};
+  // exchange (trade in)
+  const exs=Store.ventasCache.filter(v=>v.fecha===repDate&&v.categoria==="EXCHANGE").sort((a,b)=>(b.ts||0)-(a.ts||0));
+  let exRows=exs.length?exs.map(v=>`<tr><td>${esc(v.asesorNombre||'')}</td><td>${esc(v.idTradeIn||'')}</td><td>${esc(v.folioBolsa||'')}</td></tr>`).join("")+`<tr class="total"><td>TOTAL EXCHANGE</td><td colspan="2">${exs.length}</td></tr>`:`<tr><td colspan="3" class="center muted" style="padding:14px">Sin exchange hoy</td></tr>`;
   const regs=Store.ventasCache.filter(v=>v.fecha===repDate).sort((a,b)=>(b.ts||0)-(a.ts||0));
   let regRows=regs.length?regs.map(v=>{const montoCel=(v.categoria==="FPUNTOS"||v.categoria==="FPUNTOSPESOS")?"+1":CLP(v.monto);
     const acc=admin?`<td style="white-space:nowrap">${conMonto[v.categoria]?`<button class="icon-btn" data-editv="${v.id}" data-monto="${v.monto||0}" title="Editar monto">✏️</button>`:''}<button class="icon-btn" data-delv="${v.id}" title="Eliminar">🗑</button></td>`:'';
@@ -655,6 +677,7 @@ function renderReporte(app){const agg=aggDia(repDate);const mi=mesInfo();const d
   <div class="card"><h2>Detalle por asesor</h2><div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Depto / Asesor</th><th>Garantía</th><th>Seguro</th><th>Total</th></tr></thead><tbody>${det}</tbody></table></div></div>
   <div class="card"><h2>No mix</h2><div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Asesor</th><th>Departamento</th><th>Monto</th></tr></thead><tbody>${nm}</tbody></table></div></div>
   <div class="card"><h2>${fpBadge()} y ${fpBadge2()} por asesor</h2><div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Asesor</th><th>Canje</th><th>Fpuntos + $ Pesos</th></tr></thead><tbody>${can}</tbody></table></div></div>
+  <div class="card"><h2><img src="logo-falabella.png" alt="" style="height:20px;vertical-align:middle;margin-right:6px">Exchange</h2><div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Asesor</th><th>#ID Trade In</th><th>Folio bolsa</th></tr></thead><tbody>${exRows}</tbody></table></div></div>
   <div class="card reg-card"><details><summary><b>Registros del día</b> <span class="tiny">(${regs.length}) — tocar para editar/eliminar</span></summary>
     <div class="rep-wrap" style="margin-top:10px"><table class="reg-mini"><thead><tr><th>Asesor</th><th>Tipo</th><th>Depto</th><th>Monto</th>${admin?'<th></th>':''}</tr></thead><tbody>${regRows}</tbody></table></div></details></div>`;
   $("#repDate").onchange=e=>{repDate=e.target.value;renderReporte(app);};
