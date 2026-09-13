@@ -373,9 +373,18 @@ function nombreCorto(full){const raw=clean(full);if(!raw)return "";const key=nor
   const CX=new Set(["de","del","la","las","los","y","da","do","san"]);
   const rest=toks.slice(1).filter(t=>!CX.has(norm(t)));
   return (cap(toks[0])+" "+cap(rest[1]||rest[0]||"")).trim();}
-// Lista de asesores (del avance Looker) para desplegables: [{codigo,nombre}]
-function listaVendedores(){const m={};for(const a of Store.avancesCache){for(const v of (a.vendedores||[])){const cod=clean(v.id);if(!cod)continue;if(!m[cod])m[cod]={codigo:cod,nombre:formatVendedor(v)||v.nombre||("Vendedor "+cod)};}}
-  return Object.values(m).sort((a,b)=>a.nombre.localeCompare(b.nombre));}
+// Roster fijo de asesores para "reportar a otra persona": nombre = primer nombre + apellido paterno.
+const ASESORES=[
+  {codigo:"955744",nombre:"Yujemary Mendoza"},{codigo:"989703",nombre:"Gelen Parra"},{codigo:"535230",nombre:"Paula Lopez"},
+  {codigo:"777528",nombre:"Enrique Pilar"},{codigo:"524646",nombre:"Nicole Gonzalez"},{codigo:"261432",nombre:"Ignacio Inostroza"},
+  {codigo:"705780",nombre:"Marcela Arriagada"},{codigo:"723177",nombre:"Christian Vega"},{codigo:"320374",nombre:"Ambar Ferrer"},
+  {codigo:"128171",nombre:"Jasson Guerra"},{codigo:"621633",nombre:"Cristian Sobarzo"},{codigo:"418889",nombre:"Kaczmerik Belandria"},
+  {codigo:"432539",nombre:"Luis Oropeza"},{codigo:"724114",nombre:"Sebastian Soto"},{codigo:"622974",nombre:"Mariela Meza"},
+  {codigo:"849340",nombre:"Karen Guillen"},{codigo:"621986",nombre:"Tamara Estrada"},{codigo:"667366",nombre:"Giovanni Landeros"},
+  {codigo:"507326",nombre:"Fernanda Valenzuela"},{codigo:"672106",nombre:"Joaquin Moris"},{codigo:"699322",nombre:"Kevin Taico"},
+  {codigo:"570303",nombre:"Christopher Mendez"}
+];
+function listaVendedores(){return ASESORES.slice().sort((a,b)=>a.nombre.localeCompare(b.nombre));}
 function opcionesAsesor(sel){const l=listaVendedores();
   return `<option value="">— elegir asesor —</option>`+l.map(v=>`<option value="${esc(v.codigo)}" data-nom="${esc(v.nombre)}" ${sel===v.codigo?'selected':''}>${esc(v.nombre)} (${esc(v.codigo)})</option>`).join("");}
 /* ===================== NPS ===================== */
