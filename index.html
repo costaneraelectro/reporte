@@ -737,19 +737,38 @@ async function descargarReporteImg(R,det){
 }
 
 /* ===================== AVANCE (Looker) ===================== */
+let npsFilt={fecha:"",vend:"",depto:"",nps:""};
 function npsCardsHtml(){const n=Store.npsCache;
   const logo=`<img src="epa.png" alt="EPA" style="max-height:70px;display:block;margin:0 auto 8px" onerror="this.onerror=null;this.src='epa.svg'">`;
   if(!n||((!n.deptos||!n.deptos.length)&&(!n.asesores||!n.asesores.length)))
     return `<div class="card">${logo}<h2 style="text-align:center">NPS</h2><p class="sub" style="text-align:center">Un administrador sube los archivos NPS en ⚙️ Config.</p></div>`;
-  const dRows=(n.deptos||[]).length?n.deptos.map(d=>`<tr><td><b>${esc(d.dep)}</b></td><td>${d.sample||0}</td><td>${d.nps==null?'—':d.nps}</td></tr>`).join(""):`<tr><td colspan="3" class="center muted">Sin datos por departamento</td></tr>`;
+  // Departamentos: orden mayor a menor NPS, color como las encuestas (nps tienda /10)
+  const deptos=(n.deptos||[]).slice().sort((a,b)=>(b.nps??-999)-(a.nps??-999));
+  const dRows=deptos.length?deptos.map(d=>{const cls=d.nps==null?"":npsClase(d.nps/10);return `<tr><td><b>${esc(d.dep)}</b></td><td>${d.sample||0}</td><td>${d.nps==null?'—':`<span class="nps ${cls}">${d.nps}</span>`}</td></tr>`;}).join(""):`<tr><td colspan="3" class="center muted">Sin datos por departamento</td></tr>`;
   const first3=t=>{const w=clean(t).split(/\s+/).filter(Boolean);return w.slice(0,3).join(" ")+(w.length>3?"…":"");};
-  const aRows=(n.asesores||[]).length?n.asesores.map(a=>{const cls=a.nps==null?"":npsClase(a.nps);
-     return `<tr><td>${esc(a.fecha)}</td><td>${esc(a.vendedor)}</td><td>${esc(a.jefe)}</td><td>${esc(a.depto)}</td><td>${a.nps==null?'—':`<span class="nps ${cls}">${a.nps}</span>`}</td><td class="cmt-cell">${a.razon?`<details><summary title="${esc(a.razon)}">${esc(first3(a.razon))}</summary><div class="cmt-full">${esc(a.razon)}</div></details>`:''}</td></tr>`;}).join(""):`<tr><td colspan="6" class="center muted">Sin respuestas</td></tr>`;
+  // Filtros ranking por asesor
+  const ase=n.asesores||[];const uniq=(arr)=>[...new Set(arr.filter(Boolean))].sort();
+  const fechas=uniq(ase.map(a=>a.fecha)),vends=uniq(ase.map(a=>a.vendedor)),deps=uniq(ase.map(a=>a.depto));
+  const opt=(list,sel)=>list.map(v=>`<option ${sel===v?'selected':''}>${esc(v)}</option>`).join("");
+  const filtered=ase.filter(a=>(!npsFilt.fecha||a.fecha===npsFilt.fecha)&&(!npsFilt.vend||a.vendedor===npsFilt.vend)&&(!npsFilt.depto||a.depto===npsFilt.depto)&&(!npsFilt.nps||(a.nps!=null&&npsClase(a.nps)===npsFilt.nps)));
+  const aRows=filtered.length?filtered.map(a=>{const cls=a.nps==null?"":npsClase(a.nps);
+     return `<tr><td>${esc(a.fecha)}</td><td>${esc(a.vendedor)}</td><td>${esc(a.jefe)}</td><td>${esc(a.depto)}</td><td>${a.nps==null?'—':`<span class="nps ${cls}">${a.nps}</span>`}</td><td class="cmt-cell">${a.razon?`<details><summary title="${esc(a.razon)}">${esc(first3(a.razon))}</summary><div class="cmt-full">${esc(a.razon)}</div></details>`:''}</td></tr>`;}).join(""):`<tr><td colspan="6" class="center muted">Sin respuestas con esos filtros</td></tr>`;
+  const filtros=`<div class="grid2" style="gap:8px;margin-top:8px">
+    <select id="npsFF"><option value="">Todas las fechas</option>${opt(fechas,npsFilt.fecha)}</select>
+    <select id="npsFV"><option value="">Todos los vendedores</option>${opt(vends,npsFilt.vend)}</select>
+    <select id="npsFD"><option value="">Todos los departamentos</option>${opt(deps,npsFilt.depto)}</select>
+    <select id="npsFN"><option value="">Todo NPS</option><option value="g" ${npsFilt.nps==='g'?'selected':''}>Verde (9-10)</option><option value="y" ${npsFilt.nps==='y'?'selected':''}>Amarillo (7-8)</option><option value="r" ${npsFilt.nps==='r'?'selected':''}>Rojo (≤6)</option></select>
+  </div>`;
   return `<div class="card">${logo}<h2 style="text-align:center">NPS por departamento</h2><div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Departamento</th><th>Encuestas</th><th>NPS</th></tr></thead><tbody>${dRows}</tbody></table></div></div>
-  <div class="card"><h2>Ranking NPS por asesor</h2><div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Fecha</th><th>Vendedor</th><th>Jefe de ventas</th><th>Departamento</th><th>NPS</th><th>Comentario</th></tr></thead><tbody>${aRows}</tbody></table></div></div>`;}
+  <div class="card"><h2>Ranking NPS por asesor</h2>${filtros}<div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Fecha</th><th>Vendedor</th><th>Jefe de ventas</th><th>Departamento</th><th>NPS</th><th>Comentario</th></tr></thead><tbody>${aRows}</tbody></table></div></div>`;}
+function bindNpsFiltros(app){const f=$("#npsFF"),v=$("#npsFV"),d=$("#npsFD"),nn=$("#npsFN");if(!f)return;
+  f.onchange=e=>{npsFilt.fecha=e.target.value;renderAvance(app);};
+  v.onchange=e=>{npsFilt.vend=e.target.value;renderAvance(app);};
+  d.onchange=e=>{npsFilt.depto=e.target.value;renderAvance(app);};
+  nn.onchange=e=>{npsFilt.nps=e.target.value;renderAvance(app);};}
 function renderAvance(app){
   const av=Store.avancesCache[0]||null;const mi=mesInfo();const diasRest=mi?mi.diasRest:1;
-  if(!av){app.innerHTML=`<div class="card"><h2>Avance</h2><p class="sub">Aún no hay avances de Looker. Un administrador los sube en ⚙️ Config.</p></div>`+npsCardsHtml();return;}
+  if(!av){app.innerHTML=`<div class="card"><h2>Avance</h2><p class="sub">Aún no hay avances de Looker. Un administrador los sube en ⚙️ Config.</p></div>`+npsCardsHtml();bindNpsFiltros(app);return;}
   // combina el último avance con deptos y el último con vendedores (por si se subieron por separado)
   const deptosSrc=(Store.avancesCache.find(a=>a.deptos&&a.deptos.length)||av);
   const vendSrc=(Store.avancesCache.find(a=>a.vendedores&&a.vendedores.length)||av);
@@ -787,6 +806,7 @@ function renderAvance(app){
     <tbody>${rows}<tr class="total"><td>TOTAL TIENDA</td><td>${CLP(TG)}</td><td>${CLP(TS)}</td><td>${CLP(metaT)}</td><td class="pct${esMes}">${metaT?pctMes+'%':'—'}</td><td>${CLP(faltaT)}</td></tr></tbody></table></div></div>
   <div class="card"><h2>Venta por asesor</h2><div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Asesor</th><th>Garantía</th><th>Seguro</th><th>Total</th></tr></thead><tbody>${asesRows}</tbody></table></div></div>`
   +npsCardsHtml();
+  bindNpsFiltros(app);
 }
 
 /* ===================== CONFIG ===================== */
