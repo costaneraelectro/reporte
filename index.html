@@ -7,9 +7,6 @@
 <title>Reporte Electro</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#0f1210; --bg2:#151a13; --card:#1a2016; --card2:#212a1b; --line:#2c3626;
@@ -19,18 +16,10 @@
     --radius:16px; --shadow:0 10px 28px rgba(0,0,0,.35); --safe-b:env(safe-area-inset-bottom,0px);
   }
   *{box-sizing:border-box} html,body{margin:0;padding:0}
-  body{font-family:'Poppins',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
     background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;
     padding-bottom:calc(78px + var(--safe-b));transition:background .2s,color .2s}
   a{color:var(--accent)}
-  .spin{animation:respin .6s linear}@keyframes respin{to{transform:rotate(360deg)}}
-  .nps{display:inline-block;min-width:30px;text-align:center;padding:2px 8px;border-radius:8px;font-weight:800}
-  .nps.g{background:var(--okbg);color:var(--ok)} .nps.y{background:var(--warnbg);color:var(--warn)} .nps.r{background:var(--badbg);color:var(--bad)}
-  .cmt-cell{max-width:340px} .cmt-cell details summary{cursor:pointer;color:var(--muted);list-style:none;white-space:nowrap} .cmt-cell details[open] summary{color:var(--text)}
-  .cmt-full{max-width:320px;white-space:normal;word-break:break-word;margin-top:4px;color:var(--muted);font-size:13px;line-height:1.35}
-  .nps-rank .filt-row th{padding:5px 6px;background:var(--card2)}
-  .nps-rank .filt-row select{width:100%;min-width:104px;font-size:11px;font-weight:700;padding:6px 8px;border-radius:9px;background:var(--input);color:var(--text);border:1px solid var(--line);cursor:pointer}
-  .nps-rank .filt-row select:focus{outline:none;border-color:var(--accent)}
   .app{max-width:820px;margin:0 auto;padding:14px 15px 0} .hidden{display:none!important}
 
   .topbar{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:8px;padding:10px 13px;
@@ -82,21 +71,6 @@
   .kpi{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .kpi .k{background:var(--input);border:1px solid var(--line);border-radius:12px;padding:12px}
   .kpi .k .n{font-size:20px;font-weight:900} .kpi .k .l{font-size:10.5px;color:var(--muted2);text-transform:uppercase;letter-spacing:.5px}
-  .reg-card details>summary{cursor:pointer;list-style:none;font-size:15px;padding:2px 0}
-  .reg-card details>summary::-webkit-details-marker{display:none}
-  table.reg-mini th,table.reg-mini td{font-size:11px;padding:5px 7px}
-  table.reg-mini .icon-btn{width:26px;height:26px;font-size:13px;border-radius:8px}
-  @media(max-width:480px){
-    .topbar{padding:8px 10px;gap:6px}
-    .brand{font-size:13px;gap:7px} .brand img{width:28px;height:28px} .brand small{font-size:9px}
-    .pill{font-size:10px;padding:4px 7px} .icon-btn{width:32px;height:32px;font-size:14px;border-radius:9px}
-    .card{padding:12px;margin:10px 0;border-radius:13px}
-    .card h2{font-size:15px}
-    table{font-size:12px} th,td{padding:7px 8px}
-    .kpi{gap:8px} .kpi .k{padding:10px} .kpi .k .n{font-size:16px} .kpi .k .l{font-size:9.5px}
-    .btn{padding:12px 12px;font-size:14px}
-    input,select,textarea{font-size:16px}
-  }
 
   .sem{width:11px;height:11px;border-radius:50%;display:inline-block;margin-right:5px;vertical-align:middle}
   .sem.ok{background:var(--ok)}.sem.warn{background:var(--warn)}.sem.bad{background:var(--bad)}
@@ -120,7 +94,6 @@
   .swatch{width:32px;height:32px;border-radius:9px;border:2px solid transparent;cursor:pointer}.swatch.sel{border-color:var(--text)}
   .fpbadge{display:inline-flex;align-items:center;gap:6px;font-weight:900}
   .fpring{width:22px;height:22px;border-radius:50%;background:conic-gradient(#00a94f 0 25%,#0072ce 0 50%,#e4002b 0 75%,#ff7f00 0 100%);-webkit-mask:radial-gradient(circle 6px,transparent 98%,#000);mask:radial-gradient(circle 6px,transparent 98%,#000)}
-  .fplogo{height:30px;width:auto;vertical-align:middle;display:inline-block}
 
   .fs{position:fixed;inset:0;background:#fff;color:#111;z-index:200;overflow:auto;padding:16px}
   .fs .fs-close{position:fixed;top:12px;right:12px;background:#111;color:#fff;border:none;width:40px;height:40px;border-radius:12px;font-size:18px;cursor:pointer;z-index:210}
@@ -129,9 +102,9 @@
   .fs .fs-kpis{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:8px 0 12px}
   .fs .fs-kpis .k{background:#f3f6ea;border-radius:10px;padding:8px 12px;text-align:center;min-width:96px}
   .fs .fs-kpis .k .n{font-weight:900;font-size:16px}.fs .fs-kpis .k .l{font-size:10px;color:#666;text-transform:uppercase}
-  .fs table{background:#fff;color:#111;border:1px solid #ddd;width:100%}
-  .fs th,.fs td{border-bottom:1px solid #e5e5e5;padding:7px;font-size:12px;white-space:nowrap}
-  @media(max-width:480px){.fs{padding:12px}.fs h1{font-size:19px}.fs .fs-date{font-size:12px}.fs th,.fs td{font-size:10px;padding:4px 5px}.fs .fs-kpis .k{min-width:0;padding:6px 8px}.fs .fs-kpis .k .n{font-size:13px}}
+  .fs table{background:#fff;color:#111;border:1px solid #ddd;table-layout:fixed}
+  .fs th,.fs td{border-bottom:1px solid #e5e5e5;padding:7px;font-size:12px;overflow:hidden;text-overflow:ellipsis}
+  .fs th:first-child,.fs td:first-child{width:26%}
   .fs thead th{background:#f3f6ea;color:#333}
   .fs tr.area-row td{background:#eaf3c6;color:#1a1f14;font-weight:800}
   .fs tr.total td{background:#111;color:#fff;font-weight:900}
@@ -145,7 +118,6 @@
   <div class="brand"><img src="icon-180.png" alt="RE"><div>Reporte Electro<small>Garantía · Seguro</small></div></div>
   <div class="spacer"></div>
   <span class="pill" id="updPill"><span class="dot" id="modeDot"></span><span id="updText">—</span></span>
-  <button class="icon-btn" id="btnRefresh" title="Actualizar">🔄</button>
   <button class="icon-btn" id="btnBrush" title="Color de la app">🖌️</button>
   <button class="icon-btn" id="btnTheme" title="Claro/oscuro">🌙</button>
   <button class="icon-btn" id="btnLogout" title="Cerrar sesión">⎋</button>
@@ -173,10 +145,8 @@ const FIREBASE_CONFIG = {
 
 const AREA_EN="ELECTRO NEGRO", AREA_LB="LINEA BLANCA";
 const AREAS=[AREA_EN,AREA_LB];
-const DEPTOS_EN=["CONNECT","AUDIO","COMPUTACION","VIDEOJUEGOS","FOTOGRAFIA"]; // Electro Negro con departamentos (Connect primero)
+const DEPTOS_EN=["AUDIO","COMPUTACION","CONNECT","VIDEOJUEGOS","FOTOGRAFIA"]; // Electro Negro con departamentos
 const DEPTOS_LB=["ELECTRODOMESTICOS","CUIDADO PERSONAL","LINEA BLANCA"];      // Línea Blanca: metas y avance por depto
-const DEPTOS_ALL=[...DEPTOS_EN,...DEPTOS_LB];
-const deptoArea=d=>DEPTOS_EN.includes(d)?AREA_EN:AREA_LB;
 const SEGURO_DEPTS=new Set(["CONNECT"]); // solo Connect lleva meta de seguro
 const NOMIX_DEPTOS=["VIDEO","AUDIO","COMPUTACION Y HOGAR","TELEFONIA","ELECTRODOMESTICOS","LINEA BLANCA","DECO",
   "ZAPATOS HOMBRE","ZAPATOS MUJER","ZAPATILLAS HOMBRE","ZAPATILLAS MUJER","CALZADO COLEGIAL","ZAPATOS INFANTIL"];
@@ -186,7 +156,7 @@ const ADMIN_PASS="connect2025";
 function metaKey(area,dep){return area+"::"+dep;}
 function metasSeed(){const m={};DEPTOS_EN.forEach(d=>{m[metaKey(AREA_EN,d)]=SEGURO_DEPTS.has(d)?{garantia:0,seguro:0}:{garantia:0};});DEPTOS_LB.forEach(d=>{m[metaKey(AREA_LB,d)]={garantia:0};});return m;}
 const DEFAULT_CONFIG={mes:{inicio:"",fin:""},metas:metasSeed(),theme:{accent:"#aad503"},
-  gemini:{apiKey:"",model:"gemini-2.5-flash"},firebase:{apiKey:"",authDomain:"",projectId:"",storageBucket:"",messagingSenderId:"",appId:""}};
+  gemini:{apiKey:"",model:"gemini-2.0-flash"},firebase:{apiKey:"",authDomain:"",projectId:"",storageBucket:"",messagingSenderId:"",appId:""}};
 
 /* utils */
 const $=(s,e=document)=>e.querySelector(s), $$=(s,e=document)=>[...e.querySelectorAll(s)];
@@ -194,8 +164,6 @@ const clean=s=>(s||"").toString().trim();
 const norm=s=>clean(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
 const CLP=n=>(n<0?"-$":"$")+Math.abs(Math.round(+n||0)).toLocaleString("es-CL");
 const num=v=>Math.round(+String(v).replace(/[^\d-]/g,""))||0;
-const JEFES=["isabel de lourd matus","pablo andres hernandez","yesenia yasmin gonzalez","miguel angel moraga"];
-const esJefe=nombre=>{const n=norm(nombre);return !!n&&JEFES.some(j=>n.includes(j)||j.includes(n));};
 const looknum=s=>{const n=parseInt(String(s||"").replace(/[^\d-]/g,""),10);return isNaN(n)?0:n;};
 const todayStr=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");};
 function fechaLarga(s){const [y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d).toLocaleDateString("es-CL",{weekday:"long",day:"numeric",month:"long",year:"numeric"});}
@@ -232,16 +200,15 @@ const Store={mode:"local",db:null,auth:null,storage:null,user:null,config:null,
   loadScript(src){return new Promise((res,rej)=>{const s=document.createElement("script");s.src=src;s.onload=res;s.onerror=rej;document.head.appendChild(s);});},
   async initFirebase(fc){if(!window.firebase){const b="https://www.gstatic.com/firebasejs/10.14.1/";for(const f of ["firebase-app-compat.js","firebase-auth-compat.js","firebase-firestore-compat.js","firebase-storage-compat.js"])await this.loadScript(b+f);}
     if(!firebase.apps.length)firebase.initializeApp(fc);this.db=firebase.firestore();this.auth=firebase.auth();try{this.storage=firebase.storage();}catch{this.storage=null;}
-    try{await this.db.enablePersistence({synchronizeTabs:true});}catch(e){/* varias pestañas o navegador sin soporte: sigue sin cache offline */}
     try{const d=await this.db.collection("config").doc("app").get();if(d.exists){this.config=Object.assign(this.config,d.data());this.config.metas=Object.assign(metasSeed(),this.config.metas||{});this.lsSet("re4_config",this.config);}}catch(e){}},
   emailFor(u){return u+"@reporteelectro.app";},
   usernameOf(n,a){return (norm(n)+"."+norm(a)).replace(/[^a-z0-9.]/g,"").replace(/\.+/g,".");},
   async countUsers(){if(this.mode==="firebase"){const s=await this.db.collection("usuarios").limit(1).get();return s.size;}return Object.keys(this.lsGet("re4_users",{})).length;},
-  async signUp({nombre,apellido,codigo,clave}){const username=this.usernameOf(nombre,apellido);
-    const mkProf=(first)=>({nombre:clean(nombre),apellido:clean(apellido),codigo:clean(codigo),username,display:clean(nombre)+" "+clean(apellido),rol:first?"admin":"user",estado:first?"activo":"pendiente",createdAt:Date.now()});
-    if(this.mode==="firebase"){const cred=await this.auth.createUserWithEmailAndPassword(this.emailFor(username),clave);const first=(await this.countUsers())===0;const prof=mkProf(first);prof.uid=cred.user.uid;
-      await this.db.collection("usuarios").doc(cred.user.uid).set(prof);if(prof.estado!=="activo")await this.auth.signOut();else this.user=prof;return prof;}
-    const first=(await this.countUsers())===0;const prof=mkProf(first);const users=this.lsGet("re4_users",{});if(users[username])throw new Error("Ese usuario ya existe.");prof.uid="local_"+uid();prof.clave=clave;users[username]=prof;this.lsSet("re4_users",users);if(prof.estado==="activo"){this.lsSet("re4_session",prof.uid);this.user=prof;}
+  async signUp({nombre,apellido,codigo,clave}){const username=this.usernameOf(nombre,apellido);const first=(await this.countUsers())===0;
+    const prof={nombre:clean(nombre),apellido:clean(apellido),codigo:clean(codigo),username,display:clean(nombre)+" "+clean(apellido),rol:first?"admin":"user",estado:first?"activo":"pendiente",createdAt:Date.now()};
+    if(this.mode==="firebase"){const cred=await this.auth.createUserWithEmailAndPassword(this.emailFor(username),clave);prof.uid=cred.user.uid;
+      await this.db.collection("usuarios").doc(cred.user.uid).set(prof);if(prof.estado!=="activo")await this.auth.signOut();else this.user=prof;}
+    else{const users=this.lsGet("re4_users",{});if(users[username])throw new Error("Ese usuario ya existe.");prof.uid="local_"+uid();prof.clave=clave;users[username]=prof;this.lsSet("re4_users",users);if(prof.estado==="activo"){this.lsSet("re4_session",prof.uid);this.user=prof;}}
     return prof;},
   async signIn({username,clave}){username=norm(username).replace(/\s+/g,".");
     if(this.mode==="firebase"){const cred=await this.auth.signInWithEmailAndPassword(this.emailFor(username),clave);const d=await this.db.collection("usuarios").doc(cred.user.uid).get();const p=d.exists?d.data():null;
@@ -257,20 +224,9 @@ const Store={mode:"local",db:null,auth:null,storage:null,user:null,config:null,
   async setUser(u2,patch){if(this.mode==="firebase")await this.db.collection("usuarios").doc(u2).update(patch);
     else{const users=this.lsGet("re4_users",{});const k=Object.keys(users).find(x=>users[x].uid===u2);if(k){Object.assign(users[k],patch);this.lsSet("re4_users",users);this._emitU();}}
     if(this.user&&this.user.uid===u2)Object.assign(this.user,patch);},
-  async deleteUser(u2){if(this.mode==="firebase")await this.db.collection("usuarios").doc(u2).delete();
-    else{const users=this.lsGet("re4_users",{});const k=Object.keys(users).find(x=>users[x].uid===u2);if(k){delete users[k];this.lsSet("re4_users",users);this._emitU();}}},
   async claimAdmin(){await this.setUser(this.user.uid,{rol:"admin",estado:"activo"});},
   async addVenta(v){v.registradoPor=this.user.uid;v.registradoPorNombre=this.user.display||"";v.ts=Date.now();
-    if(this.mode==="firebase"){
-      // La imagen (dataURL) va en colección aparte para que 'ventas' quede liviano y el reporte cargue rápido.
-      if(v.boletaUrl&&/^data:/.test(v.boletaUrl)){try{const rb=await this.db.collection("boletas").add({img:v.boletaUrl,uid:this.user.uid,ts:v.ts});v.boletaId=rb.id;}catch(e){}delete v.boletaUrl;}
-      // No esperamos el ack del servidor: el onSnapshot refleja al instante (evita que quede "Guardando…" si la red tarda).
-      const ref=this.db.collection("ventas").doc();v.id=ref.id;ref.set(v).catch(e=>toast("No se pudo guardar en línea"));
-    }else{v.id=uid();const a=this.lsGet("re4_ventas",[]);a.push(v);this.lsSet("re4_ventas",a);this._emitV();}return v;},
-  async deleteVenta(id){if(this.mode==="firebase"){this.ventasCache=(this.ventasCache||[]).filter(x=>x.id!==id);if(this.onVentas)this.onVentas(this.ventasCache);this.db.collection("ventas").doc(id).delete().catch(e=>toast("No se pudo eliminar en línea"));}
-    else{const a=this.lsGet("re4_ventas",[]).filter(x=>x.id!==id);this.lsSet("re4_ventas",a);this._emitV();}},
-  async updateVenta(id,patch){if(this.mode==="firebase"){const v=(this.ventasCache||[]).find(x=>x.id===id);if(v)Object.assign(v,patch);if(this.onVentas)this.onVentas(this.ventasCache);this.db.collection("ventas").doc(id).update(patch).catch(e=>toast("No se pudo editar en línea"));}
-    else{const a=this.lsGet("re4_ventas",[]);const v=a.find(x=>x.id===id);if(v){Object.assign(v,patch);this.lsSet("re4_ventas",a);this._emitV();}}},
+    if(this.mode==="firebase"){const r=await this.db.collection("ventas").add(v);v.id=r.id;}else{v.id=uid();const a=this.lsGet("re4_ventas",[]);a.push(v);this.lsSet("re4_ventas",a);this._emitV();}return v;},
   subscribeVentas(cb){this.onVentas=cb;if(this.mode==="firebase"){this.db.collection("ventas").orderBy("ts","desc").onSnapshot(s=>{this.ventasCache=s.docs.map(d=>Object.assign({id:d.id},d.data()));cb(this.ventasCache);});}else this._emitV();},
   _emitV(){this.ventasCache=this.lsGet("re4_ventas",[]).sort((a,b)=>b.ts-a.ts);if(this.onVentas)this.onVentas(this.ventasCache);},
   async addAvance(a){a.importadoPor=this.user.uid;a.ts=Date.now();
@@ -285,54 +241,20 @@ const Store={mode:"local",db:null,auth:null,storage:null,user:null,config:null,
   async deleteAvance(id){if(this.mode==="firebase")await this.db.collection("avances").doc(id).delete();else{const arr=this.lsGet("re4_avances",[]).filter(x=>x.id!==id);this.lsSet("re4_avances",arr);this._emitA();}},
   subscribeAvances(cb){this.onAvances=cb;if(this.mode==="firebase"){this.db.collection("avances").orderBy("ts","desc").onSnapshot(s=>{this.avancesCache=s.docs.map(d=>Object.assign({id:d.id},d.data()));cb(this.avancesCache);});}else this._emitA();},
   _emitA(){this.avancesCache=this.lsGet("re4_avances",[]).sort((a,b)=>b.ts-a.ts);if(this.onAvances)this.onAvances(this.avancesCache);},
-  npsCache:null,
-  async saveNps(obj){obj.ts=Date.now();if(this.mode==="firebase")await this.db.collection("config").doc("nps").set(obj);else this.lsSet("re4_nps",obj);this.npsCache=obj;if(this.onNps)this.onNps(obj);},
-  subscribeNps(cb){this.onNps=cb;if(this.mode==="firebase"){this.db.collection("config").doc("nps").onSnapshot(d=>{this.npsCache=d.exists?d.data():null;cb(this.npsCache);});}else{this.npsCache=this.lsGet("re4_nps",null);cb(this.npsCache);}},
-  async uploadBoleta(file){
-    if(this.mode==="firebase"&&this.storage){try{const p=`boletas/${this.user.uid}/${Date.now()}`;const r=this.storage.ref().child(p);await r.put(file);return await r.getDownloadURL();}catch(e){/* Storage no activo (plan gratis): sigue al fallback */}}
-    // Sin Storage (plan gratis): comprime la imagen y guarda como dataURL en Firestore (< 1MB por doc).
-    if(/^image\//.test(file.type))return await comprimirImagen(file);
-    if(file.size<=850*1024)return await new Promise(res=>{const fr=new FileReader();fr.onload=()=>res(fr.result);fr.onerror=()=>res(null);fr.readAsDataURL(file);});
-    throw new Error("Archivo muy grande para guardar sin Storage (máx ~850KB si no es imagen)");
-  }
+  async uploadBoleta(file){if(this.mode==="firebase"&&this.storage){const p=`boletas/${this.user.uid}/${Date.now()}`;const r=this.storage.ref().child(p);await r.put(file);return await r.getDownloadURL();}return null;}
 };
-function comprimirImagen(file){return new Promise((res,rej)=>{const fr=new FileReader();fr.onerror=()=>rej(new Error("no se pudo leer la imagen"));
-  fr.onload=()=>{const img=new Image();img.onerror=()=>rej(new Error("imagen inválida"));
-    img.onload=()=>{const max=1100;let{width:w,height:h}=img;if(w>max||h>max){const s=max/Math.max(w,h);w=Math.round(w*s);h=Math.round(h*s);}
-      const cv=document.createElement("canvas");cv.width=w;cv.height=h;cv.getContext("2d").drawImage(img,0,0,w,h);
-      let q=0.72,url=cv.toDataURL("image/jpeg",q);while(url.length>900*1024&&q>0.35){q-=0.1;url=cv.toDataURL("image/jpeg",q);}
-      res(url);};
-    img.src=fr.result;};
-  fr.readAsDataURL(file);});}
 
 /* ===================== IA (solo boletas) ===================== */
 function fileToB64(f){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(",")[1]);r.onerror=rej;r.readAsDataURL(f);});}
 async function leerBoleta(file){const g=Store.config.gemini;if(!g.apiKey)throw new Error("Falta la API key de Gemini (⚙️ Config).");
-  let b64,mime=file.type||"image/jpeg";
-  if(/^image\//.test(file.type)){const durl=await comprimirImagen(file);b64=durl.split(",")[1];mime="image/jpeg";} // comprime para acelerar la subida a Gemini
-  else b64=await fileToB64(file);
-  const deptTxt=AREA_EN+": "+DEPTOS_EN.join(", ")+" | "+AREA_LB+" (sin departamentos)";
+  const b64=await fileToB64(file);const deptTxt=AREA_EN+": "+DEPTOS_EN.join(", ")+" | "+AREA_LB+" (sin departamentos)";
   const prompt=`Lees una BOLETA de Falabella (Chile), imagen o PDF. Extrae SOLO lo que veas. Devuelve EXCLUSIVAMENTE JSON:
-{"vendedor_nombre":string|null,"vendedor_codigo":string|null,"producto":string|null,"monto":number|null,"valor_garantia":number|null,"tipo":"Garantía"|"Seguro"|null,"area":string|null,"departamento":string|null,"fecha":string|null,"confianza":number,"dudas":[string]}
-La "fecha" es la fecha de emisión de la boleta en formato YYYY-MM-DD (null si no la ves).
+{"vendedor_nombre":string|null,"vendedor_codigo":string|null,"producto":string|null,"monto":number|null,"valor_garantia":number|null,"tipo":"Garantía"|"Seguro"|null,"area":string|null,"departamento":string|null,"confianza":number,"dudas":[string]}
 El vendedor viene como "VENDEDOR:<codigo> <APELLIDO>". Montos enteros en pesos. Sugiere area y departamento de: ${deptTxt}. Si no puedes, null y agrégalo a "dudas".`;
-  const body=JSON.stringify({contents:[{parts:[{text:prompt},{inline_data:{mime_type:mime,data:b64}}]}],generationConfig:{temperature:0.1,response_mime_type:"application/json"}});
-  const cands=[];if(g.model&&!/^gemini-2\.0/.test(g.model))cands.push(g.model);
-  ["gemini-flash-latest","gemini-2.5-flash","gemini-2.5-flash-lite","gemini-flash-lite-latest","gemini-2.0-flash-001"].forEach(m=>{if(!cands.includes(m))cands.push(m);});
-  const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-  let lastErr="";
-  for(const model of cands){
-    const url=`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(g.apiKey)}`;
-    for(let intento=0;intento<2;intento++){
-      const r=await fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},body});
-      if(r.ok){const j=await r.json();const t=j?.candidates?.[0]?.content?.parts?.[0]?.text||"{}";try{return JSON.parse(t);}catch{const m=t.match(/\{[\s\S]*\}/);return m?JSON.parse(m[0]):{};}}
-      const txt=(await r.text()).slice(0,140);lastErr="Gemini "+r.status+": "+txt;
-      if(r.status===503||r.status===429){if(intento===0){await sleep(1600);continue;}break;} // saturado: reintenta 1 vez, luego prueba otro modelo
-      if(r.status!==404&&r.status!==400)throw new Error(lastErr); // error real (ej. key inválida)
-      break; // 404/400 = modelo no disponible: siguiente modelo
-    }
-  }
-  throw new Error(lastErr||"Ningún modelo de Gemini disponible");}
+  const url=`https://generativelanguage.googleapis.com/v1beta/models/${g.model||"gemini-2.0-flash"}:generateContent?key=${encodeURIComponent(g.apiKey)}`;
+  const r=await fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({contents:[{parts:[{text:prompt},{inline_data:{mime_type:file.type||"image/jpeg",data:b64}}]}],generationConfig:{temperature:0.1,response_mime_type:"application/json"}})});
+  if(!r.ok)throw new Error("Gemini "+r.status+": "+(await r.text()).slice(0,140));
+  const j=await r.json();const t=j?.candidates?.[0]?.content?.parts?.[0]?.text||"{}";try{return JSON.parse(t);}catch{const m=t.match(/\{[\s\S]*\}/);return m?JSON.parse(m[0]):{};}}
 
 /* ===================== Parser Looker (sin IA) ===================== */
 function mapLookerDept(raw){const u=norm(raw);
@@ -353,68 +275,12 @@ function parseLookerFiles(texts){const out={deptos:[],vendedores:[]};
     const iG=idx("gext"),iS=idx("seguro"),iVend=idx("vendedor"),iNom=idx("nombre"),iApe=idx("apellido"),iDep=idx("departamento");
     rows.slice(1).forEach(r=>{if(r.classList.contains("total"))return;const cells=[...r.querySelectorAll("td,th")];if(cells.length<2)return;
       const g=looknum(cells[iG]?.textContent),s=looknum(cells[iS]?.textContent);
-      if(iVend>=0){const id=clean(cells[iVend]?.textContent);const nomC=clean(cells[iNom]?.textContent),apeC=clean(cells[iApe]?.textContent);const nom=(nomC+" "+apeC).trim();
-        if(id&&!/^total/i.test(id)&&(g||s||nom))out.vendedores.push({id,nombre:nom||("Vendedor "+id),nom:nomC,ape:apeC,gext:g,seguro:s});}
+      if(iVend>=0){const id=clean(cells[iVend]?.textContent);const nom=(clean(cells[iNom]?.textContent)+" "+clean(cells[iApe]?.textContent)).trim();
+        if(id&&!/^total/i.test(id)&&(g||s||nom))out.vendedores.push({id,nombre:nom||("Vendedor "+id),gext:g,seguro:s});}
       else if(iDep>=0){const dep=clean(cells[iDep]?.textContent);if(dep&&!/^total/i.test(dep))out.deptos.push(Object.assign({raw:dep,gext:g,seguro:s},mapLookerDept(dep)));}
     });});
   return out;
 }
-// Casos especiales: nombre preferido distinto al "primer nombre + apellido".
-const NOMBRE_OVERRIDES={"yesenia nicole gonzalez":"Nicole Gonzalez"};
-function formatVendedor(v){if(!v)return null;const raw=clean(v.nombre||((v.nom||"")+" "+(v.ape||"")));const key=norm(raw);
-  for(const k in NOMBRE_OVERRIDES){if(key===k||key.includes(k)||k.includes(key))return NOMBRE_OVERRIDES[k];}
-  const cap=s=>s?s[0].toUpperCase()+s.slice(1).toLowerCase():"";
-  let nombre,ape;
-  if(v.nom||v.ape){nombre=cap((v.nom||"").split(/\s+/)[0]);ape=cap((v.ape||"").split(/\s+/)[0]);}
-  else{const t=raw.split(/\s+/).filter(Boolean);nombre=cap(t[0]||"");ape=cap(t[t.length-1]||"");}
-  return (nombre+" "+ape).trim()||raw;}
-// "Nombre completo" -> "Nombre Apellido" (aplica override Nicole Gonzalez). Salta partículas (de/del/la...).
-function nombreCorto(full){const raw=clean(full);if(!raw)return "";const key=norm(raw);
-  for(const k in NOMBRE_OVERRIDES){if(key===k||key.includes(k)||k.includes(key))return NOMBRE_OVERRIDES[k];}
-  const cap=s=>s?s[0].toUpperCase()+s.slice(1).toLowerCase():"";
-  const toks=raw.split(/\s+/).filter(Boolean);if(!toks.length)return raw;
-  const CX=new Set(["de","del","la","las","los","y","da","do","san"]);
-  const rest=toks.slice(1).filter(t=>!CX.has(norm(t)));
-  return (cap(toks[0])+" "+cap(rest[1]||rest[0]||"")).trim();}
-// Roster fijo de asesores para "reportar a otra persona": nombre = primer nombre + apellido paterno.
-const ASESORES=[
-  {codigo:"955744",nombre:"Yujemary Mendoza"},{codigo:"989703",nombre:"Gelen Parra"},{codigo:"535230",nombre:"Paula Lopez"},
-  {codigo:"777528",nombre:"Enrique Pilar"},{codigo:"524646",nombre:"Nicole Gonzalez"},{codigo:"261432",nombre:"Ignacio Inostroza"},
-  {codigo:"705780",nombre:"Marcela Arriagada"},{codigo:"723177",nombre:"Christian Vega"},{codigo:"320374",nombre:"Ambar Ferrer"},
-  {codigo:"128171",nombre:"Jasson Guerra"},{codigo:"621633",nombre:"Cristian Sobarzo"},
-  {codigo:"432539",nombre:"Luis Oropeza"},{codigo:"724114",nombre:"Sebastian Soto"},{codigo:"622974",nombre:"Mariela Meza"},
-  {codigo:"849340",nombre:"Karen Guillen"},{codigo:"621986",nombre:"Tamara Estrada"},{codigo:"667366",nombre:"Giovanni Landeros"},
-  {codigo:"507326",nombre:"Fernanda Valenzuela"},{codigo:"672106",nombre:"Joaquin Moris"},{codigo:"699322",nombre:"Kevin Taico"},
-  {codigo:"570303",nombre:"Christopher Mendez"}
-];
-function listaVendedores(){return ASESORES.slice().sort((a,b)=>a.nombre.localeCompare(b.nombre));}
-function opcionesAsesor(sel){const l=listaVendedores();
-  return `<option value="">— elegir asesor —</option>`+l.map(v=>`<option value="${esc(v.codigo)}" data-nom="${esc(v.nombre)}" ${sel===v.codigo?'selected':''}>${esc(v.nombre)} (${esc(v.codigo)})</option>`).join("");}
-/* ===================== NPS ===================== */
-async function ensureXLSX(){if(window.XLSX)return;await Store.loadScript("https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js");}
-// Propertyranker (Medallia, HTML): Departamentos / Sample Size / NPS Tienda
-function parseNpsDeptos(text){const doc=new DOMParser().parseFromString(text,"text/html");const table=doc.querySelector("table");if(!table)return[];
-  const rows=[...table.querySelectorAll("tr")];if(!rows.length)return[];
-  const heads=[...rows[0].querySelectorAll("th,td")].map(x=>norm(x.textContent));
-  const iDep=heads.findIndex(h=>h.includes("departament")),iSam=heads.findIndex(h=>h.includes("sample")),iNps=heads.findIndex(h=>h.includes("nps tienda"));
-  const out=[];rows.slice(1).forEach(r=>{const c=[...r.querySelectorAll("td,th")];if(c.length<2)return;
-    const dep=clean(c[iDep]?.textContent);if(!dep||/^total/i.test(dep))return;
-    const npsTxt=clean(c[iNps]?.textContent).replace(/\./g,"").replace(",",".");const nps=parseFloat(npsTxt);
-    out.push({dep,sample:num(c[iSam]?.textContent),nps:isNaN(nps)?null:Math.round(nps*10)/10});});
-  return out;}
-// Falabella respuestas (xlsx): una fila por encuesta
-async function parseNpsAsesores(buf){await ensureXLSX();const wb=XLSX.read(buf,{type:"array"});const ws=wb.Sheets[wb.SheetNames[0]];
-  const aoa=XLSX.utils.sheet_to_json(ws,{header:1,raw:false,defval:""});
-  const hi=aoa.findIndex(r=>r.some(c=>norm(c).includes("nps total")));if(hi<0)return[];
-  const heads=aoa[hi].map(c=>norm(c));const col=n=>heads.findIndex(h=>h.includes(n));
-  const iF=col("fecha de respuesta"),iV=col("nombre vendedor"),iJ=col("nombre jefe de venta"),iD=col("departamentos consolidado"),iN=col("nps total"),iR=col("razon nps consolidado");
-  const out=[];for(let r=hi+1;r<aoa.length;r++){const row=aoa[r];if(!row)continue;
-    const vend=clean(row[iV]),npsv=String(row[iN]??"").trim();if(!vend&&npsv==="")continue;
-    out.push({fecha:(clean(row[iF]).split(" ")[0]||""),vendedor:nombreCorto(vend),jefe:nombreCorto(clean(row[iJ])),depto:clean(row[iD]),nps:npsv===""?null:num(npsv),razon:clean(row[iR])});}
-  return out;}
-function npsClase(n){return n>=9?"g":n>=7?"y":"r";}
-function vendedorPorCodigo(cod){cod=clean(cod);if(!cod)return null;
-  for(const a of Store.avancesCache){for(const v of (a.vendedores||[])){if(clean(v.id)===cod)return v;}}return null;}
 
 /* ===================== Router ===================== */
 let CURRENT="registrar";
@@ -423,7 +289,6 @@ $("#nav").addEventListener("click",e=>{const b=e.target.closest("button");if(b)g
 $("#btnLogout").addEventListener("click",async()=>{if(confirm("¿Cerrar sesión?")){await Store.signOut();location.reload();}});
 $("#btnTheme").addEventListener("click",toggleTheme);
 $("#btnBrush").addEventListener("click",modalBrocha);
-$("#btnRefresh").addEventListener("click",()=>{const b=$("#btnRefresh");b.classList.add("spin");updateHeader();render();setTimeout(()=>b.classList.remove("spin"),600);toast("Actualizado");});
 function render(){const app=$("#app");if(!Store.user){$("#nav").classList.add("hidden");renderAuth(app);return;}
   $("#nav").classList.remove("hidden");({registrar:renderRegistrar,reporte:renderReporte,avance:renderAvance,config:renderConfig}[CURRENT]||renderRegistrar)(app);}
 function updateHeader(){const on=Store.mode==="firebase";$("#modeDot").classList.toggle("online",on);
@@ -470,87 +335,72 @@ function renderAuth(app){app.innerHTML=`
 /* ===================== REGISTRAR ===================== */
 let draft=null;
 function nuevoDraft(){return {tipo:"Garantía",monto:"",area:"",departamento:"",producto:"",asesorNombre:Store.user.display||"",asesorCodigo:Store.user.codigo||"",otro:false,boletaUrl:""};}
-function fpBadge(){return `<span class="fpbadge">CANJE <img src="fpuntos.svg" class="fplogo" alt="Fpuntos"></span>`;}
-function fpBadge2(){return `<span class="fpbadge"><img src="fpuntos.svg" class="fplogo" alt="Fpuntos"><span style="color:var(--accent);font-weight:900">+ $ Pesos</span></span>`;}
+function fpBadge(){return `<span class="fpbadge"><span class="fpring"></span>Fpuntos</span>`;}
+function fpBadge2(){return `<span class="fpbadge"><span class="fpring"></span>Fpuntos <span style="color:var(--accent)">+ Pesos</span></span>`;}
 function renderRegistrar(app){if(!draft)draft=nuevoDraft();
-  if(draft.tipo==="Seguro")draft.area=AREA_EN; // Línea Blanca no vende seguros
-  const esLB=draft.area===AREA_LB;const esSeguro=draft.tipo==="Seguro";
+  const esLB=draft.area===AREA_LB;
   app.innerHTML=`
   <div class="card">
     <h2>Registrar garantía / seguro</h2>
-    <p class="sub">Ingresa los datos y suma.</p>
+    <p class="sub">Saca o sube la boleta para autocompletar, o ingresa a mano. Verificas antes de sumar.</p>
+    <div class="btn-row"><label class="btn secondary" style="cursor:pointer">📷 Sacar / subir boleta<input id="fileBoleta" type="file" accept="image/*,application/pdf" capture="environment" class="hidden"></label></div>
+    <div id="ocrStatus"></div>
     <h3>Tipo</h3>
     <div class="seg"><button type="button" id="tGar" class="${draft.tipo==='Garantía'?'active':''}">Garantía</button><button type="button" id="tSeg" class="${draft.tipo==='Seguro'?'active':''}">Seguro</button></div>
     <form id="vForm">
       <label>Monto</label><input name="monto" inputmode="numeric" value="${esc(draft.monto)}" placeholder="$" required>
-      <label>Departamento${esSeguro?' (Electro Negro)':''}</label><select name="departamento" id="selDepto"></select>
+      <div class="grid2">
+        <div><label>Área</label><select name="area" id="selArea"><option value="">—</option>${AREAS.map(a=>`<option ${draft.area===a?'selected':''}>${a}</option>`).join("")}</select></div>
+        <div id="deptoWrap" class="${esLB?'hidden':''}"><label>Departamento</label><select name="departamento" id="selDepto"><option value="">—</option></select></div>
+      </div>
       <h3>Asesor</h3>
       <div class="seg"><button type="button" id="asMe" class="${!draft.otro?'active':''}">Yo (${esc(Store.user.display||'')})</button><button type="button" id="asOther" class="${draft.otro?'active':''}">A otra persona</button></div>
-      <div class="${draft.otro?'':'hidden'}" id="asOtherBox">
-        ${listaVendedores().length?`<label>Asesor</label><select id="asPick">${opcionesAsesor(draft.asesorCodigo)}</select>`:''}
-        <div class="grid2"><div><label>Nombre asesor</label><input id="asNom" name="asesorNombre" value="${esc(draft.asesorNombre)}"></div><div><label>N° vendedor</label><input id="asCod" name="asesorCodigo" value="${esc(draft.asesorCodigo)}" inputmode="numeric"></div></div>
-      </div>
+      <div class="grid2 ${draft.otro?'':'hidden'}"><div><label>Nombre asesor</label><input name="asesorNombre" value="${esc(draft.asesorNombre)}"></div><div><label>N° vendedor</label><input name="asesorCodigo" value="${esc(draft.asesorCodigo)}" inputmode="numeric"></div></div>
       <div class="btn-row"><button class="btn" type="submit">✓ Registrar ${draft.tipo}</button></div>
     </form>
   </div>
 
   <div class="card">
     <h2>Canje de puntos</h2>
+    <p class="sub">Botones independientes: suman +1 por asesor (no van por departamento ni monto).</p>
     <div class="seg"><button type="button" id="fpMe" class="active">Yo (${esc(Store.user.display||'')})</button><button type="button" id="fpOther">A otra persona</button></div>
-    <div class="hidden" id="fpOtherBox">
-      ${listaVendedores().length?`<label>Asesor</label><select id="fpPick">${opcionesAsesor("")}</select>`:''}
-      <div class="grid2"><div><label>Nombre asesor</label><input id="fpNom"></div><div><label>N° vendedor</label><input id="fpCod" inputmode="numeric"></div></div>
-    </div>
-    <div class="btn-row"><button class="btn secondary" id="btnFp">${fpBadge()} &nbsp;+1</button></div>
-    <div class="btn-row"><button class="btn secondary" id="btnFpP">${fpBadge2()} &nbsp;+1</button></div>
+    <div class="grid2 hidden" id="fpOtherBox"><div><label>Nombre asesor</label><input id="fpNom"></div><div><label>N° vendedor</label><input id="fpCod" inputmode="numeric"></div></div>
+    <div class="btn-row"><button class="btn dark" id="btnFp">${fpBadge()} &nbsp;+1</button></div>
+    <div class="btn-row"><button class="btn dark" id="btnFpP">${fpBadge2()} &nbsp;+1</button></div>
   </div>
 
   <div class="card">
     <h2>No mix</h2><p class="sub">Suma por asesor, departamento y monto.</p>
     <div class="seg"><button type="button" id="nmMe" class="active">Yo (${esc(Store.user.display||'')})</button><button type="button" id="nmOther">A otra persona</button></div>
-    <div class="hidden" id="nmOtherBox">
-      ${listaVendedores().length?`<label>Asesor</label><select id="nmPick">${opcionesAsesor("")}</select>`:''}
-      <div class="grid2"><div><label>Nombre asesor</label><input id="nmNom"></div><div><label>N° vendedor</label><input id="nmCod" inputmode="numeric"></div></div>
-    </div>
-    <label>Departamento</label><select id="nmDepto">${DEPTOS_ALL.map(d=>`<option>${d}</option>`).join("")}</select>
+    <div class="grid2 hidden" id="nmOtherBox"><div><label>Nombre asesor</label><input id="nmNom"></div><div><label>N° vendedor</label><input id="nmCod" inputmode="numeric"></div></div>
+    <label>Departamento</label><select id="nmDepto">${NOMIX_DEPTOS.map(d=>`<option>${d}</option>`).join("")}</select>
     <label>Monto</label><input id="nmMonto" inputmode="numeric" placeholder="$">
-    <div class="btn-row"><button class="btn secondary" id="btnNoMix">Reportar no mix</button></div>
-  </div>
-
-  <div class="card">
-    <h2><img src="logo-falabella.png" alt="" style="height:20px;vertical-align:middle;margin-right:6px">Registro Exchange</h2>
-    <div class="seg"><button type="button" id="exMe" class="active">Yo (${esc(Store.user.display||'')})</button><button type="button" id="exOther">A otra persona</button></div>
-    <div class="hidden" id="exOtherBox">
-      ${listaVendedores().length?`<label>Asesor</label><select id="exPick">${opcionesAsesor("")}</select>`:''}
-      <div class="grid2"><div><label>Nombre asesor</label><input id="exNom"></div><div><label>N° vendedor</label><input id="exCod" inputmode="numeric"></div></div>
-    </div>
-    <div class="grid2"><div><label>#ID Trade In</label><input id="exId" placeholder="ID Trade In"></div><div><label>Folio bolsa</label><input id="exFolio" placeholder="Folio bolsa"></div></div>
-    <div class="btn-row"><button class="btn secondary" id="btnEx">Reportar Exchange</button></div>
+    <div class="btn-row"><button class="btn dark" id="btnNoMix">Reportar no mix</button></div>
   </div>`;
 
-  const deptoList=esSeguro?DEPTOS_EN:DEPTOS_ALL;
-  const fillDepto=()=>{$("#selDepto").innerHTML=`<option value="">— departamento —</option>`+deptoList.map(d=>`<option ${draft.departamento===d?'selected':''}>${d}</option>`).join("");};
+  const fillDepto=()=>{$("#selDepto").innerHTML=`<option value="">—</option>`+DEPTOS_EN.map(d=>`<option ${draft.departamento===d?'selected':''}>${d}</option>`).join("");};
   fillDepto();
   const sync=()=>{const f=$("#vForm");if(f)Object.assign(draft,Object.fromEntries(new FormData(f)));};
-  $("#selDepto").onchange=e=>{draft.departamento=e.target.value;draft.area=e.target.value?deptoArea(e.target.value):"";};
+  $("#selArea").onchange=e=>{draft.area=e.target.value;draft.departamento="";renderRegistrar(app);};
+  $("#selDepto").onchange=e=>draft.departamento=e.target.value;
   $("#tGar").onclick=()=>{sync();draft.tipo="Garantía";renderRegistrar(app);};
-  $("#tSeg").onclick=()=>{sync();draft.tipo="Seguro";draft.area=AREA_EN;if(!DEPTOS_EN.includes(draft.departamento))draft.departamento="";renderRegistrar(app);};
+  $("#tSeg").onclick=()=>{sync();draft.tipo="Seguro";renderRegistrar(app);};
   $("#asMe").onclick=()=>{sync();draft.otro=false;draft.asesorNombre=Store.user.display||"";draft.asesorCodigo=Store.user.codigo||"";renderRegistrar(app);};
   $("#asOther").onclick=()=>{sync();draft.otro=true;draft.asesorNombre="";draft.asesorCodigo="";renderRegistrar(app);};
-  {const ap=$("#asPick");if(ap)ap.onchange=e=>{const o=e.target.selectedOptions[0];$("#asNom").value=o?(o.dataset.nom||""):"";$("#asCod").value=e.target.value;};}
+  $("#fileBoleta").onchange=async e=>{const f=e.target.files[0];if(f)await procesarBoleta(f);};
 
   // fpuntos asesor selector
   let fpOtro=false;
   $("#fpMe").onclick=()=>{fpOtro=false;$("#fpMe").classList.add("active");$("#fpOther").classList.remove("active");$("#fpOtherBox").classList.add("hidden");};
   $("#fpOther").onclick=()=>{fpOtro=true;$("#fpOther").classList.add("active");$("#fpMe").classList.remove("active");$("#fpOtherBox").classList.remove("hidden");};
-  {const fp=$("#fpPick");if(fp)fp.onchange=e=>{const o=e.target.selectedOptions[0];$("#fpNom").value=o?(o.dataset.nom||""):"";$("#fpCod").value=e.target.value;};}
   const fpAsesor=()=>fpOtro?{nombre:clean($("#fpNom").value),codigo:clean($("#fpCod").value)}:{nombre:Store.user.display||"",codigo:Store.user.codigo||""};
 
-  function baseVenta(tipo){sync();const dep=draft.departamento;return {fecha:todayStr(),tipo,monto:num(draft.monto),area:dep?deptoArea(dep):draft.area,departamento:dep,
+  function baseVenta(tipo){sync();return {fecha:todayStr(),tipo,monto:num(draft.monto),area:draft.area,departamento:draft.area===AREA_LB?"":draft.departamento,
     producto:clean(draft.producto),asesorNombre:clean(draft.asesorNombre),asesorCodigo:clean(draft.asesorCodigo),boletaUrl:draft.boletaUrl||"",
     categoria:tipo==="Garantía"?"GEXT":tipo==="Seguro"?"SEGURO":"OTROS"};}
   $("#vForm").onsubmit=async e=>{e.preventDefault();const v=baseVenta(draft.tipo);
-    if(!v.monto)return toast("Ingresa el monto");if(!v.departamento)return toast("Selecciona el departamento");if(!v.asesorNombre)return toast("Falta el asesor");
+    if(!v.monto)return toast("Ingresa el monto");if(!v.area)return toast("Selecciona el área");
+    if(v.area===AREA_EN&&!v.departamento)return toast("Selecciona el departamento");if(!v.asesorNombre)return toast("Falta el asesor");
     const btn=$("#vForm .btn");btn.disabled=true;btn.textContent="Guardando…";
     try{await Store.addVenta(v);toast("✓ "+draft.tipo+" registrada");draft=nuevoDraft();renderRegistrar(app);}catch(err){toast("Error: "+err.message);btn.disabled=false;}};
   $("#btnFp").onclick=async()=>{const a=fpAsesor();if(!a.nombre)return toast("Indica el asesor");
@@ -562,41 +412,21 @@ function renderRegistrar(app){if(!draft)draft=nuevoDraft();
   let nmOtro=false;
   $("#nmMe").onclick=()=>{nmOtro=false;$("#nmMe").classList.add("active");$("#nmOther").classList.remove("active");$("#nmOtherBox").classList.add("hidden");};
   $("#nmOther").onclick=()=>{nmOtro=true;$("#nmOther").classList.add("active");$("#nmMe").classList.remove("active");$("#nmOtherBox").classList.remove("hidden");};
-  {const np=$("#nmPick");if(np)np.onchange=e=>{const o=e.target.selectedOptions[0];$("#nmNom").value=o?(o.dataset.nom||""):"";$("#nmCod").value=e.target.value;};}
   const nmAsesor=()=>nmOtro?{nombre:clean($("#nmNom").value),codigo:clean($("#nmCod").value)}:{nombre:Store.user.display||"",codigo:Store.user.codigo||""};
   $("#btnNoMix").onclick=async()=>{const dep=$("#nmDepto").value,m=num($("#nmMonto").value);if(!m)return toast("Ingresa el monto");const a=nmAsesor();if(!a.nombre)return toast("Indica el asesor");
     try{await Store.addVenta({fecha:todayStr(),tipo:"No Mix",monto:m,departamento:dep,asesorNombre:a.nombre,asesorCodigo:a.codigo,categoria:"NOMIX"});toast("✓ No mix reportado ("+a.nombre+")");$("#nmMonto").value="";}catch(err){toast("Error: "+err.message);}};
-
-  // exchange asesor selector
-  let exOtro=false;
-  $("#exMe").onclick=()=>{exOtro=false;$("#exMe").classList.add("active");$("#exOther").classList.remove("active");$("#exOtherBox").classList.add("hidden");};
-  $("#exOther").onclick=()=>{exOtro=true;$("#exOther").classList.add("active");$("#exMe").classList.remove("active");$("#exOtherBox").classList.remove("hidden");};
-  {const ep=$("#exPick");if(ep)ep.onchange=e=>{const o=e.target.selectedOptions[0];$("#exNom").value=o?(o.dataset.nom||""):"";$("#exCod").value=e.target.value;};}
-  const exAsesor=()=>exOtro?{nombre:clean($("#exNom").value),codigo:clean($("#exCod").value)}:{nombre:Store.user.display||"",codigo:Store.user.codigo||""};
-  $("#btnEx").onclick=async()=>{const id=clean($("#exId").value),folio=clean($("#exFolio").value);if(!id&&!folio)return toast("Ingresa ID Trade In o Folio");const a=exAsesor();if(!a.nombre)return toast("Indica el asesor");
-    try{await Store.addVenta({fecha:todayStr(),tipo:"Exchange",monto:0,idTradeIn:id,folioBolsa:folio,asesorNombre:a.nombre,asesorCodigo:a.codigo,categoria:"EXCHANGE"});toast("✓ Exchange reportado ("+a.nombre+")");$("#exId").value="";$("#exFolio").value="";}catch(err){toast("Error: "+err.message);}};
 }
 async function procesarBoleta(file){const st=$("#ocrStatus");
-  if(!Store.config.gemini.apiKey){
-    if(Store.mode!=="firebase"){st.innerHTML=`<div class="ocr-note">⚠️ Conéctate en línea para adjuntar boletas. Por ahora ingresa a mano.</div>`;return;}
-    st.innerHTML=`<div class="ocr-note">Procesando boleta…</div>`;
-    try{const u=await Store.uploadBoleta(file);if(u){draft.boletaUrl=u;st.innerHTML=`<div class="ocr-note">✓ Boleta adjuntada (${esc(file.name)}). Completa los datos e ingresa.</div>`;toast("Boleta adjuntada");}else st.innerHTML=`<div class="ocr-note">No se pudo adjuntar la boleta.</div>`;}
-    catch(err){st.innerHTML=`<div class="ocr-note">Error: ${esc(err.message)}</div>`;}
-    return;}
-  const t0=Date.now();let seg=0;
-  st.innerHTML=`<div class="ocr-note">🤖 Analizando la boleta… <b id="ocrSeg">0s</b><br><span class="tiny">Puedes esperar el aviso; te avisamos al terminar.</span></div>`;
-  const timer=setInterval(()=>{seg=Math.round((Date.now()-t0)/1000);const el=$("#ocrSeg");if(el)el.textContent=seg+"s";},1000);
-  try{const [data,url]=await Promise.all([leerBoleta(file),Store.uploadBoleta(file).catch(()=>null)]);clearInterval(timer);if(url)draft.boletaUrl=url;st.innerHTML=`<div class="ocr-note">✓ Boleta analizada en ${Math.round((Date.now()-t0)/1000)}s. Revisa y suma.</div>`;toast("✓ Boleta lista, revisa y suma");verificarBoleta(data);}
-  catch(err){clearInterval(timer);st.innerHTML=`<div class="ocr-note">No pude leer la boleta (${esc(err.message)}). Ingresa a mano.</div>`;toast("No se pudo leer la boleta");}}
+  if(!Store.config.gemini.apiKey){st.innerHTML=`<div class="ocr-note">⚠️ Configura la API key de Gemini en ⚙️ Config para leer la boleta. Por ahora, ingresa a mano.</div>`;try{const u=await Store.uploadBoleta(file);if(u){draft.boletaUrl=u;toast("Boleta adjuntada");}}catch{}return;}
+  st.innerHTML=`<div class="ocr-note">🤖 Leyendo la boleta…</div>`;
+  try{const [data,url]=await Promise.all([leerBoleta(file),Store.uploadBoleta(file).catch(()=>null)]);if(url)draft.boletaUrl=url;verificarBoleta(data);st.innerHTML="";}
+  catch(err){st.innerHTML=`<div class="ocr-note">No pude leer la boleta (${esc(err.message)}). Ingresa a mano.</div>`;}}
 function verificarBoleta(data){const dudas=new Set((data.dudas||[]).map(x=>norm(x)));const flag=k=>dudas.has(k)?'field-flag':'';
   let area=(data.area||"").toUpperCase();if(!AREAS.includes(area))area="";
   let depto=(area===AREA_EN&&DEPTOS_EN.includes((data.departamento||"").toUpperCase()))?(data.departamento||"").toUpperCase():"";
   const conf=Math.round((data.confianza||0)*100);
-  const vend=vendedorPorCodigo(data.vendedor_codigo);if(vend){const fn=formatVendedor(vend);if(fn)data.vendedor_nombre=fn;}
-  const bFecha=clean(data.fecha||"");const fechaAlerta=bFecha&&bFecha!==todayStr();
   const html=`<div class="modal-bg" id="vBg"><div class="modal"><div class="m-head"><b>Verifica los datos <span class="badge-ai">IA · ${conf}%</span></b><button class="icon-btn" id="vX">✕</button></div>
     <div class="m-body"><p class="sub">Corrige lo necesario. Lo <span style="color:var(--warn)">resaltado</span> la IA no lo tuvo claro.</p>
-    ${fechaAlerta?`<div class="ocr-note" style="border-color:var(--warn);color:var(--warn)">⚠️ La boleta es del <b>${esc(bFecha)}</b>, distinta a hoy (${todayStr()}). Verifica antes de registrar.</div>`:''}
     <div class="seg"><button type="button" id="vGar" class="${data.tipo!=='Seguro'?'active':''}">Garantía</button><button type="button" id="vSeg" class="${data.tipo==='Seguro'?'active':''}">Seguro</button></div>
     <div class="grid2"><div><label>Vendedor</label><input id="vNom" class="${flag('vendedor_nombre')}" value="${esc(data.vendedor_nombre||'')}"></div><div><label>N° vendedor</label><input id="vCod" class="${flag('vendedor_codigo')}" value="${esc(data.vendedor_codigo||'')}"></div></div>
     <label>Producto</label><input id="vProd" value="${esc(data.producto||'')}">
@@ -617,6 +447,12 @@ function verificarBoleta(data){const dudas=new Set((data.dudas||[]).map(x=>norm(
 /* ===================== agregación día (ventas registradas) ===================== */
 function metaOf(area,dep){const m=Store.config.metas[metaKey(area,dep)]||{};return {gar:+m.garantia||0,seg:+m.seguro||0};}
 function metaLB(){return DEPTOS_LB.reduce((s,d)=>s+metaOf(AREA_LB,d).gar,0);} // meta total Línea Blanca (suma de sus deptos)
+function avanceMesByDept(){ // avance del mes (Looker) por depto: {en:{dep:total}, lb:total}
+  const src=Store.avancesCache.find(a=>a.deptos&&a.deptos.length);
+  const en={};DEPTOS_EN.forEach(d=>en[d]=0);let lb=0;
+  if(src)(src.deptos||[]).forEach(x=>{const t=(+x.gext||0)+(+x.seguro||0);if(x.area===AREA_LB)lb+=t;else if(en[x.dep]!=null)en[x.dep]+=t;});
+  return {en,lb};
+}
 function mesInfo(){const m=Store.config.mes||{};if(!m.inicio||!m.fin)return null;const diasTot=diffDays(m.inicio,m.fin)+1;const hoy=todayStr();
   const ref=hoy<m.inicio?m.inicio:(hoy>m.fin?m.fin:hoy);const diasRest=Math.max(1,diffDays(ref,m.fin)+1);return {inicio:m.inicio,fin:m.fin,diasTot,diasRest,diasTrans:diasTot-diasRest+1};}
 function aggDia(fecha){
@@ -634,28 +470,29 @@ function aggDia(fecha){
 
 /* ===================== REPORTE (día) ===================== */
 let repDate=todayStr();
-function buildFilas(agg,diasTot){ // filas para tabla y fullscreen
+function buildFilas(agg,mi){ // filas para tabla y fullscreen; meta diaria = (meta mes - avance mes) / días restantes
+  const av=avanceMesByDept();const diasRest=mi?mi.diasRest:0;
   const filas=[];let tGar=0,tSeg=0,tMetaDia=0;
-  const push=(area,dep,label,c,metaMesOv)=>{const meta=metaOf(area,dep);const metaMes=metaMesOv!=null?metaMesOv:(meta.gar+meta.seg);const metaDia=metaMes/diasTot;
+  const push=(area,dep,label,c,metaMes,avMes)=>{const metaDia=(mi&&metaMes>0)?Math.max(0,metaMes-avMes)/diasRest:0;
     const tot=c.gar+c.seg;const pct=metaDia?Math.round(tot/metaDia*1000)/10:0;const falta=Math.max(0,Math.round(metaDia-tot));
     tGar+=c.gar;tSeg+=c.seg;tMetaDia+=metaDia;
     filas.push({area,label,gar:c.gar,seg:c.seg,metaDia,pct,es:estado(pct),falta,hasMeta:metaDia>0});};
-  filas.push({header:AREA_EN});DEPTOS_EN.forEach(d=>push(AREA_EN,d,d,agg.en[d]));
-  filas.push({header:AREA_LB});push(AREA_LB,"",AREA_LB,agg.lb,metaLB());
+  filas.push({header:AREA_EN});DEPTOS_EN.forEach(d=>{const m=metaOf(AREA_EN,d);push(AREA_EN,d,d,agg.en[d],m.gar+m.seg,av.en[d]||0);});
+  filas.push({header:AREA_LB});push(AREA_LB,"",AREA_LB,agg.lb,metaLB(),av.lb||0);
   const tot=tGar+tSeg;const pctT=tMetaDia?Math.round(tot/tMetaDia*1000)/10:0;
   return {filas,tGar,tSeg,tot,tMetaDia,pctT,esT:estado(pctT),faltaT:Math.max(0,Math.round(tMetaDia-tot))};
 }
-function renderReporte(app){const agg=aggDia(repDate);const mi=mesInfo();const diasTot=mi?mi.diasTot:30;
-  const R=buildFilas(agg,diasTot);
-  let rows="";R.filas.forEach(f=>{if(f.header){rows+=`<tr class="area-row"><td>${f.header}</td><td>Garantía</td><td>${f.header===AREA_LB?'':'Seguro'}</td><td>Meta día</td><td>Cumpl.</td><td>Falta</td></tr>`;return;}
-    rows+=`<tr><td><b>${f.label}</b></td><td>${CLP(f.gar)}</td><td>${SEGURO_DEPTS.has(f.label)?CLP(f.seg):'—'}</td><td>${f.hasMeta?CLP(f.metaDia):'—'}</td><td class="pct${f.es}">${f.hasMeta?'<span class="sem '+f.es+'"></span>'+f.pct+'%':'—'}</td><td>${f.hasMeta?CLP(f.falta):'—'}</td></tr>`;});
+function renderReporte(app){const agg=aggDia(repDate);const mi=mesInfo();
+  const R=buildFilas(agg,mi);
+  let rows="";R.filas.forEach(f=>{if(f.header){rows+=`<tr class="area-row"><td>${f.header}</td><td>Garantía</td><td>Seguro</td><td>Meta día</td><td>Cumpl.</td><td>Falta</td></tr>`;return;}
+    rows+=`<tr><td><b>${f.label}</b></td><td>${CLP(f.gar)}</td><td>${CLP(f.seg)}</td><td>${f.hasMeta?CLP(f.metaDia):'—'}</td><td class="pct${f.es}">${f.hasMeta?'<span class="sem '+f.es+'"></span>'+f.pct+'%':'—'}</td><td>${f.hasMeta?CLP(f.falta):'—'}</td></tr>`;});
   const kpis=`<div class="kpi"><div class="k"><div class="l">Garantía hoy</div><div class="n">${CLP(R.tGar)}</div></div>
     <div class="k"><div class="l">Seguro hoy</div><div class="n">${CLP(R.tSeg)}</div></div>
     <div class="k"><div class="l">Total hoy</div><div class="n">${CLP(R.tot)}</div></div>
     <div class="k"><div class="l">Cumpl. meta diaria</div><div class="n pct${R.esT}">${R.tMetaDia?'<span class="sem '+R.esT+'"></span>'+R.pctT+'%':'—'}</div></div></div>`;
 
   // detalle por asesor (garantía/seguro)
-  let det="";const addAses=(label,ases)=>{const names=Object.keys(ases).filter(nm=>!esJefe(nm));if(!names.length)return;
+  let det="";const addAses=(label,ases)=>{const names=Object.keys(ases);if(!names.length)return;
     det+=`<tr class="area-row"><td>${label}</td><td>Garantía</td><td>Seguro</td><td>Total</td></tr>`;
     names.forEach(nm=>{const x=ases[nm];det+=`<tr class="asesor"><td>${esc(nm)}</td><td>${CLP(x.gar)}</td><td>${CLP(x.seg)}</td><td>${CLP(x.gar+x.seg)}</td></tr>`;});};
   DEPTOS_EN.forEach(d=>addAses(AREA_EN+" · "+d,agg.en[d].ases));addAses(AREA_LB,agg.lb.ases);
@@ -668,135 +505,51 @@ function renderReporte(app){const agg=aggDia(repDate);const mi=mesInfo();const d
   const canNames=[...new Set([...Object.keys(agg.fp.ases),...Object.keys(agg.fpp.ases)])];
   let can=canNames.length?canNames.map(nm2=>`<tr><td>${esc(nm2)}</td><td>${agg.fp.ases[nm2]||0}</td><td>${agg.fpp.ases[nm2]||0}</td></tr>`).join("")+`<tr class="total"><td>TOTAL</td><td>${agg.fp.total}</td><td>${agg.fpp.total}</td></tr>`:`<tr><td colspan="3" class="center muted" style="padding:14px">Sin canjes hoy</td></tr>`;
 
-  // registros individuales del día (todas las categorías) — el admin edita monto o elimina
-  const admin=Store.isAdmin();
-  const TIPO={GEXT:"Garantía",SEGURO:"Seguro",NOMIX:"No mix",FPUNTOS:"Canje",FPUNTOSPESOS:"Fpuntos + $ Pesos",EXCHANGE:"Exchange"};
-  const conMonto={GEXT:1,SEGURO:1,NOMIX:1};
-  // exchange (trade in)
-  const exs=Store.ventasCache.filter(v=>v.fecha===repDate&&v.categoria==="EXCHANGE").sort((a,b)=>(b.ts||0)-(a.ts||0));
-  let exRows=exs.length?exs.map(v=>`<tr><td>${esc(v.asesorNombre||'')}</td><td>${esc(v.idTradeIn||'')}</td><td>${esc(v.folioBolsa||'')}</td></tr>`).join("")+`<tr class="total"><td>TOTAL EXCHANGE</td><td colspan="2">${exs.length}</td></tr>`:`<tr><td colspan="3" class="center muted" style="padding:14px">Sin exchange hoy</td></tr>`;
-  const regs=Store.ventasCache.filter(v=>v.fecha===repDate).sort((a,b)=>(b.ts||0)-(a.ts||0));
-  let regRows=regs.length?regs.map(v=>{const montoCel=(v.categoria==="FPUNTOS"||v.categoria==="FPUNTOSPESOS")?"+1":CLP(v.monto);
-    const acc=admin?`<td style="white-space:nowrap">${conMonto[v.categoria]?`<button class="icon-btn" data-editv="${v.id}" data-monto="${v.monto||0}" title="Editar monto">✏️</button>`:''}<button class="icon-btn" data-delv="${v.id}" title="Eliminar">🗑</button></td>`:'';
-    return `<tr><td>${esc(v.asesorNombre||'')}</td><td>${TIPO[v.categoria]||v.categoria||''}</td><td>${esc(v.departamento||v.area||'')}</td><td>${montoCel}</td>${acc}</tr>`;}).join(""):`<tr><td colspan="${admin?5:4}" class="center muted" style="padding:14px">Sin registros este día</td></tr>`;
-
   app.innerHTML=`
-  <div class="card"><div class="row" style="align-items:center"><div style="flex:1"><input type="date" id="repDate" value="${repDate}"></div><button class="btn sm" id="btnFull" style="flex:none">🖥️ Reporte</button><button class="btn sm secondary" id="btnImg" style="flex:none">📥 Imagen</button></div>
+  <div class="card"><div class="row" style="align-items:center"><div style="flex:1"><input type="date" id="repDate" value="${repDate}"></div><button class="btn sm" id="btnFull" style="flex:none">🖥️ Reporte</button></div>
     ${kpis}${R.faltaT>0?`<p class="tiny" style="margin-top:8px">Falta <b style="color:var(--warn)">${CLP(R.faltaT)}</b> para la meta diaria.</p>`:(R.tMetaDia?`<p class="tiny" style="margin-top:8px">✅ Meta diaria cumplida.</p>`:`<p class="tiny" style="margin-top:8px">Define metas y mes comercial en ⚙️ Config.</p>`)}</div>
   <div class="card"><h2>Avance del día</h2><div class="rep-wrap" style="margin-top:10px"><table>
     <thead><tr><th>Área / Depto</th><th>Garantía</th><th>Seguro</th><th>Meta día</th><th>Cumpl.</th><th>Falta</th></tr></thead>
     <tbody>${rows}<tr class="total"><td>TOTAL TIENDA</td><td>${CLP(R.tGar)}</td><td>${CLP(R.tSeg)}</td><td>${R.tMetaDia?CLP(R.tMetaDia):'—'}</td><td class="pct${R.esT}">${R.tMetaDia?'<span class="sem '+R.esT+'"></span>'+R.pctT+'%':'—'}</td><td>${R.tMetaDia?CLP(R.faltaT):'—'}</td></tr></tbody></table></div></div>
   <div class="card"><h2>Detalle por asesor</h2><div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Depto / Asesor</th><th>Garantía</th><th>Seguro</th><th>Total</th></tr></thead><tbody>${det}</tbody></table></div></div>
   <div class="card"><h2>No mix</h2><div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Asesor</th><th>Departamento</th><th>Monto</th></tr></thead><tbody>${nm}</tbody></table></div></div>
-  <div class="card"><h2>${fpBadge()} y ${fpBadge2()} por asesor</h2><div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Asesor</th><th>Canje</th><th>Fpuntos + $ Pesos</th></tr></thead><tbody>${can}</tbody></table></div></div>
-  <div class="card"><h2><img src="logo-falabella.png" alt="" style="height:20px;vertical-align:middle;margin-right:6px">Exchange</h2><div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Asesor</th><th>#ID Trade In</th><th>Folio bolsa</th></tr></thead><tbody>${exRows}</tbody></table></div></div>
-  <div class="card reg-card"><details><summary><b>Registros del día</b> <span class="tiny">(${regs.length}) — tocar para editar/eliminar</span></summary>
-    <div class="rep-wrap" style="margin-top:10px"><table class="reg-mini"><thead><tr><th>Asesor</th><th>Tipo</th><th>Depto</th><th>Monto</th>${admin?'<th></th>':''}</tr></thead><tbody>${regRows}</tbody></table></div></details></div>`;
+  <div class="card"><h2>${fpBadge()} y Fpuntos + Pesos por asesor</h2><div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Asesor</th><th>Fpuntos</th><th>Fpuntos + Pesos</th></tr></thead><tbody>${can}</tbody></table></div></div>`;
   $("#repDate").onchange=e=>{repDate=e.target.value;renderReporte(app);};
-  $("#btnFull").onclick=()=>reporteFull(R,agg);
-  $("#btnImg").onclick=()=>descargarReporteImg(R,det);
-  if(admin){
-    $$("#app [data-delv]").forEach(b=>b.onclick=async()=>{if(confirm("¿Eliminar este registro?")){try{await Store.deleteVenta(b.dataset.delv);toast("Registro eliminado");}catch(err){toast("Error: "+err.message);}}});
-    $$("#app [data-editv]").forEach(b=>b.onclick=async()=>{const nv=prompt("Nuevo monto:",b.dataset.monto);if(nv===null)return;try{await Store.updateVenta(b.dataset.editv,{monto:num(nv)});toast("Monto actualizado");}catch(err){toast("Error: "+err.message);}});
-  }
+  $("#btnFull").onclick=()=>reporteFull(R);
 }
-function reporteFull(R,agg){
-  let rows="";R.filas.forEach(f=>{if(f.header){rows+=`<tr class="area-row"><td>${f.header}</td><td>Garantía</td><td>${f.header===AREA_LB?'':'Seguro'}</td><td>Meta</td><td>Cumpl.</td><td>Falta</td></tr>`;return;}
-    rows+=`<tr><td><b>${f.label}</b></td><td>${CLP(f.gar)}</td><td>${SEGURO_DEPTS.has(f.label)?CLP(f.seg):'—'}</td><td>${f.hasMeta?CLP(f.metaDia):'—'}</td><td>${f.hasMeta?'<span class="sem '+f.es+'"></span>'+f.pct+'%':'—'}</td><td>${f.hasMeta?CLP(f.falta):'—'}</td></tr>`;});
-  let nmRows="",canRows="";
-  if(agg){
-    nmRows=agg.nomix.items.length?agg.nomix.items.map(x=>`<tr><td>${esc(x.asesor)}</td><td>${esc(x.dep)}</td><td>${CLP(x.monto)}</td></tr>`).join("")+`<tr class="total"><td>TOTAL NO MIX</td><td></td><td>${CLP(agg.nomix.total)}</td></tr>`:`<tr><td colspan="3" class="center muted">Sin no mix hoy</td></tr>`;
-    const canNames=[...new Set([...Object.keys(agg.fp.ases),...Object.keys(agg.fpp.ases)])];
-    canRows=canNames.length?canNames.map(n=>`<tr><td>${esc(n)}</td><td>${agg.fp.ases[n]||0}</td><td>${agg.fpp.ases[n]||0}</td></tr>`).join("")+`<tr class="total"><td>TOTAL</td><td>${agg.fp.total}</td><td>${agg.fpp.total}</td></tr>`:`<tr><td colspan="3" class="center muted">Sin canjes hoy</td></tr>`;
-  }
+function reporteFull(R){
+  let rows="";R.filas.forEach(f=>{if(f.header){rows+=`<tr class="area-row"><td>${f.header}</td><td>Garantía</td><td>Seguro</td><td>Meta</td><td>Cumpl.</td><td>Falta</td></tr>`;return;}
+    rows+=`<tr><td><b>${f.label}</b></td><td>${CLP(f.gar)}</td><td>${CLP(f.seg)}</td><td>${f.hasMeta?CLP(f.metaDia):'—'}</td><td>${f.hasMeta?'<span class="sem '+f.es+'"></span>'+f.pct+'%':'—'}</td><td>${f.hasMeta?CLP(f.falta):'—'}</td></tr>`;});
   const html=`<div class="fs" id="fs"><button class="fs-close" id="fsX">✕</button>
     <h1>Reporte Electro</h1><div class="fs-date">${fechaLarga(repDate)}</div>
     <div class="fs-kpis"><div class="k"><div class="l">Garantía</div><div class="n">${CLP(R.tGar)}</div></div><div class="k"><div class="l">Seguro</div><div class="n">${CLP(R.tSeg)}</div></div><div class="k"><div class="l">Total</div><div class="n">${CLP(R.tot)}</div></div><div class="k"><div class="l">Cumpl.</div><div class="n">${R.tMetaDia?R.pctT+'%':'—'} <span class="sem ${R.esT}"></span></div></div></div>
     <table><thead><tr><th>Área / Depto</th><th>Garantía</th><th>Seguro</th><th>Meta</th><th>Cumpl.</th><th>Falta</th></tr></thead>
     <tbody>${rows}<tr class="total"><td>TOTAL TIENDA</td><td>${CLP(R.tGar)}</td><td>${CLP(R.tSeg)}</td><td>${R.tMetaDia?CLP(R.tMetaDia):'—'}</td><td>${R.tMetaDia?R.pctT+'%':'—'}</td><td>${R.tMetaDia?CLP(R.faltaT):'—'}</td></tr></tbody></table>
     ${R.faltaT>0?`<p class="fs-foot">Falta ${CLP(R.faltaT)} para la meta diaria.</p>`:''}
-    ${agg?`<h2 style="margin-top:22px">No mix</h2><table><thead><tr><th>Asesor</th><th>Departamento</th><th>Monto</th></tr></thead><tbody>${nmRows}</tbody></table>
-    <h2 style="margin-top:22px">${fpBadge()} y ${fpBadge2()} por asesor</h2><table><thead><tr><th>Asesor</th><th>Canje</th><th>Fpuntos + $ Pesos</th></tr></thead><tbody>${canRows}</tbody></table>`:''}</div>`;
+    <div class="fs-foot">Toma la captura de esta pantalla para enviar el reporte.</div></div>`;
   document.body.insertAdjacentHTML("beforeend",html);$("#fsX").onclick=()=>$("#fs").remove();
-}
-async function ensureH2C(){if(window.html2canvas)return;await Store.loadScript("https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js");}
-// Imagen del reporte para compartir: título + KPIs + avance del día + reporte por asesor (sin no mix/canjes, sin ✕)
-async function descargarReporteImg(R,det){
-  let rows="";R.filas.forEach(f=>{if(f.header){rows+=`<tr class="area-row"><td>${f.header}</td><td>Garantía</td><td>${f.header===AREA_LB?'':'Seguro'}</td><td>Meta día</td><td>Cumpl.</td><td>Falta</td></tr>`;return;}
-    rows+=`<tr><td><b>${f.label}</b></td><td>${CLP(f.gar)}</td><td>${SEGURO_DEPTS.has(f.label)?CLP(f.seg):'—'}</td><td>${f.hasMeta?CLP(f.metaDia):'—'}</td><td>${f.hasMeta?'<span class="sem '+f.es+'"></span>'+f.pct+'%':'—'}</td><td>${f.hasMeta?CLP(f.falta):'—'}</td></tr>`;});
-  const kpis=`<div class="fs-kpis"><div class="k"><div class="l">Garantía</div><div class="n">${CLP(R.tGar)}</div></div><div class="k"><div class="l">Seguro</div><div class="n">${CLP(R.tSeg)}</div></div><div class="k"><div class="l">Total</div><div class="n">${CLP(R.tot)}</div></div><div class="k"><div class="l">Cumpl.</div><div class="n">${R.tMetaDia?R.pctT+'%':'—'} <span class="sem ${R.esT}"></span></div></div></div>`;
-  const node=document.createElement("div");node.className="fs";node.style.cssText="position:fixed;left:-99999px;top:0;width:900px;height:auto;overflow:visible;padding:24px";
-  node.innerHTML=`<h1>Reporte Electro</h1><div class="fs-date">${fechaLarga(repDate)}</div>${kpis}
-    <h2 style="margin:10px 0 4px">Cómo vamos en el día</h2>
-    <table><thead><tr><th>Área / Depto</th><th>Garantía</th><th>Seguro</th><th>Meta día</th><th>Cumpl.</th><th>Falta</th></tr></thead>
-    <tbody>${rows}<tr class="total"><td>TOTAL TIENDA</td><td>${CLP(R.tGar)}</td><td>${CLP(R.tSeg)}</td><td>${R.tMetaDia?CLP(R.tMetaDia):'—'}</td><td>${R.tMetaDia?R.pctT+'%':'—'}</td><td>${R.tMetaDia?CLP(R.faltaT):'—'}</td></tr></tbody></table>
-    <h2 style="margin:18px 0 4px">Reporte por asesor</h2>
-    <table><thead><tr><th>Depto / Asesor</th><th>Garantía</th><th>Seguro</th><th>Total</th></tr></thead><tbody>${det}</tbody></table>`;
-  document.body.appendChild(node);
-  toast("Generando imagen…");
-  try{await ensureH2C();const canvas=await html2canvas(node,{scale:2,backgroundColor:"#ffffff"});
-    canvas.toBlob(b=>{if(!b){toast("No se pudo generar");return;}const url=URL.createObjectURL(b);const a=document.createElement("a");a.href=url;a.download="reporte-electro-"+repDate+".png";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),5000);toast("✓ Imagen descargada");});
-  }catch(err){toast("Error imagen: "+err.message);}finally{node.remove();}
 }
 
 /* ===================== AVANCE (Looker) ===================== */
-let npsFilt={fecha:"",vend:"",depto:"",nps:""};
-function npsCardsHtml(){const n=Store.npsCache;
-  const logo=`<img src="epa.png" alt="EPA" style="max-height:70px;display:block;margin:0 auto 8px" onerror="this.onerror=null;this.src='epa.svg'">`;
-  if(!n||((!n.deptos||!n.deptos.length)&&(!n.asesores||!n.asesores.length)))
-    return `<div class="card">${logo}<h2 style="text-align:center">NPS</h2><p class="sub" style="text-align:center">Un administrador sube los archivos NPS en ⚙️ Config.</p></div>`;
-  // Departamentos: orden mayor a menor NPS, color como las encuestas (nps tienda /10)
-  const deptos=(n.deptos||[]).slice().sort((a,b)=>(b.nps??-999)-(a.nps??-999));
-  const dRows=deptos.length?deptos.map(d=>{const cls=d.nps==null?"":npsClase(d.nps/10);return `<tr><td><b>${esc(d.dep)}</b></td><td>${d.sample||0}</td><td>${d.nps==null?'—':`<span class="nps ${cls}">${d.nps}</span>`}</td></tr>`;}).join(""):`<tr><td colspan="3" class="center muted">Sin datos por departamento</td></tr>`;
-  const first3=t=>{const w=clean(t).split(/\s+/).filter(Boolean);return w.slice(0,3).join(" ")+(w.length>3?"…":"");};
-  // Filtros ranking por asesor
-  const ase=n.asesores||[];const uniq=(arr)=>[...new Set(arr.filter(Boolean))].sort();
-  const fechas=uniq(ase.map(a=>a.fecha)),vends=uniq(ase.map(a=>a.vendedor)),deps=uniq(ase.map(a=>a.depto));
-  const opt=(list,sel)=>list.map(v=>`<option ${sel===v?'selected':''}>${esc(v)}</option>`).join("");
-  const filtered=ase.filter(a=>(!npsFilt.fecha||a.fecha===npsFilt.fecha)&&(!npsFilt.vend||a.vendedor===npsFilt.vend)&&(!npsFilt.depto||a.depto===npsFilt.depto)&&(!npsFilt.nps||(a.nps!=null&&npsClase(a.nps)===npsFilt.nps)));
-  const aRows=filtered.length?filtered.map(a=>{const cls=a.nps==null?"":npsClase(a.nps);
-     return `<tr><td>${esc(a.fecha)}</td><td>${esc(a.vendedor)}</td><td>${esc(a.jefe)}</td><td>${esc(a.depto)}</td><td>${a.nps==null?'—':`<span class="nps ${cls}">${a.nps}</span>`}</td><td class="cmt-cell">${a.razon?`<details><summary title="${esc(a.razon)}">${esc(first3(a.razon))}</summary><div class="cmt-full">${esc(a.razon)}</div></details>`:''}</td></tr>`;}).join(""):`<tr><td colspan="6" class="center muted">Sin respuestas con esos filtros</td></tr>`;
-  const activos=(npsFilt.fecha||npsFilt.vend||npsFilt.depto||npsFilt.nps)?`<button class="btn ghost sm" id="npsClear" style="width:auto;margin-top:8px">✕ Limpiar filtros</button>`:'';
-  const filtRow=`<tr class="filt-row">
-    <th><select id="npsFF"><option value="">Fecha ▾</option>${opt(fechas,npsFilt.fecha)}</select></th>
-    <th><select id="npsFV"><option value="">Vendedor ▾</option>${opt(vends,npsFilt.vend)}</select></th>
-    <th></th>
-    <th><select id="npsFD"><option value="">Depto ▾</option>${opt(deps,npsFilt.depto)}</select></th>
-    <th><select id="npsFN"><option value="">NPS ▾</option><option value="g" ${npsFilt.nps==='g'?'selected':''}>🟢 9-10</option><option value="y" ${npsFilt.nps==='y'?'selected':''}>🟡 7-8</option><option value="r" ${npsFilt.nps==='r'?'selected':''}>🔴 ≤6</option></select></th>
-    <th></th></tr>`;
-  return `<div class="card">${logo}<h2 style="text-align:center">NPS por departamento</h2><div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Departamento</th><th>Encuestas</th><th>NPS</th></tr></thead><tbody>${dRows}</tbody></table></div></div>
-  <div class="card"><h2>Ranking NPS por asesor</h2>${activos}<div class="rep-wrap" style="margin-top:10px"><table class="nps-rank"><thead>${filtRow}<tr><th>Fecha</th><th>Vendedor</th><th>Jefe de ventas</th><th>Departamento</th><th>NPS</th><th>Comentario</th></tr></thead><tbody>${aRows}</tbody></table></div></div>`;}
-function bindNpsFiltros(app){const f=$("#npsFF"),v=$("#npsFV"),d=$("#npsFD"),nn=$("#npsFN");if(!f)return;
-  f.onchange=e=>{npsFilt.fecha=e.target.value;renderAvance(app);};
-  v.onchange=e=>{npsFilt.vend=e.target.value;renderAvance(app);};
-  d.onchange=e=>{npsFilt.depto=e.target.value;renderAvance(app);};
-  nn.onchange=e=>{npsFilt.nps=e.target.value;renderAvance(app);};
-  {const c=$("#npsClear");if(c)c.onclick=()=>{npsFilt={fecha:"",vend:"",depto:"",nps:""};renderAvance(app);};}}
 function renderAvance(app){
   const av=Store.avancesCache[0]||null;const mi=mesInfo();const diasRest=mi?mi.diasRest:1;
-  if(!av){app.innerHTML=`<div class="card"><h2>Avance</h2><p class="sub">Aún no hay avances de Looker. Un administrador los sube en ⚙️ Config.</p></div>`+npsCardsHtml();bindNpsFiltros(app);return;}
+  if(!av){app.innerHTML=`<div class="card"><h2>Avance</h2><p class="sub">Aún no hay avances. Un administrador sube los HTML de Looker en ⚙️ Config.</p></div>`;return;}
   // combina el último avance con deptos y el último con vendedores (por si se subieron por separado)
   const deptosSrc=(Store.avancesCache.find(a=>a.deptos&&a.deptos.length)||av);
   const vendSrc=(Store.avancesCache.find(a=>a.vendedores&&a.vendedores.length)||av);
   const en={};DEPTOS_EN.forEach(d=>en[d]={gext:0,seguro:0});const lb={};DEPTOS_LB.forEach(d=>lb[d]={gext:0,seguro:0});
   (deptosSrc.deptos||[]).forEach(x=>{if(x.area===AREA_LB){if(lb[x.dep]){lb[x.dep].gext+=x.gext;lb[x.dep].seguro+=x.seguro;}else{lb["LINEA BLANCA"].gext+=x.gext;lb["LINEA BLANCA"].seguro+=x.seguro;}}else if(en[x.dep]){en[x.dep].gext+=x.gext;en[x.dep].seguro+=x.seguro;}});
   let rows="",TG=0,TS=0,TMg=0,TMs=0;
-  const push=(area,dep,label,c)=>{const meta=metaOf(area,dep);const seg=SEGURO_DEPTS.has(dep);
+  const push=(area,dep,label,c)=>{const meta=metaOf(area,dep);const metaTot=meta.gar+meta.seg;const av2=c.gext+c.seguro;const falta=Math.max(0,metaTot-av2);const md=Math.round(falta/diasRest);const pct=metaTot?Math.round(av2/metaTot*1000)/10:0;const es=estado(pct);
     TG+=c.gext;TS+=c.seguro;TMg+=meta.gar;TMs+=meta.seg;
-    if(seg){const metaTot=meta.gar+meta.seg;const falta=Math.max(0,metaTot-(c.gext+c.seguro));
-      const pctG=meta.gar?Math.round(c.gext/meta.gar*1000)/10:0;const esG=estado(pctG);
-      const pctS=meta.seg?Math.round(c.seguro/meta.seg*1000)/10:0;const esS=estado(pctS);
-      const cumpl=`<div class="pct${esG}"><span class="sem ${esG}"></span>Gar ${meta.gar?pctG+'%':'—'}</div><div class="pct${esS}" style="margin-top:2px"><span class="sem ${esS}"></span>Seg ${meta.seg?pctS+'%':'—'}</div>`;
-      rows+=`<tr><td><b>${label}</b></td><td>${CLP(c.gext)}</td><td>${CLP(c.seguro)}</td><td>${CLP(metaTot)}</td><td>${cumpl}</td><td>${CLP(falta)}</td></tr>`;
-    }else{const metaTot=meta.gar;const falta=Math.max(0,metaTot-c.gext);const pct=metaTot?Math.round(c.gext/metaTot*1000)/10:0;const es=estado(pct);
-      rows+=`<tr><td><b>${label}</b></td><td>${CLP(c.gext)}</td><td>—</td><td>${CLP(metaTot)}</td><td class="pct${es}">${metaTot?'<span class="sem '+es+'"></span>'+pct+'%':'—'}</td><td>${CLP(falta)}</td></tr>`;}};
+    rows+=`<tr><td><b>${label}</b></td><td>${CLP(c.gext)}</td><td>${CLP(c.seguro)}</td><td>${CLP(metaTot)}</td><td class="pct${es}">${metaTot?'<span class="sem '+es+'"></span>'+pct+'%':'—'}</td><td>${CLP(falta)}</td></tr>`;};
   rows+=`<tr class="area-row"><td>${AREA_EN}</td><td>Garantía</td><td>Seguro</td><td>Meta</td><td>Cumpl.</td><td>Falta</td></tr>`;DEPTOS_EN.forEach(d=>push(AREA_EN,d,d,en[d]));
-  rows+=`<tr class="area-row"><td>${AREA_LB}</td><td>Garantía</td><td></td><td>Meta</td><td>Cumpl.</td><td>Falta</td></tr>`;DEPTOS_LB.forEach(d=>push(AREA_LB,d,d,lb[d]));
+  rows+=`<tr class="area-row"><td>${AREA_LB}</td><td>Garantía</td><td>Seguro</td><td>Meta</td><td>Cumpl.</td><td>Falta</td></tr>`;DEPTOS_LB.forEach(d=>push(AREA_LB,d,d,lb[d]));
   const avT=TG+TS,metaT=TMg+TMs,faltaT=Math.max(0,metaT-avT),mdT=Math.round(faltaT/diasRest);
   const pctMes=metaT?Math.round(avT/metaT*1000)/10:0;const esMes=estado(pctMes);
   const proy=(mi&&mi.diasTrans>0)?Math.round(avT/mi.diasTrans*mi.diasTot):0;
   const pctProy=metaT?Math.round(proy/metaT*1000)/10:0;
-  const ases=(vendSrc.vendedores||[]).filter(v=>(v.gext||v.seguro)&&!esJefe(v.nombre)).sort((a,b)=>(b.gext+b.seguro)-(a.gext+a.seguro));
+  const ases=(vendSrc.vendedores||[]).filter(v=>v.gext||v.seguro).sort((a,b)=>(b.gext+b.seguro)-(a.gext+a.seguro));
   const asesRows=ases.length?ases.map(v=>`<tr class="asesor"><td>${esc(v.nombre)}</td><td>${CLP(v.gext)}</td><td>${CLP(v.seguro)}</td><td>${CLP(v.gext+v.seguro)}</td></tr>`).join(""):`<tr><td colspan="4" class="center muted" style="padding:16px">Sin desglose por asesor</td></tr>`;
   app.innerHTML=`
   <div class="card"><div class="row" style="align-items:center"><h2 style="flex:1">Avance del mes</h2><span class="chip acc">${mi?mi.diasRest+' días restantes':'configura el mes en ⚙️'}</span></div>
@@ -810,9 +563,7 @@ function renderAvance(app){
     <p class="tiny" style="margin-top:8px">Falta <b>${CLP(faltaT)}</b> para el plan · meta diaria <b>${CLP(mdT)}</b>.</p></div>
   <div class="card"><h2>Por área · departamento</h2><div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Área / Depto</th><th>Garantía</th><th>Seguro</th><th>Meta</th><th>Cumpl.</th><th>Falta</th></tr></thead>
     <tbody>${rows}<tr class="total"><td>TOTAL TIENDA</td><td>${CLP(TG)}</td><td>${CLP(TS)}</td><td>${CLP(metaT)}</td><td class="pct${esMes}">${metaT?pctMes+'%':'—'}</td><td>${CLP(faltaT)}</td></tr></tbody></table></div></div>
-  <div class="card"><h2>Venta por asesor</h2><div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Asesor</th><th>Garantía</th><th>Seguro</th><th>Total</th></tr></thead><tbody>${asesRows}</tbody></table></div></div>`
-  +npsCardsHtml();
-  bindNpsFiltros(app);
+  <div class="card"><h2>Venta por asesor</h2><div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Asesor</th><th>Garantía</th><th>Seguro</th><th>Total</th></tr></thead><tbody>${asesRows}</tbody></table></div></div>`;
 }
 
 /* ===================== CONFIG ===================== */
@@ -832,29 +583,24 @@ function renderConfig(app){const c=Store.config;const admin=Store.isAdmin();cons
     <label>Fecha del avance</label><input type="date" id="avFecha" value="${todayStr()}">
     <label class="btn secondary" style="cursor:pointer;margin-top:10px">📄 Elegir archivo(s) (.html)<input id="avFile" type="file" accept=".html,.htm,.txt" multiple class="hidden"></label>
     <div id="avStatus"></div><div id="avPrev"></div><div id="avList" style="margin-top:12px"></div></div>
-  <div class="card"><h2>NPS (EPA)</h2><p class="sub">Sube el ranking por departamento (.xls de Medallia) y/o el detalle de respuestas (.xlsx). Puedes subir ambos.</p>
-    <label class="btn secondary" style="cursor:pointer">📊 Elegir archivo(s) NPS<input id="npsFile" type="file" accept=".xls,.xlsx,.html,.htm" multiple class="hidden"></label>
-    <div id="npsStatus"></div></div>
-  <div class="card"><h2>Extracción de boletas (IA · Gemini)</h2><label>API key</label><input id="cGemKey" type="password" value="${esc(c.gemini.apiKey||'')}" placeholder="AIza…"><label>Modelo</label><input id="cGemModel" value="${esc(c.gemini.model||'gemini-2.5-flash')}"><p class="tiny">Solo se usa para leer boletas (no para Looker). Gratis en aistudio.google.com/apikey</p></div>
+  <div class="card"><h2>Extracción de boletas (IA · Gemini)</h2><label>API key</label><input id="cGemKey" type="password" value="${esc(c.gemini.apiKey||'')}" placeholder="AIza…"><label>Modelo</label><input id="cGemModel" value="${esc(c.gemini.model||'gemini-2.0-flash')}"><p class="tiny">Solo se usa para leer boletas (no para Looker). Gratis en aistudio.google.com/apikey</p></div>
+  <div class="card"><h2>Firebase</h2><p class="tiny">Recomendado: pega tu config UNA vez en la constante <b>FIREBASE_CONFIG</b> arriba de index.html y súbelo al repo. O pega aquí el <b>firebaseConfig</b> (acepto el bloque completo):</p><textarea id="fbJson" placeholder='apiKey: "…", authDomain: "…", projectId: "…", …'></textarea></div>
   <div class="btn-row"><button class="btn" id="cfgSave">Guardar configuración</button></div>`;
   app.innerHTML=html;bindApar(c);
 
   function drawMetas(){const rowEN=d=>{const m=metaOf(AREA_EN,d);const seg=SEGURO_DEPTS.has(d);
     return `<div class="row" style="align-items:center;margin-bottom:6px"><div style="flex:1.1;font-size:13px;font-weight:700">${d}</div>
-      <input class="meta-inp" data-k="${metaKey(AREA_EN,d)}" data-t="garantia" inputmode="numeric" value="${CLP(m.gar)}" placeholder="Garantía">
-      ${seg?`<input class="meta-inp" data-k="${metaKey(AREA_EN,d)}" data-t="seguro" inputmode="numeric" value="${CLP(m.seg)}" placeholder="Seguro">`:`<div style="flex:1"></div>`}</div>`;};
-    const rowLB=d=>{const m=metaOf(AREA_LB,d);return `<div class="row" style="align-items:center;margin-bottom:6px"><div style="flex:1.1;font-size:13px;font-weight:700">${d}</div><input class="meta-inp" data-k="${metaKey(AREA_LB,d)}" data-t="garantia" inputmode="numeric" value="${CLP(m.gar)}" placeholder="Garantía"><div style="flex:1"></div></div>`;};
-    $("#metasBox").innerHTML=`<h3>${AREA_EN}</h3>`+DEPTOS_EN.map(rowEN).join("")+`<h3>${AREA_LB}</h3>`+DEPTOS_LB.map(rowLB).join("");
-    $$("#metasBox .meta-inp").forEach(inp=>inp.oninput=()=>{const p=inp.selectionStart,old=inp.value;inp.value=CLP(num(inp.value));inp.selectionStart=inp.selectionEnd=Math.max(0,p+(inp.value.length-old.length));});}
+      <input data-k="${metaKey(AREA_EN,d)}" data-t="garantia" inputmode="numeric" value="${m.gar}" placeholder="Garantía">
+      ${seg?`<input data-k="${metaKey(AREA_EN,d)}" data-t="seguro" inputmode="numeric" value="${m.seg}" placeholder="Seguro">`:`<div style="flex:1"></div>`}</div>`;};
+    const rowLB=d=>{const m=metaOf(AREA_LB,d);return `<div class="row" style="align-items:center;margin-bottom:6px"><div style="flex:1.1;font-size:13px;font-weight:700">${d}</div><input data-k="${metaKey(AREA_LB,d)}" data-t="garantia" inputmode="numeric" value="${m.gar}" placeholder="Garantía"><div style="flex:1"></div></div>`;};
+    $("#metasBox").innerHTML=`<h3>${AREA_EN}</h3>`+DEPTOS_EN.map(rowEN).join("")+`<h3>${AREA_LB}</h3>`+DEPTOS_LB.map(rowLB).join("");}
   drawMetas();
 
   Store.subscribeUsers(list=>{const box=$("#usersBox");if(!box)return;const pend=list.filter(u=>u.estado!=="activo"),act=list.filter(u=>u.estado==="activo");
-    const delBtn=u=>u.uid===Store.user.uid?'':`<button class="btn ghost sm" data-del="${u.uid}" data-name="${esc(u.display)}">Eliminar</button>`;
-    box.innerHTML=(pend.length?`<h3>Pendientes</h3>`+pend.map(u=>`<div class="list-item"><div class="li-main"><div class="t">${esc(u.display)} <span class="chip warn">pendiente</span></div><div class="s">${esc(u.username)} · N° ${esc(u.codigo||'')}</div></div><div class="btn-row" style="margin:0"><button class="btn sm" data-appr="${u.uid}">Aprobar</button>${delBtn(u)}</div></div>`).join(""):'')
-      +`<h3>Activos</h3>`+(act.length?act.map(u=>`<div class="list-item"><div class="li-main"><div class="t">${esc(u.display)} ${u.rol==='admin'?'<span class="chip acc">admin</span>':''}</div><div class="s">${esc(u.username)} · N° ${esc(u.codigo||'')}</div></div><div class="btn-row" style="margin:0"><button class="btn ghost sm" data-rol="${u.uid}" data-cur="${u.rol}">${u.rol==='admin'?'Quitar admin':'Hacer admin'}</button>${delBtn(u)}</div></div>`).join(""):'<p class="tiny">Sin usuarios.</p>');
+    box.innerHTML=(pend.length?`<h3>Pendientes</h3>`+pend.map(u=>`<div class="list-item"><div class="li-main"><div class="t">${esc(u.display)} <span class="chip warn">pendiente</span></div><div class="s">${esc(u.username)} · N° ${esc(u.codigo||'')}</div></div><button class="btn sm" data-appr="${u.uid}">Aprobar</button></div>`).join(""):'')
+      +`<h3>Activos</h3>`+(act.length?act.map(u=>`<div class="list-item"><div class="li-main"><div class="t">${esc(u.display)} ${u.rol==='admin'?'<span class="chip acc">admin</span>':''}</div><div class="s">${esc(u.username)} · N° ${esc(u.codigo||'')}</div></div><button class="btn ghost sm" data-rol="${u.uid}" data-cur="${u.rol}">${u.rol==='admin'?'Quitar admin':'Hacer admin'}</button></div>`).join(""):'<p class="tiny">Sin usuarios.</p>');
     $$("#usersBox [data-appr]").forEach(b=>b.onclick=async()=>{await Store.setUser(b.dataset.appr,{estado:"activo"});toast("Aprobado");});
-    $$("#usersBox [data-rol]").forEach(b=>b.onclick=async()=>{await Store.setUser(b.dataset.rol,{rol:b.dataset.cur==='admin'?'user':'admin'});toast("Rol actualizado");});
-    $$("#usersBox [data-del]").forEach(b=>b.onclick=async()=>{if(!confirm("¿Eliminar a "+b.dataset.name+"? (borra su perfil; su acceso de Firebase Auth se elimina aparte en la consola)"))return;try{await Store.deleteUser(b.dataset.del);toast("Usuario eliminado");}catch(err){toast("Error: "+err.message);}});});
+    $$("#usersBox [data-rol]").forEach(b=>b.onclick=async()=>{await Store.setUser(b.dataset.rol,{rol:b.dataset.cur==='admin'?'user':'admin'});toast("Rol actualizado");});});
 
   Store.subscribeAvances(list=>{const el=$("#avList");if(!el)return;el.innerHTML=list.length?`<h3>Avances cargados</h3>`+list.slice(0,8).map(a=>`<div class="list-item"><div class="li-main"><div class="t">${esc(a.fecha||'')}</div><div class="s">${(a.deptos||[]).length} depto(s) · ${(a.vendedores||[]).length} asesor(es)</div></div><button class="icon-btn" data-dela="${a.id}">🗑</button></div>`).join(""):'';
     $$("#avList [data-dela]").forEach(b=>b.onclick=async()=>{if(confirm("¿Eliminar avance?"))await Store.deleteAvance(b.dataset.dela);});});
@@ -873,19 +619,16 @@ function renderConfig(app){const c=Store.config;const admin=Store.isAdmin();cons
         catch(err){toast("Error: "+err.message);btn.disabled=false;btn.textContent="Guardar avance";}};
     }catch(err){st.innerHTML=`<div class="ocr-note">Error leyendo: ${esc(err.message)}</div>`;}};
 
-  $("#npsFile").onchange=async e=>{const files=[...e.target.files];if(!files.length)return;const st=$("#npsStatus");st.innerHTML=`<div class="ocr-note">Procesando ${files.length} archivo(s)…</div>`;
-    const obj=Object.assign({deptos:[],asesores:[]},Store.npsCache||{});
-    try{for(const f of files){const head=await f.slice(0,200).text();
-        if(/<html|<table|<tr/i.test(head)){const txt=await f.text();obj.deptos=parseNpsDeptos(txt);}
-        else{const buf=await f.arrayBuffer();obj.asesores=await parseNpsAsesores(buf);}}
-      await Store.saveNps(obj);st.innerHTML=`<div class="ocr-note">✓ NPS guardado: ${obj.deptos.length} depto(s), ${obj.asesores.length} respuesta(s). Míralo en Avance.</div>`;}
-    catch(err){st.innerHTML=`<div class="ocr-note">Error NPS: ${esc(err.message)}</div>`;}};
-
   $("#cfgSave").onclick=async()=>{c.mes={inicio:$("#cMesIni").value,fin:$("#cMesFin").value};
     $$("#metasBox [data-k]").forEach(inp=>{const k=inp.dataset.k;c.metas[k]=c.metas[k]||{};c.metas[k][inp.dataset.t]=num(inp.value);});
-    c.gemini.apiKey=$("#cGemKey").value.trim();c.gemini.model=$("#cGemModel").value.trim()||"gemini-2.5-flash";c.theme.accent=$("#cAccent").value;
-    await Store.saveConfig(c);applyTheme();toast("Configuración guardada ✓");};
+    c.gemini.apiKey=$("#cGemKey").value.trim();c.gemini.model=$("#cGemModel").value.trim()||"gemini-2.0-flash";c.theme.accent=$("#cAccent").value;
+    const jt=$("#fbJson").value.trim();if(jt){const fb=parseFirebaseBlock(jt);if(!fb)return toast("No pude leer la config de Firebase");c.firebase=Object.assign(c.firebase,fb);}
+    await Store.saveConfig(c);applyTheme();toast("Configuración guardada ✓");
+    if(c.firebase.apiKey&&c.firebase.projectId&&Store.mode!=="firebase"&&confirm("Firebase configurado. ¿Recargar para conectar?"))location.reload();};
 }
+function parseFirebaseBlock(t){try{return JSON.parse(t);}catch{}
+  const obj={};["apiKey","authDomain","projectId","storageBucket","messagingSenderId","appId"].forEach(k=>{const m=t.match(new RegExp(k+"\\s*[:=]\\s*[\"']([^\"']+)[\"']"));if(m)obj[k]=m[1];});
+  return obj.apiKey?obj:null;}
 function bindApar(c){$("#mDark").onclick=()=>{localStorage.setItem("re_mode","dark");applyTheme();renderConfig($("#app"));};
   $("#mLight").onclick=()=>{localStorage.setItem("re_mode","light");applyTheme();renderConfig($("#app"));};
   $$("#app .swatch").forEach(s=>s.onclick=async()=>{c.theme.accent=s.dataset.h;$("#cAccent").value=s.dataset.h;$$("#app .swatch").forEach(x=>x.classList.remove("sel"));s.classList.add("sel");applyThemeAccent(s.dataset.h);Store.lsSet("re4_config",c);if(Store.isAdmin())await Store.saveConfig(c);});
@@ -896,7 +639,6 @@ function bindApar(c){$("#mDark").onclick=()=>{localStorage.setItem("re_mode","da
   await Store.restoreSession();applyTheme();
   Store.subscribeVentas(()=>{updateHeader();if(CURRENT==="reporte")renderReporte($("#app"));});
   Store.subscribeAvances(()=>{updateHeader();if(CURRENT==="avance")renderAvance($("#app"));});
-  Store.subscribeNps(()=>{if(CURRENT==="avance")renderAvance($("#app"));});
   updateHeader();render();
   if("serviceWorker" in navigator){try{navigator.serviceWorker.register("sw.js");}catch{}}
 })();
