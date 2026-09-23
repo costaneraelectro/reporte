@@ -715,11 +715,11 @@ function reporteFull(R,agg){
   }
   const html=`<div class="fs" id="fs"><button class="fs-close" id="fsX">✕</button>
     <h1>Reporte Electro</h1><div class="fs-date">${fechaLarga(repDate)}</div>
-    <div class="fs-rot">↻ Gira el teléfono para ver todas las cifras · o usa 📥 Imagen</div>
     <div class="fs-kpis"><div class="k"><div class="l">Garantía</div><div class="n">${CLP(R.tGar)}</div></div><div class="k"><div class="l">Seguro</div><div class="n">${CLP(R.tSeg)}</div></div><div class="k"><div class="l">Total</div><div class="n">${CLP(R.tot)}</div></div><div class="k"><div class="l">Cumpl.</div><div class="n">${R.tMetaDia?R.pctT+'%':'—'} <span class="sem ${R.esT}"></span></div></div></div>
     <table><thead><tr><th>Área / Depto</th><th>Garantía</th><th>Seguro</th><th>Meta</th><th>Cumpl.</th><th>Falta</th></tr></thead>
     <tbody>${rows}<tr class="total"><td>TOTAL TIENDA</td><td>${CLP(R.tGar)}</td><td>${CLP(R.tSeg)}</td><td>${R.tMetaDia?CLP(R.tMetaDia):'—'}</td><td>${R.tMetaDia?R.pctT+'%':'—'}</td><td>${R.tMetaDia?CLP(R.faltaT):'—'}</td></tr></tbody></table>
     ${R.faltaT>0?`<p class="fs-foot">Falta ${CLP(R.faltaT)} para la meta diaria.</p>`:''}
+    <div class="fs-rot">↻ Gira el teléfono para ver todas las cifras · o usa 📥 Imagen</div>
     ${agg?`<h2 style="margin-top:22px">No mix</h2><table><thead><tr><th>Asesor</th><th>Departamento</th><th>Monto</th></tr></thead><tbody>${nmRows}</tbody></table>
     <h2 style="margin-top:22px">${fpBadge()} y ${fpBadge2()} por asesor</h2><table><thead><tr><th>Asesor</th><th>Canje</th><th>Fpuntos + $ Pesos</th></tr></thead><tbody>${canRows}</tbody></table>`:''}</div>`;
   document.body.insertAdjacentHTML("beforeend",html);$("#fsX").onclick=()=>$("#fs").remove();
@@ -777,7 +777,7 @@ function attachBetaHtml(){
   const demo=[["Teléfonos",42,25],["Computadores",30,12],["Tablets",15,7]];
   const rows=demo.map(r=>{const p=r[1]?Math.round(r[2]/r[1]*100):0;const cls=p>=50?'g':p>=30?'y':'r';return `<tr><td><b>${r[0]}</b></td><td>${r[1]}</td><td>${r[2]}</td><td><span class="nps ${cls}">${p}%</span></td></tr>`;}).join("");
   return `<div class="card" style="border:1px dashed var(--accent)">
-    <div class="row" style="align-items:center;gap:8px"><img src="attach.svg" alt="" style="height:34px"><div><h2 style="margin:0">Attach Rate <span class="chip acc">Beta</span></h2><p class="tiny" style="margin:2px 0 0">Cruce de productos elegibles × accesorios. Próximamente + reporte de Planes.</p></div></div>
+    <div class="row" style="align-items:center;gap:10px"><img src="attach.svg" alt="" style="height:44px"><div><h2 style="margin:0">Próximamente <span class="chip acc">Beta</span></h2><p class="tiny" style="margin:2px 0 0">Reporte de <b>Attach Rate</b>, reporte de <b>Planes</b> y reporte de <b>Exchange</b>. Attach Rate = cruce de productos elegibles × accesorios.</p></div></div>
     <details style="margin-top:10px"><summary class="tiny" style="cursor:pointer">Ver vista previa (datos de ejemplo)</summary>
     <div class="rep-wrap" style="margin-top:8px"><table><thead><tr><th>Categoría</th><th>Elegibles</th><th>Con accesorio</th><th>Attach %</th></tr></thead><tbody>${rows}</tbody></table></div>
     <p class="tiny" style="margin-top:6px;color:var(--muted2)">Ejemplo ilustrativo. La beta real se conectará a datos pronto.</p></details></div>`;}
