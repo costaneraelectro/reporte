@@ -125,6 +125,8 @@
   .fs{position:fixed;inset:0;background:#fff;color:#111;z-index:200;overflow:auto;padding:16px}
   .fs .fs-close{position:fixed;top:12px;right:12px;background:#111;color:#fff;border:none;width:40px;height:40px;border-radius:12px;font-size:18px;cursor:pointer;z-index:210}
   .fs h1{font-size:22px;margin:2px 0 2px;text-align:center}
+  .fs-rot{display:none;text-align:center;font-size:11px;color:#777;background:#f3f6ea;border-radius:8px;padding:5px 8px;margin:4px auto 8px}
+  @media(max-width:480px) and (orientation:portrait){.fs-rot{display:block}}
   .fs .fs-date{text-align:center;color:#555;margin-bottom:6px;text-transform:capitalize}
   .fs .fs-kpis{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:8px 0 12px}
   .fs .fs-kpis .k{background:#f3f6ea;border-radius:10px;padding:8px 12px;text-align:center;min-width:96px}
@@ -387,6 +389,8 @@ const ASESORES=[
   {codigo:"507326",nombre:"Fernanda Valenzuela"},{codigo:"672106",nombre:"Joaquin Moris"},{codigo:"699322",nombre:"Kevin Taico"},
   {codigo:"570303",nombre:"Christopher Mendez"}
 ];
+// Aplica solo el override de nombre (Yesenia Nicole Gonzalez -> Nicole Gonzalez) sin acortar el resto.
+function fixNombre(n){const raw=clean(n);if(!raw)return raw;const k=norm(raw);for(const kk in NOMBRE_OVERRIDES){if(k.includes(kk)||kk.includes(k))return NOMBRE_OVERRIDES[kk];}return raw;}
 function listaVendedores(){return ASESORES.slice().sort((a,b)=>a.nombre.localeCompare(b.nombre));}
 function opcionesAsesor(sel){const l=listaVendedores();
   return `<option value="">— elegir asesor —</option>`+l.map(v=>`<option value="${esc(v.codigo)}" data-nom="${esc(v.nombre)}" ${sel===v.codigo?'selected':''}>${esc(v.nombre)} (${esc(v.codigo)})</option>`).join("");}
@@ -657,16 +661,16 @@ function renderReporte(app){const agg=aggDia(repDate);const mi=mesInfo();const d
   // detalle por asesor (garantía/seguro)
   let det="";const addAses=(label,ases)=>{const names=Object.keys(ases).filter(nm=>!esJefe(nm));if(!names.length)return;
     det+=`<tr class="area-row"><td>${label}</td><td>Garantía</td><td>Seguro</td><td>Total</td></tr>`;
-    names.forEach(nm=>{const x=ases[nm];det+=`<tr class="asesor"><td>${esc(nm)}</td><td>${CLP(x.gar)}</td><td>${CLP(x.seg)}</td><td>${CLP(x.gar+x.seg)}</td></tr>`;});};
+    names.forEach(nm=>{const x=ases[nm];det+=`<tr class="asesor"><td>${esc(fixNombre(nm))}</td><td>${CLP(x.gar)}</td><td>${CLP(x.seg)}</td><td>${CLP(x.gar+x.seg)}</td></tr>`;});};
   DEPTOS_EN.forEach(d=>addAses(AREA_EN+" · "+d,agg.en[d].ases));addAses(AREA_LB,agg.lb.ases);
   if(!det)det=`<tr><td colspan="4" class="center muted" style="padding:16px">Sin ventas hoy</td></tr>`;
 
   // no mix (asesor + departamento + monto)
-  let nm=agg.nomix.items.length?agg.nomix.items.map(x=>`<tr><td>${esc(x.asesor)}</td><td>${esc(x.dep)}</td><td>${CLP(x.monto)}</td></tr>`).join("")+`<tr class="total"><td>TOTAL NO MIX</td><td></td><td>${CLP(agg.nomix.total)}</td></tr>`:`<tr><td colspan="3" class="center muted" style="padding:14px">Sin no mix hoy</td></tr>`;
+  let nm=agg.nomix.items.length?agg.nomix.items.map(x=>`<tr><td>${esc(fixNombre(x.asesor))}</td><td>${esc(x.dep)}</td><td>${CLP(x.monto)}</td></tr>`).join("")+`<tr class="total"><td>TOTAL NO MIX</td><td></td><td>${CLP(agg.nomix.total)}</td></tr>`:`<tr><td colspan="3" class="center muted" style="padding:14px">Sin no mix hoy</td></tr>`;
 
   // canjes: fpuntos + fpuntos+pesos por asesor (conteo)
   const canNames=[...new Set([...Object.keys(agg.fp.ases),...Object.keys(agg.fpp.ases)])];
-  let can=canNames.length?canNames.map(nm2=>`<tr><td>${esc(nm2)}</td><td>${agg.fp.ases[nm2]||0}</td><td>${agg.fpp.ases[nm2]||0}</td></tr>`).join("")+`<tr class="total"><td>TOTAL</td><td>${agg.fp.total}</td><td>${agg.fpp.total}</td></tr>`:`<tr><td colspan="3" class="center muted" style="padding:14px">Sin canjes hoy</td></tr>`;
+  let can=canNames.length?canNames.map(nm2=>`<tr><td>${esc(fixNombre(nm2))}</td><td>${agg.fp.ases[nm2]||0}</td><td>${agg.fpp.ases[nm2]||0}</td></tr>`).join("")+`<tr class="total"><td>TOTAL</td><td>${agg.fp.total}</td><td>${agg.fpp.total}</td></tr>`:`<tr><td colspan="3" class="center muted" style="padding:14px">Sin canjes hoy</td></tr>`;
 
   // registros individuales del día (todas las categorías) — el admin edita monto o elimina
   const admin=Store.isAdmin();
@@ -674,11 +678,11 @@ function renderReporte(app){const agg=aggDia(repDate);const mi=mesInfo();const d
   const conMonto={GEXT:1,SEGURO:1,NOMIX:1};
   // exchange (trade in)
   const exs=Store.ventasCache.filter(v=>v.fecha===repDate&&v.categoria==="EXCHANGE").sort((a,b)=>(b.ts||0)-(a.ts||0));
-  let exRows=exs.length?exs.map(v=>`<tr><td>${esc(v.asesorNombre||'')}</td><td>${esc(v.idTradeIn||'')}</td><td>${esc(v.folioBolsa||'')}</td></tr>`).join("")+`<tr class="total"><td>TOTAL EXCHANGE</td><td colspan="2">${exs.length}</td></tr>`:`<tr><td colspan="3" class="center muted" style="padding:14px">Sin exchange hoy</td></tr>`;
+  let exRows=exs.length?exs.map(v=>`<tr><td>${esc(fixNombre(v.asesorNombre||""))}</td><td>${esc(v.idTradeIn||'')}</td><td>${esc(v.folioBolsa||'')}</td></tr>`).join("")+`<tr class="total"><td>TOTAL EXCHANGE</td><td colspan="2">${exs.length}</td></tr>`:`<tr><td colspan="3" class="center muted" style="padding:14px">Sin exchange hoy</td></tr>`;
   const regs=Store.ventasCache.filter(v=>v.fecha===repDate).sort((a,b)=>(b.ts||0)-(a.ts||0));
   let regRows=regs.length?regs.map(v=>{const montoCel=(v.categoria==="FPUNTOS"||v.categoria==="FPUNTOSPESOS")?"+1":CLP(v.monto);
     const acc=admin?`<td style="white-space:nowrap">${conMonto[v.categoria]?`<button class="icon-btn" data-editv="${v.id}" data-monto="${v.monto||0}" title="Editar monto">✏️</button>`:''}<button class="icon-btn" data-delv="${v.id}" title="Eliminar">🗑</button></td>`:'';
-    return `<tr><td>${esc(v.asesorNombre||'')}</td><td>${TIPO[v.categoria]||v.categoria||''}</td><td>${esc(v.departamento||v.area||'')}</td><td>${montoCel}</td>${acc}</tr>`;}).join(""):`<tr><td colspan="${admin?5:4}" class="center muted" style="padding:14px">Sin registros este día</td></tr>`;
+    return `<tr><td>${esc(fixNombre(v.asesorNombre||''))}</td><td>${TIPO[v.categoria]||v.categoria||''}</td><td>${esc(v.departamento||v.area||'')}</td><td>${montoCel}</td>${acc}</tr>`;}).join(""):`<tr><td colspan="${admin?5:4}" class="center muted" style="padding:14px">Sin registros este día</td></tr>`;
 
   app.innerHTML=`
   <div class="card"><div class="row" style="align-items:center"><div style="flex:1"><input type="date" id="repDate" value="${repDate}"></div><button class="btn sm" id="btnFull" style="flex:none">🖥️ Reporte</button><button class="btn sm secondary" id="btnImg" style="flex:none">📥 Imagen</button></div>
@@ -705,12 +709,13 @@ function reporteFull(R,agg){
     rows+=`<tr><td><b>${f.label}</b></td><td>${CLP(f.gar)}</td><td>${SEGURO_DEPTS.has(f.label)?CLP(f.seg):'—'}</td><td>${f.hasMeta?CLP(f.metaDia):'—'}</td><td>${f.hasMeta?'<span class="sem '+f.es+'"></span>'+f.pct+'%':'—'}</td><td>${f.hasMeta?CLP(f.falta):'—'}</td></tr>`;});
   let nmRows="",canRows="";
   if(agg){
-    nmRows=agg.nomix.items.length?agg.nomix.items.map(x=>`<tr><td>${esc(x.asesor)}</td><td>${esc(x.dep)}</td><td>${CLP(x.monto)}</td></tr>`).join("")+`<tr class="total"><td>TOTAL NO MIX</td><td></td><td>${CLP(agg.nomix.total)}</td></tr>`:`<tr><td colspan="3" class="center muted">Sin no mix hoy</td></tr>`;
+    nmRows=agg.nomix.items.length?agg.nomix.items.map(x=>`<tr><td>${esc(fixNombre(x.asesor))}</td><td>${esc(x.dep)}</td><td>${CLP(x.monto)}</td></tr>`).join("")+`<tr class="total"><td>TOTAL NO MIX</td><td></td><td>${CLP(agg.nomix.total)}</td></tr>`:`<tr><td colspan="3" class="center muted">Sin no mix hoy</td></tr>`;
     const canNames=[...new Set([...Object.keys(agg.fp.ases),...Object.keys(agg.fpp.ases)])];
-    canRows=canNames.length?canNames.map(n=>`<tr><td>${esc(n)}</td><td>${agg.fp.ases[n]||0}</td><td>${agg.fpp.ases[n]||0}</td></tr>`).join("")+`<tr class="total"><td>TOTAL</td><td>${agg.fp.total}</td><td>${agg.fpp.total}</td></tr>`:`<tr><td colspan="3" class="center muted">Sin canjes hoy</td></tr>`;
+    canRows=canNames.length?canNames.map(n=>`<tr><td>${esc(fixNombre(n))}</td><td>${agg.fp.ases[n]||0}</td><td>${agg.fpp.ases[n]||0}</td></tr>`).join("")+`<tr class="total"><td>TOTAL</td><td>${agg.fp.total}</td><td>${agg.fpp.total}</td></tr>`:`<tr><td colspan="3" class="center muted">Sin canjes hoy</td></tr>`;
   }
   const html=`<div class="fs" id="fs"><button class="fs-close" id="fsX">✕</button>
     <h1>Reporte Electro</h1><div class="fs-date">${fechaLarga(repDate)}</div>
+    <div class="fs-rot">↻ Gira el teléfono para ver todas las cifras · o usa 📥 Imagen</div>
     <div class="fs-kpis"><div class="k"><div class="l">Garantía</div><div class="n">${CLP(R.tGar)}</div></div><div class="k"><div class="l">Seguro</div><div class="n">${CLP(R.tSeg)}</div></div><div class="k"><div class="l">Total</div><div class="n">${CLP(R.tot)}</div></div><div class="k"><div class="l">Cumpl.</div><div class="n">${R.tMetaDia?R.pctT+'%':'—'} <span class="sem ${R.esT}"></span></div></div></div>
     <table><thead><tr><th>Área / Depto</th><th>Garantía</th><th>Seguro</th><th>Meta</th><th>Cumpl.</th><th>Falta</th></tr></thead>
     <tbody>${rows}<tr class="total"><td>TOTAL TIENDA</td><td>${CLP(R.tGar)}</td><td>${CLP(R.tSeg)}</td><td>${R.tMetaDia?CLP(R.tMetaDia):'—'}</td><td>${R.tMetaDia?R.pctT+'%':'—'}</td><td>${R.tMetaDia?CLP(R.faltaT):'—'}</td></tr></tbody></table>
@@ -765,7 +770,17 @@ function npsCardsHtml(){const n=Store.npsCache;
     <th><select id="npsFN"><option value="">NPS ▾</option><option value="g" ${npsFilt.nps==='g'?'selected':''}>🟢 9-10</option><option value="y" ${npsFilt.nps==='y'?'selected':''}>🟡 7-8</option><option value="r" ${npsFilt.nps==='r'?'selected':''}>🔴 ≤6</option></select></th>
     <th></th></tr>`;
   return `<div class="card">${logo}<h2 style="text-align:center">NPS por departamento</h2><div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Departamento</th><th>Encuestas</th><th>NPS</th></tr></thead><tbody>${dRows}</tbody></table></div></div>
-  <div class="card"><h2>Ranking NPS por asesor</h2>${activos}<div class="rep-wrap" style="margin-top:10px"><table class="nps-rank"><thead>${filtRow}<tr><th>Fecha</th><th>Vendedor</th><th>Jefe de ventas</th><th>Departamento</th><th>NPS</th><th>Comentario</th></tr></thead><tbody>${aRows}</tbody></table></div></div>`;}
+  <div class="card"><h2>Ranking NPS por asesor</h2>${activos}<div class="rep-wrap" style="margin-top:10px"><table class="nps-rank"><thead>${filtRow}<tr><th>Fecha</th><th>Vendedor</th><th>Jefe de ventas</th><th>Departamento</th><th>NPS</th><th>Comentario</th></tr></thead><tbody>${aRows}</tbody></table></div></div>
+  ${attachBetaHtml()}`;}
+// Attach Rate: cruce productos elegibles (teléfonos, compus, tablets…) × accesorios (audífonos, cables, cargadores, controles…)
+function attachBetaHtml(){
+  const demo=[["Teléfonos",42,25],["Computadores",30,12],["Tablets",15,7]];
+  const rows=demo.map(r=>{const p=r[1]?Math.round(r[2]/r[1]*100):0;const cls=p>=50?'g':p>=30?'y':'r';return `<tr><td><b>${r[0]}</b></td><td>${r[1]}</td><td>${r[2]}</td><td><span class="nps ${cls}">${p}%</span></td></tr>`;}).join("");
+  return `<div class="card" style="border:1px dashed var(--accent)">
+    <div class="row" style="align-items:center;gap:8px"><img src="attach.svg" alt="" style="height:34px"><div><h2 style="margin:0">Attach Rate <span class="chip acc">Beta</span></h2><p class="tiny" style="margin:2px 0 0">Cruce de productos elegibles × accesorios. Próximamente + reporte de Planes.</p></div></div>
+    <details style="margin-top:10px"><summary class="tiny" style="cursor:pointer">Ver vista previa (datos de ejemplo)</summary>
+    <div class="rep-wrap" style="margin-top:8px"><table><thead><tr><th>Categoría</th><th>Elegibles</th><th>Con accesorio</th><th>Attach %</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <p class="tiny" style="margin-top:6px;color:var(--muted2)">Ejemplo ilustrativo. La beta real se conectará a datos pronto.</p></details></div>`;}
 function bindNpsFiltros(app){const f=$("#npsFF"),v=$("#npsFV"),d=$("#npsFD"),nn=$("#npsFN");if(!f)return;
   f.onchange=e=>{npsFilt.fecha=e.target.value;renderAvance(app);};
   v.onchange=e=>{npsFilt.vend=e.target.value;renderAvance(app);};
@@ -796,8 +811,8 @@ function renderAvance(app){
   const pctMes=metaT?Math.round(avT/metaT*1000)/10:0;const esMes=estado(pctMes);
   const proy=(mi&&mi.diasTrans>0)?Math.round(avT/mi.diasTrans*mi.diasTot):0;
   const pctProy=metaT?Math.round(proy/metaT*1000)/10:0;
-  const ases=(vendSrc.vendedores||[]).filter(v=>(v.gext||v.seguro)&&!esJefe(v.nombre)).sort((a,b)=>(b.gext+b.seguro)-(a.gext+a.seguro));
-  const asesRows=ases.length?ases.map(v=>`<tr class="asesor"><td>${esc(v.nombre)}</td><td>${CLP(v.gext)}</td><td>${CLP(v.seguro)}</td><td>${CLP(v.gext+v.seguro)}</td></tr>`).join(""):`<tr><td colspan="4" class="center muted" style="padding:16px">Sin desglose por asesor</td></tr>`;
+  const ases=(vendSrc.vendedores||[]).filter(v=>(v.gext+v.seguro)>0&&!esJefe(v.nombre)).sort((a,b)=>(b.gext+b.seguro)-(a.gext+a.seguro));
+  const asesRows=ases.length?ases.map(v=>`<tr class="asesor"><td>${esc(nombreCorto(v.nombre))}</td><td>${CLP(v.gext)}</td><td>${CLP(v.seguro)}</td><td>${CLP(v.gext+v.seguro)}</td></tr>`).join(""):`<tr><td colspan="4" class="center muted" style="padding:16px">Sin desglose por asesor</td></tr>`;
   app.innerHTML=`
   <div class="card"><div class="row" style="align-items:center"><h2 style="flex:1">Avance del mes</h2><span class="chip acc">${mi?mi.diasRest+' días restantes':'configura el mes en ⚙️'}</span></div>
     ${mi?`<p class="sub">Mes comercial ${esc(mi.inicio)} → ${esc(mi.fin)} · van ${mi.diasTrans}/${mi.diasTot} días.</p>`:'<p class="sub">Configura el mes comercial en ⚙️ para el proyectado y la meta diaria.</p>'}
