@@ -85,6 +85,7 @@
   .reg-card details>summary{cursor:pointer;list-style:none;font-size:15px;padding:2px 0}
   .reg-card details>summary::-webkit-details-marker{display:none}
   table.reg-mini th,table.reg-mini td{font-size:11px;padding:5px 7px}
+  .users-mini .list-item{padding:6px 2px}.users-mini .li-main .t{font-size:12px}.users-mini .li-main .s{font-size:10px}.users-mini h3{font-size:11px;margin:8px 0 4px}.users-mini .btn.sm{padding:6px 9px;font-size:11px}
   table.reg-mini .icon-btn{width:26px;height:26px;font-size:13px;border-radius:8px}
   @media(max-width:480px){
     .topbar{padding:8px 10px;gap:6px}
@@ -283,7 +284,11 @@ const Store={mode:"local",db:null,auth:null,storage:null,user:null,config:null,
       if(this.mode==="firebase"){await this.db.collection("avances").doc(ex.id).set(merged);}
       else{const arr=this.lsGet("re4_avances",[]);const i=arr.findIndex(x=>x.id===ex.id);merged.id=ex.id;arr[i]=merged;this.lsSet("re4_avances",arr);this._emitA();}
       return merged;}
-    if(this.mode==="firebase"){const r=await this.db.collection("avances").add(a);a.id=r.id;}else{a.id=uid();const arr=this.lsGet("re4_avances",[]);arr.push(a);this.lsSet("re4_avances",arr);this._emitA();}return a;},
+    if(this.mode==="firebase"){const r=await this.db.collection("avances").add(a);a.id=r.id;this.pruneAvances();}else{a.id=uid();const arr=this.lsGet("re4_avances",[]);arr.push(a);this.lsSet("re4_avances",arr);this.pruneAvances();this._emitA();}return a;},
+  pruneAvances(){const arr=(this.avancesCache||[]).slice().sort((a,b)=>(b.ts||0)-(a.ts||0));const keep=[];arr.forEach(a=>{if(!keep.includes(a.fecha)&&keep.length<2)keep.push(a.fecha);});
+    const del=arr.filter(a=>a.fecha&&!keep.includes(a.fecha));
+    if(this.mode==="firebase"){del.forEach(a=>this.db.collection("avances").doc(a.id).delete().catch(()=>{}));}
+    else if(del.length){const rest=this.lsGet("re4_avances",[]).filter(a=>keep.includes(a.fecha));this.lsSet("re4_avances",rest);}},
   async deleteAvance(id){if(this.mode==="firebase")await this.db.collection("avances").doc(id).delete();else{const arr=this.lsGet("re4_avances",[]).filter(x=>x.id!==id);this.lsSet("re4_avances",arr);this._emitA();}},
   subscribeAvances(cb){this.onAvances=cb;if(this.mode==="firebase"){this.db.collection("avances").orderBy("ts","desc").onSnapshot(s=>{this.avancesCache=s.docs.map(d=>Object.assign({id:d.id},d.data()));cb(this.avancesCache);});}else this._emitA();},
   _emitA(){this.avancesCache=this.lsGet("re4_avances",[]).sort((a,b)=>b.ts-a.ts);if(this.onAvances)this.onAvances(this.avancesCache);},
@@ -405,6 +410,17 @@ function parseNpsDeptos(text){const doc=new DOMParser().parseFromString(text,"te
     const dep=clean(c[iDep]?.textContent);if(!dep||/^total/i.test(dep))return;
     const npsTxt=clean(c[iNps]?.textContent).replace(/\./g,"").replace(",",".");const nps=parseFloat(npsTxt);
     out.push({dep,sample:num(c[iSam]?.textContent),nps:isNaN(nps)?null:Math.round(nps*10)/10});});
+  return out;}
+// Ranking NPS por asesor (Medallia HTML): Vendedor "Nombre (código)" · Sample Size · NPS Tienda
+function parseNpsRankAsesor(text){const doc=new DOMParser().parseFromString(text,"text/html");const table=doc.querySelector("table");if(!table)return[];
+  const rows=[...table.querySelectorAll("tr")];if(!rows.length)return[];
+  const heads=[...rows[0].querySelectorAll("th,td")].map(x=>norm(x.textContent));
+  const iV=heads.findIndex(h=>h.includes("vendedor")),iSam=heads.findIndex(h=>h.includes("sample")),iNps=heads.findIndex(h=>h.includes("nps tienda"));
+  const out=[];rows.slice(1).forEach(r=>{const c=[...r.querySelectorAll("td,th")];if(c.length<2)return;
+    const raw=clean(c[iV]?.textContent);if(!raw||/^total/i.test(raw))return;
+    const m=raw.match(/^(.*?)\s*\((\d+)\)\s*$/);const nombre=m?m[1].trim():raw,codigo=m?m[2]:"";
+    const npsTxt=clean(c[iNps]?.textContent).replace(/\./g,"").replace(",",".");const nps=parseFloat(npsTxt);
+    out.push({nombre:nombreCorto(nombre),codigo,sample:num(c[iSam]?.textContent),nps:isNaN(nps)?null:Math.round(nps*10)/10});});
   return out;}
 // Falabella respuestas (xlsx): una fila por encuesta
 async function parseNpsAsesores(buf){await ensureXLSX();const wb=XLSX.read(buf,{type:"array"});const ws=wb.Sheets[wb.SheetNames[0]];
@@ -776,8 +792,14 @@ function npsCardsHtml(){const n=Store.npsCache;
     <th><select id="npsFD"><option value="">Depto ▾</option>${opt(deps,npsFilt.depto)}</select></th>
     <th><select id="npsFN"><option value="">NPS ▾</option><option value="g" ${npsFilt.nps==='g'?'selected':''}>🟢 9-10</option><option value="y" ${npsFilt.nps==='y'?'selected':''}>🟡 7-8</option><option value="r" ${npsFilt.nps==='r'?'selected':''}>🔴 ≤6</option></select></th>
     <th></th></tr>`;
-  return `<div class="card">${logo}<h2 style="text-align:center">NPS por departamento</h2><div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Departamento</th><th>Encuestas</th><th>NPS</th></tr></thead><tbody>${dRows}</tbody></table></div></div>
-  <div class="card"><h2>Ranking NPS por asesor</h2>${activos}<div class="rep-wrap" style="margin-top:10px"><table class="nps-rank"><thead>${filtRow}<tr><th>Fecha</th><th>Vendedor</th><th>Jefe de ventas</th><th>Departamento</th><th>NPS</th><th>Comentario</th></tr></thead><tbody>${aRows}</tbody></table></div></div>
+  // Ranking por asesor (archivo subido en Config); color como encuestas (nps tienda /10)
+  const rk=(n.rankAse||[]).slice().filter(r=>!esJefe(r.nombre)).sort((a,b)=>(b.nps??-999)-(a.nps??-999));
+  const rkRows=rk.length?rk.map(r=>`<tr><td>${esc(fixNombre(r.nombre))}</td><td>${r.sample||0}</td><td>${r.nps==null?'—':`<span class="nps ${npsClase(r.nps/10)}">${r.nps}</span>`}</td></tr>`).join(""):`<tr><td colspan="3" class="center muted">Sube el ranking por asesor en ⚙️ Config</td></tr>`;
+  return `<div class="card">${logo}<h2 style="text-align:center">NPS por departamento</h2><div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Departamento</th><th>Encuestas</th><th>NPS</th></tr></thead><tbody>${dRows}</tbody></table></div>
+    <details style="margin-top:12px"><summary style="cursor:pointer;font-weight:700">Ranking NPS por asesor</summary>
+      <div class="rep-wrap" style="margin-top:8px"><table><thead><tr><th>Asesor</th><th>Encuestas</th><th>NPS</th></tr></thead><tbody>${rkRows}</tbody></table></div></details>
+    <details style="margin-top:12px"><summary style="cursor:pointer;font-weight:700">Detalle de encuestas (notas y comentarios)</summary>
+      ${activos}<div class="rep-wrap" style="margin-top:8px"><table class="nps-rank"><thead>${filtRow}<tr><th>Fecha</th><th>Vendedor</th><th>Jefe de ventas</th><th>Departamento</th><th>NPS</th><th>Comentario</th></tr></thead><tbody>${aRows}</tbody></table></div></details></div>
   ${attachBetaHtml()}`;}
 // Attach Rate: cruce productos elegibles (teléfonos, compus, tablets…) × accesorios (audífonos, cables, cargadores, controles…)
 function attachBetaHtml(){
@@ -832,7 +854,7 @@ function renderAvance(app){
     <p class="tiny" style="margin-top:8px">Falta <b>${CLP(faltaT)}</b> para el plan · meta diaria <b>${CLP(mdT)}</b>.</p></div>
   <div class="card"><h2>Por área · departamento</h2><div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Área / Depto</th><th>Garantía</th><th>Seguro</th><th>Meta</th><th>Cumpl.</th><th>Falta</th></tr></thead>
     <tbody>${rows}<tr class="total"><td>TOTAL TIENDA</td><td>${CLP(TG)}</td><td>${CLP(TS)}</td><td>${CLP(metaT)}</td><td class="pct${esMes}">${metaT?pctMes+'%':'—'}</td><td>${CLP(faltaT)}</td></tr></tbody></table></div></div>
-  <div class="card"><h2>Venta por asesor</h2><div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Asesor</th><th>Garantía</th><th>Seguro</th><th>Total</th></tr></thead><tbody>${asesRows}</tbody></table></div></div>`
+  <div class="card"><details><summary style="cursor:pointer;font-weight:700">Garantía · detalle por asesor</summary><div class="rep-wrap" style="margin-top:10px"><table><thead><tr><th>Asesor</th><th>Garantía</th><th>Seguro</th><th>Total</th></tr></thead><tbody>${asesRows}</tbody></table></div></details></div>`
   +npsCardsHtml();
   bindNpsFiltros(app);
 }
@@ -849,7 +871,7 @@ function renderConfig(app){const c=Store.config;const admin=Store.isAdmin();cons
   html+=`<div class="card"><h2>Mes comercial</h2><div class="grid2"><div><label>Inicio</label><input id="cMesIni" type="date" value="${esc(c.mes.inicio||'')}"></div><div><label>Término</label><input id="cMesFin" type="date" value="${esc(c.mes.fin||'')}"></div></div>
     ${mi?`<p class="tiny" style="margin-top:8px">Quedan <b style="color:var(--accent)">${mi.diasRest}</b> día(s) para que termine el mes (van ${mi.diasTrans}/${mi.diasTot}).</p>`:''}</div>
   <div class="card"><h2>Metas</h2><div id="metasBox"></div></div>
-  <div class="card"><h2>Usuarios</h2><p class="sub">Aprueba cuentas y designa administradores.</p><div id="usersBox">Cargando…</div></div>
+  <div class="card users-mini"><details open><summary style="cursor:pointer;font-weight:800;font-size:17px">Usuarios</summary><p class="sub">Aprueba cuentas y designa administradores.</p><div id="usersBox">Cargando…</div></details></div>
   <div class="card"><h2>Subir avance de Looker</h2><p class="sub">Sube los HTML de Looker (Venta x Vendedor y/o Venta x Departamento). Puedes elegir ambos a la vez. <b>No usa IA.</b></p>
     <label>Fecha del avance</label><input type="date" id="avFecha" value="${todayStr()}">
     <label class="btn secondary" style="cursor:pointer;margin-top:10px">📄 Elegir archivo(s) (.html)<input id="avFile" type="file" accept=".html,.htm,.txt" multiple class="hidden"></label>
@@ -857,7 +879,6 @@ function renderConfig(app){const c=Store.config;const admin=Store.isAdmin();cons
   <div class="card"><h2>NPS (EPA)</h2><p class="sub">Sube el ranking por departamento (.xls de Medallia) y/o el detalle de respuestas (.xlsx). Puedes subir ambos.</p>
     <label class="btn secondary" style="cursor:pointer">📊 Elegir archivo(s) NPS<input id="npsFile" type="file" accept=".xls,.xlsx,.html,.htm" multiple class="hidden"></label>
     <div id="npsStatus"></div></div>
-  <div class="card"><h2>Extracción de boletas (IA · Gemini)</h2><label>API key</label><input id="cGemKey" type="password" value="${esc(c.gemini.apiKey||'')}" placeholder="AIza…"><label>Modelo</label><input id="cGemModel" value="${esc(c.gemini.model||'gemini-2.5-flash')}"><p class="tiny">Solo se usa para leer boletas (no para Looker). Gratis en aistudio.google.com/apikey</p></div>
   <div class="btn-row"><button class="btn" id="cfgSave">Guardar configuración</button></div>`;
   app.innerHTML=html;bindApar(c);
 
@@ -896,16 +917,19 @@ function renderConfig(app){const c=Store.config;const admin=Store.isAdmin();cons
     }catch(err){st.innerHTML=`<div class="ocr-note">Error leyendo: ${esc(err.message)}</div>`;}};
 
   $("#npsFile").onchange=async e=>{const files=[...e.target.files];if(!files.length)return;const st=$("#npsStatus");st.innerHTML=`<div class="ocr-note">Procesando ${files.length} archivo(s)…</div>`;
-    const obj=Object.assign({deptos:[],asesores:[]},Store.npsCache||{});
-    try{for(const f of files){const head=await f.slice(0,200).text();
-        if(/<html|<table|<tr/i.test(head)){const txt=await f.text();obj.deptos=parseNpsDeptos(txt);}
-        else{const buf=await f.arrayBuffer();obj.asesores=await parseNpsAsesores(buf);}}
-      await Store.saveNps(obj);st.innerHTML=`<div class="ocr-note">✓ NPS guardado: ${obj.deptos.length} depto(s), ${obj.asesores.length} respuesta(s). Míralo en Avance.</div>`;}
-    catch(err){st.innerHTML=`<div class="ocr-note">Error NPS: ${esc(err.message)}</div>`;}};
+    const obj=Object.assign({deptos:[],asesores:[],rankAse:[]},Store.npsCache||{});const hecho=[];
+    try{for(const f of files){const head=(await f.slice(0,4000).text()).toLowerCase();
+        if(/<html|<table|<tr/i.test(head)){const txt=await f.text();
+          if(head.includes("nps tienda")&&head.includes("vendedor")){obj.rankAse=parseNpsRankAsesor(txt);hecho.push("Ranking asesor "+obj.rankAse.length);}
+          else if(head.includes("nps tienda")){obj.deptos=parseNpsDeptos(txt);hecho.push("NPS depto "+obj.deptos.length);}
+          else{hecho.push("HTML no reconocido");}
+        } else {const buf=await f.arrayBuffer();obj.asesores=await parseNpsAsesores(buf);hecho.push("Encuestas "+obj.asesores.length);}}
+      await Store.saveNps(obj);st.innerHTML=`<div class="ocr-note">✓ Guardado: ${esc(hecho.join(" · "))}. Míralo en Avance.</div>`;}
+    catch(err){st.innerHTML=`<div class="ocr-note">Error: ${esc(err.message)}</div>`;}};
 
   $("#cfgSave").onclick=async()=>{c.mes={inicio:$("#cMesIni").value,fin:$("#cMesFin").value};
     $$("#metasBox [data-k]").forEach(inp=>{const k=inp.dataset.k;c.metas[k]=c.metas[k]||{};c.metas[k][inp.dataset.t]=num(inp.value);});
-    c.gemini.apiKey=$("#cGemKey").value.trim();c.gemini.model=$("#cGemModel").value.trim()||"gemini-2.5-flash";c.theme.accent=$("#cAccent").value;
+    c.theme.accent=$("#cAccent").value;
     await Store.saveConfig(c);applyTheme();toast("Configuración guardada ✓");};
 }
 function bindApar(c){$("#mDark").onclick=()=>{localStorage.setItem("re_mode","dark");applyTheme();renderConfig($("#app"));};
