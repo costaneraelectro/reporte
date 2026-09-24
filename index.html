@@ -638,19 +638,26 @@ function aggDia(fecha){
 
 /* ===================== REPORTE (día) ===================== */
 let repDate=todayStr();
-function buildFilas(agg,diasTot){ // filas para tabla y fullscreen
-  const filas=[];let tGar=0,tSeg=0,tMetaDia=0;
-  const push=(area,dep,label,c,metaMesOv)=>{const meta=metaOf(area,dep);const metaMes=metaMesOv!=null?metaMesOv:(meta.gar+meta.seg);const metaDia=metaMes/diasTot;
+// Avance mensual por depto (desde el último Looker) para la meta diaria dinámica.
+function avanceMesMap(){const en={};DEPTOS_EN.forEach(d=>en[d]=0);const lb={};DEPTOS_LB.forEach(d=>lb[d]=0);let lbTot=0;
+  const src=(Store.avancesCache||[]).find(a=>a.deptos&&a.deptos.length);
+  if(src)(src.deptos||[]).forEach(x=>{const v=(x.gext||0)+(x.seguro||0);if(x.area===AREA_LB){if(lb[x.dep]!=null)lb[x.dep]+=v;else lb["LINEA BLANCA"]+=v;lbTot+=v;}else if(en[x.dep]!=null)en[x.dep]+=v;});
+  return {en,lb,lbTot};}
+// Meta diaria dinámica: lo que falta del mes / días restantes.
+function buildFilas(agg,diasRest){
+  const filas=[];let tGar=0,tSeg=0,tMetaDia=0;const av=avanceMesMap();
+  const push=(area,dep,label,c,metaMesOv,avMes)=>{const meta=metaOf(area,dep);const metaMes=metaMesOv!=null?metaMesOv:(meta.gar+meta.seg);
+    const falcMes=Math.max(0,metaMes-(avMes||0));const metaDia=metaMes>0?falcMes/Math.max(1,diasRest):0;
     const tot=c.gar+c.seg;const pct=metaDia?Math.round(tot/metaDia*1000)/10:0;const falta=Math.max(0,Math.round(metaDia-tot));
     tGar+=c.gar;tSeg+=c.seg;tMetaDia+=metaDia;
     filas.push({area,label,gar:c.gar,seg:c.seg,metaDia,pct,es:estado(pct),falta,hasMeta:metaDia>0});};
-  filas.push({header:AREA_EN});DEPTOS_EN.forEach(d=>push(AREA_EN,d,d,agg.en[d]));
-  filas.push({header:AREA_LB});push(AREA_LB,"",AREA_LB,agg.lb,metaLB());
+  filas.push({header:AREA_EN});DEPTOS_EN.forEach(d=>push(AREA_EN,d,d,agg.en[d],null,av.en[d]));
+  filas.push({header:AREA_LB});push(AREA_LB,"",AREA_LB,agg.lb,metaLB(),av.lbTot);
   const tot=tGar+tSeg;const pctT=tMetaDia?Math.round(tot/tMetaDia*1000)/10:0;
   return {filas,tGar,tSeg,tot,tMetaDia,pctT,esT:estado(pctT),faltaT:Math.max(0,Math.round(tMetaDia-tot))};
 }
-function renderReporte(app){const agg=aggDia(repDate);const mi=mesInfo();const diasTot=mi?mi.diasTot:30;
-  const R=buildFilas(agg,diasTot);
+function renderReporte(app){const agg=aggDia(repDate);const mi=mesInfo();const diasRest=mi?mi.diasRest:1;
+  const R=buildFilas(agg,diasRest);
   let rows="";R.filas.forEach(f=>{if(f.header){rows+=`<tr class="area-row"><td>${f.header}</td><td>Garantía</td><td>${f.header===AREA_LB?'':'Seguro'}</td><td>Meta día</td><td>Cumpl.</td><td>Falta</td></tr>`;return;}
     rows+=`<tr><td><b>${f.label}</b></td><td>${CLP(f.gar)}</td><td>${SEGURO_DEPTS.has(f.label)?CLP(f.seg):'—'}</td><td>${f.hasMeta?CLP(f.metaDia):'—'}</td><td class="pct${f.es}">${f.hasMeta?'<span class="sem '+f.es+'"></span>'+f.pct+'%':'—'}</td><td>${f.hasMeta?CLP(f.falta):'—'}</td></tr>`;});
   const kpis=`<div class="kpi"><div class="k"><div class="l">Garantía hoy</div><div class="n">${CLP(R.tGar)}</div></div>
