@@ -918,12 +918,12 @@ function renderConfig(app){const c=Store.config;const admin=Store.isAdmin();cons
 
   $("#npsFile").onchange=async e=>{const files=[...e.target.files];if(!files.length)return;const st=$("#npsStatus");st.innerHTML=`<div class="ocr-note">Procesando ${files.length} archivo(s)…</div>`;
     const obj=Object.assign({deptos:[],asesores:[],rankAse:[]},Store.npsCache||{});const hecho=[];
-    try{for(const f of files){const head=(await f.slice(0,4000).text()).toLowerCase();
-        if(/<html|<table|<tr/i.test(head)){const txt=await f.text();
-          if(head.includes("nps tienda")&&head.includes("vendedor")){obj.rankAse=parseNpsRankAsesor(txt);hecho.push("Ranking asesor "+obj.rankAse.length);}
-          else if(head.includes("nps tienda")){obj.deptos=parseNpsDeptos(txt);hecho.push("NPS depto "+obj.deptos.length);}
-          else{hecho.push("HTML no reconocido");}
-        } else {const buf=await f.arrayBuffer();obj.asesores=await parseNpsAsesores(buf);hecho.push("Encuestas "+obj.asesores.length);}}
+    try{for(const f of files){const sig=await f.slice(0,8).text();
+        if(/^PK/.test(sig)||/\.xlsx$/i.test(f.name)){const buf=await f.arrayBuffer();obj.asesores=await parseNpsAsesores(buf);hecho.push("Encuestas "+obj.asesores.length);continue;}
+        const txt=await f.text();const low=txt.toLowerCase();
+        if(low.includes("nps tienda")&&low.includes("vendedor")){obj.rankAse=parseNpsRankAsesor(txt);hecho.push("Ranking asesor "+obj.rankAse.length);}
+        else if(low.includes("nps tienda")){obj.deptos=parseNpsDeptos(txt);hecho.push("NPS depto "+obj.deptos.length);}
+        else{hecho.push("HTML no reconocido");}}
       await Store.saveNps(obj);st.innerHTML=`<div class="ocr-note">✓ Guardado: ${esc(hecho.join(" · "))}. Míralo en Avance.</div>`;}
     catch(err){st.innerHTML=`<div class="ocr-note">Error: ${esc(err.message)}</div>`;}};
 
