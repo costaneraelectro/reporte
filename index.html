@@ -433,6 +433,19 @@ async function parseNpsAsesores(buf){await ensureXLSX();const wb=XLSX.read(buf,{
     out.push({fecha:(clean(row[iF]).split(" ")[0]||""),vendedor:nombreCorto(vend),jefe:nombreCorto(clean(row[iJ])),depto:clean(row[iD]),nps:npsv===""?null:num(npsv),razon:clean(row[iR])});}
   return out;}
 function npsClase(n){return n>=9?"g":n>=7?"y":"r";}
+function nombrePorCodigo(cod){cod=clean(cod);const a=ASESORES.find(x=>x.codigo===cod);return a?a.nombre:"";}
+const ATTACH_CATS=["COMPUTACION","TELEFONIA","VIDEOJUEGOS"];
+function parseAttach(text){const doc=new DOMParser().parseFromString(text,"text/html");const rows=[...doc.querySelectorAll("tr")];const out=[];
+  rows.forEach(r=>{if(r.classList.contains("subtotal")||r.classList.contains("total"))return;const c=[...r.querySelectorAll("td")];if(c.length<14)return;
+    const cat=clean(c[3].textContent).toUpperCase();if(!ATTACH_CATS.includes(cat))return;
+    const cod=clean(c[1].textContent),nom=clean(c[2].textContent);
+    out.push({codigo:cod,nombre:nom||nombrePorCodigo(cod),cat,eleg:num(c[4].textContent),solo:num(c[5].textContent),attach:num(c[6].textContent),totEleg:num(c[11].textContent),totAcc:num(c[12].textContent)});});
+  return out;}
+function parsePlanes(text){const doc=new DOMParser().parseFromString(text,"text/html");const rows=[...doc.querySelectorAll("tr")];const map={};let total=0;
+  rows.forEach(r=>{if(r.classList.contains("total"))return;const c=[...r.querySelectorAll("td")];if(c.length<5)return;
+    const cod=clean(c[1].textContent);if(!cod)return;const u=num(c[4].textContent);if(!map[cod])map[cod]={codigo:cod,nombre:nombrePorCodigo(cod),u:0};map[cod].u+=u;total+=u;});
+  return {asesores:Object.values(map).filter(x=>x.u>0),total};}
+function attachClase(pct,meta){return pct>=meta?"g":pct>=meta-8?"y":"r";}
 function vendedorPorCodigo(cod){cod=clean(cod);if(!cod)return null;
   for(const a of Store.avancesCache){for(const v of (a.vendedores||[])){if(clean(v.id)===cod)return v;}}return null;}
 
@@ -800,16 +813,52 @@ function npsCardsHtml(){const n=Store.npsCache;
       <div class="rep-wrap" style="margin-top:8px"><table><thead><tr><th>Asesor</th><th>Encuestas</th><th>NPS</th></tr></thead><tbody>${rkRows}</tbody></table></div></details>
     <details style="margin-top:12px"><summary style="cursor:pointer;font-weight:700">Detalle de encuestas (notas y comentarios)</summary>
       ${activos}<div class="rep-wrap" style="margin-top:8px"><table class="nps-rank"><thead>${filtRow}<tr><th>Fecha</th><th>Vendedor</th><th>Jefe de ventas</th><th>Departamento</th><th>NPS</th><th>Comentario</th></tr></thead><tbody>${aRows}</tbody></table></div></details></div>
-  ${attachBetaHtml()}`;}
-// Attach Rate: cruce productos elegibles (teléfonos, compus, tablets…) × accesorios (audífonos, cables, cargadores, controles…)
-function attachBetaHtml(){
-  const demo=[["Teléfonos",42,25],["Computadores",30,12],["Tablets",15,7]];
-  const rows=demo.map(r=>{const p=r[1]?Math.round(r[2]/r[1]*100):0;const cls=p>=50?'g':p>=30?'y':'r';return `<tr><td><b>${r[0]}</b></td><td>${r[1]}</td><td>${r[2]}</td><td><span class="nps ${cls}">${p}%</span></td></tr>`;}).join("");
-  return `<div class="card" style="border:1px dashed var(--accent)">
-    <div class="row" style="align-items:center;gap:10px"><img src="attach.svg" alt="" style="height:44px"><div><h2 style="margin:0">Próximamente <span class="chip acc">Beta</span></h2><p class="tiny" style="margin:2px 0 0">Reporte de <b>Attach Rate</b>, reporte de <b>Planes</b> y reporte de <b>Exchange</b>. Attach Rate = cruce de productos elegibles × accesorios.</p></div></div>
-    <details style="margin-top:10px"><summary class="tiny" style="cursor:pointer">Ver vista previa (datos de ejemplo)</summary>
-    <div class="rep-wrap" style="margin-top:8px"><table><thead><tr><th>Categoría</th><th>Elegibles</th><th>Con accesorio</th><th>Attach %</th></tr></thead><tbody>${rows}</tbody></table></div>
-    <p class="tiny" style="margin-top:6px;color:var(--muted2)">Ejemplo ilustrativo. La beta real se conectará a datos pronto.</p></details></div>`;}
+  ${attachPlanesHtml()}`;}
+// Attach Rate: KPI Cantidad = Total Accesorios / Total Elegibles (meta configurable). Planes: unidades vs meta del mes.
+function attachPlanesHtml(){
+  const n=Store.npsCache;const c=Store.config;
+  const metaA=(c&&c.metaAttach!=null)?num(c.metaAttach):38;
+  const metaP=(c&&num(c.metaPlanes))||0;
+  let out="";
+  const at=(n&&n.attach)||[];
+  if(at.length){
+    const alogo=`<img src="attach.svg" alt="Attach" style="height:40px;display:block;margin:0 auto 6px" onerror="this.style.display='none'">`;
+    const cats=ATTACH_CATS.filter(cat=>at.some(r=>r.cat===cat));
+    const catRows=cats.map(cat=>{const rr=at.filter(r=>r.cat===cat);
+      const te=rr.reduce((s,r)=>s+r.totEleg,0),ta=rr.reduce((s,r)=>s+r.totAcc,0);
+      const be=rr.reduce((s,r)=>s+r.eleg,0),ba=rr.reduce((s,r)=>s+r.attach,0);
+      const pct=te?Math.round(ta/te*1000)/10:0;const cls=attachClase(pct,metaA);
+      return `<tr><td><b>${cat}</b></td><td>${be}</td><td>${ba}</td><td><span class="nps ${cls}">${pct}%</span></td></tr>`;}).join("");
+    const teAll=at.reduce((s,r)=>s+r.totEleg,0),taAll=at.reduce((s,r)=>s+r.totAcc,0);
+    const pctAll=teAll?Math.round(taAll/teAll*1000)/10:0;const clsAll=attachClase(pctAll,metaA);
+    const det=cats.map(cat=>{const rr=at.filter(r=>r.cat===cat&&!esJefe(r.nombre)&&r.totEleg>0).sort((a,b)=>{const pa=a.totEleg?a.totAcc/a.totEleg:0,pb=b.totEleg?b.totAcc/b.totEleg:0;return pb-pa;});
+      const trs=rr.map(r=>{const p=r.totEleg?Math.round(r.totAcc/r.totEleg*1000)/10:0;const cl=attachClase(p,metaA);
+        return `<tr><td>${esc(nombreCorto(fixNombre(r.nombre)))}</td><td>${r.eleg}</td><td>${r.solo}</td><td>${r.attach}</td><td><span class="nps ${cl}">${p}%</span></td></tr>`;}).join("");
+      return `<div style="margin-top:8px"><b class="tiny">${cat}</b><div class="rep-wrap" style="margin-top:4px"><table><thead><tr><th>Asesor</th><th>Eleg.</th><th>Solo</th><th>Attach</th><th>KPI%</th></tr></thead><tbody>${trs||'<tr><td colspan="5" class="center muted">—</td></tr>'}</tbody></table></div></div>`;}).join("");
+    out+=`<div class="card">${alogo}<h2 style="text-align:center">Attach Rate <span class="chip acc">Beta</span></h2>
+      <p class="sub" style="text-align:center">KPI Cantidad · meta ${metaA}%</p>
+      <div class="rep-wrap" style="margin-top:8px"><table><thead><tr><th>Categoría</th><th>Boletas eleg.</th><th>Attach</th><th>KPI Cant.</th></tr></thead><tbody>${catRows}
+      <tr class="total"><td>TOTAL</td><td>${at.reduce((s,r)=>s+r.eleg,0)}</td><td>${at.reduce((s,r)=>s+r.attach,0)}</td><td><span class="nps ${clsAll}">${pctAll}%</span></td></tr></tbody></table></div>
+      <details style="margin-top:10px"><summary style="cursor:pointer;font-weight:700">Detalle por asesor</summary>${det}</details></div>`;
+  }
+  const pl=(n&&n.planes)||null;
+  if(pl&&pl.asesores&&pl.asesores.length){
+    const plogo=`<img src="logo-falabella.png" alt="Planes" style="height:30px;display:block;margin:0 auto 8px" onerror="this.style.display='none'">`;
+    const av=pl.total||pl.asesores.reduce((s,a)=>s+a.u,0);
+    const falta=Math.max(0,metaP-av);const pct=metaP?Math.round(av/metaP*1000)/10:0;const es=estado(pct);
+    const rr=pl.asesores.filter(a=>!esJefe(a.nombre)&&a.u>0).sort((a,b)=>b.u-a.u);
+    const trs=rr.map(a=>`<tr><td>${esc(nombreCorto(fixNombre(a.nombre||nombrePorCodigo(a.codigo))))}</td><td>${a.u}</td></tr>`).join("");
+    out+=`<div class="card">${plogo}<h2 style="text-align:center">Planes <span class="chip acc">Beta</span></h2>
+      <div class="kpi" style="margin-top:8px">
+        <div class="k"><div class="l">Avance</div><div class="n">${av}</div></div>
+        <div class="k"><div class="l">Meta mes</div><div class="n">${metaP||'—'}</div></div>
+        <div class="k"><div class="l">Cumplimiento</div><div class="n pct${es}">${metaP?pct+'%':'—'}</div></div>
+        <div class="k"><div class="l">Falta</div><div class="n">${metaP?falta:'—'}</div></div></div>
+      <details style="margin-top:10px"><summary style="cursor:pointer;font-weight:700">Detalle por asesor</summary>
+      <div class="rep-wrap" style="margin-top:8px"><table><thead><tr><th>Asesor</th><th>Unidades</th></tr></thead><tbody>${trs}</tbody></table></div></details></div>`;
+  }
+  if(!out) out=`<div class="card" style="border:1px dashed var(--accent)"><div class="row" style="align-items:center;gap:10px"><img src="attach.svg" alt="" style="height:40px" onerror="this.style.display='none'"><div><h2 style="margin:0">Attach & Planes <span class="chip acc">Beta</span></h2><p class="tiny" style="margin:2px 0 0">Sube <b>Ranking Attach</b> y <b>Venta Planes</b> en ⚙️ Config para ver el reporte.</p></div></div></div>`;
+  return out;}
 function bindNpsFiltros(app){const f=$("#npsFF"),v=$("#npsFV"),d=$("#npsFD"),nn=$("#npsFN");if(!f)return;
   f.onchange=e=>{npsFilt.fecha=e.target.value;renderAvance(app);};
   v.onchange=e=>{npsFilt.vend=e.target.value;renderAvance(app);};
@@ -876,8 +925,9 @@ function renderConfig(app){const c=Store.config;const admin=Store.isAdmin();cons
     <label>Fecha del avance</label><input type="date" id="avFecha" value="${todayStr()}">
     <label class="btn secondary" style="cursor:pointer;margin-top:10px">📄 Elegir archivo(s) (.html)<input id="avFile" type="file" accept=".html,.htm,.txt" multiple class="hidden"></label>
     <div id="avStatus"></div><div id="avPrev"></div><div id="avList" style="margin-top:12px"></div></div>
-  <div class="card"><h2>NPS (EPA)</h2><p class="sub">Sube el ranking por departamento (.xls de Medallia) y/o el detalle de respuestas (.xlsx). Puedes subir ambos.</p>
-    <label class="btn secondary" style="cursor:pointer">📊 Elegir archivo(s) NPS<input id="npsFile" type="file" accept=".xls,.xlsx,.html,.htm" multiple class="hidden"></label>
+  <div class="card"><h2>Reportes (NPS · Attach · Planes) <span class="chip acc">Beta</span></h2><p class="sub">Sube HTML/XLS: NPS depto, ranking asesor, respuestas (.xlsx), Ranking Attach, Venta Planes. Se detectan solos.</p>
+    <label class="btn secondary" style="cursor:pointer">📊 Elegir archivo(s)<input id="npsFile" type="file" accept=".xls,.xlsx,.html,.htm" multiple class="hidden"></label>
+    <div class="grid2" style="margin-top:10px"><div><label>Meta Planes (unidades, este mes)</label><input id="cMetaPlanes" inputmode="numeric" value="${esc(c.metaPlanes||'')}" placeholder="329"></div><div><label>Meta Attach (%)</label><input id="cMetaAttach" inputmode="numeric" value="${esc(c.metaAttach!=null?c.metaAttach:38)}" placeholder="38"></div></div>
     <div id="npsStatus"></div></div>
   <div class="btn-row"><button class="btn" id="cfgSave">Guardar configuración</button></div>`;
   app.innerHTML=html;bindApar(c);
@@ -917,11 +967,13 @@ function renderConfig(app){const c=Store.config;const admin=Store.isAdmin();cons
     }catch(err){st.innerHTML=`<div class="ocr-note">Error leyendo: ${esc(err.message)}</div>`;}};
 
   $("#npsFile").onchange=async e=>{const files=[...e.target.files];if(!files.length)return;const st=$("#npsStatus");st.innerHTML=`<div class="ocr-note">Procesando ${files.length} archivo(s)…</div>`;
-    const obj=Object.assign({deptos:[],asesores:[],rankAse:[]},Store.npsCache||{});const hecho=[];
+    const obj=Object.assign({deptos:[],asesores:[],rankAse:[],attach:[],planes:null},Store.npsCache||{});const hecho=[];
     try{for(const f of files){const sig=await f.slice(0,8).text();
         if(/^PK/.test(sig)||/\.xlsx$/i.test(f.name)){const buf=await f.arrayBuffer();obj.asesores=await parseNpsAsesores(buf);hecho.push("Encuestas "+obj.asesores.length);continue;}
         const txt=await f.text();const low=txt.toLowerCase();
-        if(low.includes("nps tienda")&&low.includes("vendedor")){obj.rankAse=parseNpsRankAsesor(txt);hecho.push("Ranking asesor "+obj.rankAse.length);}
+        if(low.includes("boletas elegibles")){obj.attach=parseAttach(txt);hecho.push("Attach "+obj.attach.length);}
+        else if(low.includes("descripcion sku")||low.includes("venta en unidades")){obj.planes=parsePlanes(txt);hecho.push("Planes "+obj.planes.total+"u");}
+        else if(low.includes("nps tienda")&&low.includes("vendedor")){obj.rankAse=parseNpsRankAsesor(txt);hecho.push("Ranking asesor "+obj.rankAse.length);}
         else if(low.includes("nps tienda")){obj.deptos=parseNpsDeptos(txt);hecho.push("NPS depto "+obj.deptos.length);}
         else{hecho.push("HTML no reconocido");}}
       await Store.saveNps(obj);st.innerHTML=`<div class="ocr-note">✓ Guardado: ${esc(hecho.join(" · "))}. Míralo en Avance.</div>`;}
@@ -930,6 +982,7 @@ function renderConfig(app){const c=Store.config;const admin=Store.isAdmin();cons
   $("#cfgSave").onclick=async()=>{c.mes={inicio:$("#cMesIni").value,fin:$("#cMesFin").value};
     $$("#metasBox [data-k]").forEach(inp=>{const k=inp.dataset.k;c.metas[k]=c.metas[k]||{};c.metas[k][inp.dataset.t]=num(inp.value);});
     c.theme.accent=$("#cAccent").value;
+    {const mp=$("#cMetaPlanes");if(mp)c.metaPlanes=num(mp.value);const ma=$("#cMetaAttach");if(ma)c.metaAttach=num(ma.value)||38;}
     await Store.saveConfig(c);applyTheme();toast("Configuración guardada ✓");};
 }
 function bindApar(c){$("#mDark").onclick=()=>{localStorage.setItem("re_mode","dark");applyTheme();renderConfig($("#app"));};
