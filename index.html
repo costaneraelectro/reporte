@@ -446,6 +446,11 @@ function parsePlanes(text){const doc=new DOMParser().parseFromString(text,"text/
   rows.forEach(r=>{if(r.classList.contains("total"))return;const c=[...r.querySelectorAll("td")];if(c.length<5)return;
     const cod=clean(c[1].textContent);if(!cod)return;const u=num(c[4].textContent);if(!map[cod])map[cod]={codigo:cod,nombre:nombrePorCodigo(cod),u:0};map[cod].u+=u;total+=u;});
   return {asesores:Object.values(map).filter(x=>x.u>0),total};}
+function parseAttachCat(text){const doc=new DOMParser().parseFromString(text,"text/html");const rows=[...doc.querySelectorAll("tr")];const out=[];
+  rows.forEach(r=>{if(r.classList.contains("subtotal")||r.classList.contains("total"))return;const c=[...r.querySelectorAll("td")];if(c.length<4)return;
+    const cat=clean(c[0].textContent).toUpperCase();if(!ATTACH_CATS.includes(cat))return;
+    out.push({cat,totEleg:num(c[1].textContent),totAcc:num(c[2].textContent)});});
+  return out;}
 function attachClase(pct,meta){return pct>=meta?"g":pct>=meta-8?"y":"r";}
 function cumplClase(c){return c>=100?"g":c>=80?"y":"r";}
 function fmtTs(ts){if(!ts)return"—";const d=new Date(ts);const p=n=>(""+n).padStart(2,"0");return `${p(d.getDate())}/${p(d.getMonth()+1)}/${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}`;}
@@ -824,27 +829,30 @@ function attachPlanesHtml(){
   const metaP=(c&&num(c.metaPlanes))||0;
   let out="";
   const at=(n&&n.attach)||[];
-  if(at.length){
+  const atc=(n&&n.attachCat)||[];
+  if(at.length||atc.length){
     const alogo=`<img src="attach.svg" alt="Attach" style="height:40px;display:block;margin:0 auto 6px" onerror="this.style.display='none'">`;
-    const cats=ATTACH_CATS.filter(cat=>at.some(r=>r.cat===cat));
-    const catRows=cats.map(cat=>{const rr=at.filter(r=>r.cat===cat);
-      const te=rr.reduce((s,r)=>s+r.totEleg,0),ta=rr.reduce((s,r)=>s+r.totAcc,0);
-      const be=rr.reduce((s,r)=>s+r.eleg,0),ba=rr.reduce((s,r)=>s+r.attach,0);
+    // totales por categoria: usa el archivo de categorias si existe, si no lo deriva del ranking por asesor
+    const totCat=cat=>{const x=atc.find(x=>x.cat===cat);if(x)return{te:x.totEleg,ta:x.totAcc};const rr=at.filter(r=>r.cat===cat);return{te:rr.reduce((s,r)=>s+r.totEleg,0),ta:rr.reduce((s,r)=>s+r.totAcc,0)};};
+    const cats=ATTACH_CATS.filter(cat=>atc.some(x=>x.cat===cat)||at.some(r=>r.cat===cat));
+    let teAll=0,taAll=0;
+    const catRows=cats.map(cat=>{const{te,ta}=totCat(cat);teAll+=te;taAll+=ta;
       const pct=te?Math.round(ta/te*1000)/10:0;const cls=attachClase(pct,metaA);
       const cmp=metaA?Math.round(pct/metaA*1000)/10:0;const clc=cumplClase(cmp);
-      return `<tr><td><b>${cat}</b></td><td>${be}</td><td>${ba}</td><td><span class="nps ${cls}">${pct}%</span></td><td><span class="nps ${clc}">${cmp}%</span></td></tr>`;}).join("");
-    const teAll=at.reduce((s,r)=>s+r.totEleg,0),taAll=at.reduce((s,r)=>s+r.totAcc,0);
+      return `<tr><td><b>${cat}</b></td><td>${te}</td><td>${ta}</td><td><span class="nps ${cls}">${pct}%</span></td><td><span class="nps ${clc}">${cmp}%</span></td></tr>`;}).join("");
     const pctAll=teAll?Math.round(taAll/teAll*1000)/10:0;const clsAll=attachClase(pctAll,metaA);
     const cmpAll=metaA?Math.round(pctAll/metaA*1000)/10:0;const clcAll=cumplClase(cmpAll);
-    const det=cats.map(cat=>{const rr=at.filter(r=>r.cat===cat&&!esJefe(r.nombre)&&r.totEleg>0).sort((a,b)=>{const pa=a.totEleg?a.totAcc/a.totEleg:0,pb=b.totEleg?b.totAcc/b.totEleg:0;return pb-pa;});
+    let det;
+    if(at.length){det=cats.map(cat=>{const rr=at.filter(r=>r.cat===cat&&!esJefe(r.nombre)&&r.totEleg>0).sort((a,b)=>{const pa=a.totEleg?a.totAcc/a.totEleg:0,pb=b.totEleg?b.totAcc/b.totEleg:0;return pb-pa;});
       const trs=rr.map(r=>{const p=r.totEleg?Math.round(r.totAcc/r.totEleg*1000)/10:0;const cl=attachClase(p,metaA);
         const cm=metaA?Math.round(p/metaA*1000)/10:0;const clc=cumplClase(cm);
         return `<tr><td>${esc(nombreCorto(fixNombre(r.nombre)))}</td><td>${r.totEleg}</td><td>${r.totAcc}</td><td><span class="nps ${cl}">${p}%</span></td><td><span class="nps ${clc}">${cm}%</span></td><td class="sep">${r.eleg}</td><td>${r.solo}</td><td>${r.attach}</td><td>${esc(r.kpiB||'—')}</td></tr>`;}).join("");
-      return `<div style="margin-top:8px"><b class="tiny">${cat}</b><div class="rep-wrap" style="margin-top:4px"><table><thead><tr><th>Asesor</th><th>Tot. Eleg.</th><th>Tot. Acc.</th><th>KPI Cant.</th><th>Cumpl.</th><th class="sep"># Bol. Eleg.</th><th># Bol. Solo</th><th># Bol. Attach</th><th>KPI Boleta</th></tr></thead><tbody>${trs||'<tr><td colspan="9" class="center muted">—</td></tr>'}</tbody></table></div></div>`;}).join("");
+      return `<div style="margin-top:8px"><b class="tiny">${cat}</b><div class="rep-wrap" style="margin-top:4px"><table><thead><tr><th>Asesor</th><th>Tot. Eleg.</th><th>Tot. Acc.</th><th>KPI Cant.</th><th>Cumpl.</th><th class="sep"># Bol. Eleg.</th><th># Bol. Solo</th><th># Bol. Attach</th><th>KPI Boleta</th></tr></thead><tbody>${trs||'<tr><td colspan="9" class="center muted">—</td></tr>'}</tbody></table></div></div>`;}).join("");}
+    else det=`<p class="tiny" style="margin-top:8px;color:var(--muted2)">Sube el <b>Ranking por vendedor</b> del attach en ⚙️ Config para ver el detalle por asesor.</p>`;
     out+=`<div class="card">${alogo}<h2 style="text-align:center">Attach Rate <span class="chip acc">Beta</span></h2>
       <p class="sub" style="text-align:center">KPI Cantidad · meta ${metaA}% · actualizado ${fmtTs(n&&n.ts)}</p>
-      <div class="rep-wrap" style="margin-top:8px"><table><thead><tr><th>Categoría</th><th>Boletas eleg.</th><th>Attach</th><th>KPI Cant.</th><th>Cumpl.</th></tr></thead><tbody>${catRows}
-      <tr class="total"><td>TOTAL</td><td>${at.reduce((s,r)=>s+r.eleg,0)}</td><td>${at.reduce((s,r)=>s+r.attach,0)}</td><td><span class="nps ${clsAll}">${pctAll}%</span></td><td><span class="nps ${clcAll}">${cmpAll}%</span></td></tr></tbody></table></div>
+      <div class="rep-wrap" style="margin-top:8px"><table><thead><tr><th>Categoría</th><th>Tot. Eleg.</th><th>Tot. Acc.</th><th>KPI Cant.</th><th>Cumpl.</th></tr></thead><tbody>${catRows}
+      <tr class="total"><td>TOTAL</td><td>${teAll}</td><td>${taAll}</td><td><span class="nps ${clsAll}">${pctAll}%</span></td><td><span class="nps ${clcAll}">${cmpAll}%</span></td></tr></tbody></table></div>
       <details style="margin-top:10px"><summary style="cursor:pointer;font-weight:700">Detalle por asesor</summary>${det}</details></div>`;
   }
   const pl=(n&&n.planes)||null;
@@ -974,11 +982,12 @@ function renderConfig(app){const c=Store.config;const admin=Store.isAdmin();cons
     }catch(err){st.innerHTML=`<div class="ocr-note">Error leyendo: ${esc(err.message)}</div>`;}};
 
   $("#npsFile").onchange=async e=>{const files=[...e.target.files];if(!files.length)return;const st=$("#npsStatus");st.innerHTML=`<div class="ocr-note">Procesando ${files.length} archivo(s)…</div>`;
-    const obj=Object.assign({deptos:[],asesores:[],rankAse:[],attach:[],planes:null},Store.npsCache||{});const hecho=[];
+    const obj=Object.assign({deptos:[],asesores:[],rankAse:[],attach:[],attachCat:[],planes:null},Store.npsCache||{});const hecho=[];
     try{for(const f of files){const sig=await f.slice(0,8).text();
         if(/^PK/.test(sig)||/\.xlsx$/i.test(f.name)){const buf=await f.arrayBuffer();obj.asesores=await parseNpsAsesores(buf);hecho.push("Encuestas "+obj.asesores.length);continue;}
         const txt=await f.text();const low=txt.toLowerCase();
-        if(low.includes("boletas elegibles")){obj.attach=parseAttach(txt);hecho.push("Attach "+obj.attach.length);}
+        if(low.includes("boletas elegibles")){obj.attach=parseAttach(txt);hecho.push("Attach asesor "+obj.attach.length);}
+        else if(low.includes("kpi cantidad")&&low.includes("total elegibles")&&!low.includes("vendedor")){obj.attachCat=parseAttachCat(txt);hecho.push("Attach depto "+obj.attachCat.length);}
         else if(low.includes("descripcion sku")||low.includes("venta en unidades")){obj.planes=parsePlanes(txt);hecho.push("Planes "+obj.planes.total+"u");}
         else if(low.includes("nps tienda")&&low.includes("vendedor")){obj.rankAse=parseNpsRankAsesor(txt);hecho.push("Ranking asesor "+obj.rankAse.length);}
         else if(low.includes("nps tienda")){obj.deptos=parseNpsDeptos(txt);hecho.push("NPS depto "+obj.deptos.length);}
