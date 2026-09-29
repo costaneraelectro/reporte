@@ -860,6 +860,7 @@ function attachPlanesHtml(){
     const plogo=`<img src="connect.png" alt="Connect" style="height:48px;display:block;margin:0 auto 8px" onerror="this.style.display='none'">`;
     const av=pl.total||pl.asesores.reduce((s,a)=>s+a.u,0);
     const falta=Math.max(0,metaP-av);const pct=metaP?Math.round(av/metaP*1000)/10:0;const es=estado(pct);
+    const miP=mesInfo();const diasRestP=miP?miP.diasRest:1;const diarioP=metaP?Math.ceil(falta/Math.max(1,diasRestP)):0;
     const rr=pl.asesores.filter(a=>!esJefe(a.nombre)&&a.u>0).sort((a,b)=>b.u-a.u);
     const trs=rr.map(a=>`<tr><td>${esc(nombreCorto(fixNombre(a.nombre||nombrePorCodigo(a.codigo))))}</td><td>${a.u}</td></tr>`).join("");
     out+=`<div class="card">${plogo}<h2 style="text-align:center">Planes <span class="chip acc">Beta</span></h2>
@@ -868,7 +869,8 @@ function attachPlanesHtml(){
         <div class="k"><div class="l">Avance</div><div class="n">${av}</div></div>
         <div class="k"><div class="l">Meta mes</div><div class="n">${metaP||'—'}</div></div>
         <div class="k"><div class="l">Cumplimiento</div><div class="n pct${es}">${metaP?pct+'%':'—'}</div></div>
-        <div class="k"><div class="l">Falta</div><div class="n">${metaP?falta:'—'}</div></div></div>
+        <div class="k"><div class="l">Falta</div><div class="n">${metaP?falta:'—'}</div></div>
+        <div class="k"><div class="l">Diario p/meta</div><div class="n">${metaP?diarioP+(diasRestP?' · '+diasRestP+'d':''):'—'}</div></div></div>
       <details style="margin-top:10px"><summary style="cursor:pointer;font-weight:700">Detalle por asesor</summary>
       <div class="rep-wrap" style="margin-top:8px"><table><thead><tr><th>Asesor</th><th>Unidades</th></tr></thead><tbody>${trs}</tbody></table></div></details></div>`;
   }
