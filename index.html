@@ -1017,7 +1017,7 @@ function renderConfig(app){const c=Store.config;const admin=Store.isAdmin();cons
     <select id="expTipo"><option value="GEXT_SEGURO">Garantía + Seguro</option><option value="NOMIX">No Mix</option><option value="CANJES">Canjes (Fpuntos y F+Pesos)</option><option value="EXCHANGE">Exchange</option><option value="TODO">Todo</option></select>
     <div class="btn-row"><button class="btn secondary" id="expBtn">Descargar Excel</button></div><div id="expStatus" class="tiny"></div></div>
   <div class="btn-row"><button class="btn" id="cfgSave">Guardar configuración</button></div>
-  <div class="card users-mini"><details><summary style="cursor:pointer;font-weight:800;font-size:17px">👥 Usuarios</summary><p class="sub">Aprueba cuentas y designa administradores.</p><div id="usersBox">Cargando…</div></details></div>`;
+  <div class="card users-mini"><details id="usersDet"><summary style="cursor:pointer;font-weight:800;font-size:17px">👥 Usuarios <span id="usersBadge"></span></summary><p class="sub">Aprueba cuentas y designa administradores.</p><div id="usersBox">Cargando…</div></details></div>`;
   app.innerHTML=html;bindApar(c);
 
   function drawMetas(){const rowEN=d=>{const m=metaOf(AREA_EN,d);const seg=SEGURO_DEPTS.has(d);
@@ -1030,6 +1030,7 @@ function renderConfig(app){const c=Store.config;const admin=Store.isAdmin();cons
   drawMetas();
 
   Store.subscribeUsers(list=>{const box=$("#usersBox");if(!box)return;const pend=list.filter(u=>u.estado!=="activo"),act=list.filter(u=>u.estado==="activo");
+    {const det=$("#usersDet"),bdg=$("#usersBadge");if(bdg)bdg.innerHTML=pend.length?`<span class="chip warn">${pend.length} por aprobar</span>`:'';if(det&&pend.length)det.open=true;}
     const delBtn=u=>u.uid===Store.user.uid?'':`<button class="btn ghost sm" data-del="${u.uid}" data-name="${esc(u.display)}">Eliminar</button>`;
     box.innerHTML=(pend.length?`<h3>Pendientes</h3>`+pend.map(u=>`<div class="list-item"><div class="li-main"><div class="t">${esc(u.display)} <span class="chip warn">pendiente</span></div><div class="s">${esc(u.username)} · N° ${esc(u.codigo||'')}</div></div><div class="btn-row" style="margin:0"><button class="btn sm" data-appr="${u.uid}">Aprobar</button>${delBtn(u)}</div></div>`).join(""):'')
       +`<h3>Activos</h3>`+(act.length?act.map(u=>`<div class="list-item"><div class="li-main"><div class="t">${esc(u.display)} ${u.rol==='admin'?'<span class="chip acc">admin</span>':''}</div><div class="s">${esc(u.username)} · N° ${esc(u.codigo||'')}</div></div><div class="btn-row" style="margin:0"><button class="btn ghost sm" data-rol="${u.uid}" data-cur="${u.rol}">${u.rol==='admin'?'Quitar admin':'Hacer admin'}</button>${delBtn(u)}</div></div>`).join(""):'<p class="tiny">Sin usuarios.</p>');
