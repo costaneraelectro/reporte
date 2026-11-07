@@ -185,6 +185,8 @@ const FIREBASE_CONFIG = {
   messagingSenderId:"791907095112",
   appId:"1:791907095112:web:49ecbd5dee34764265fe7d"
 };
+// Clave pública VAPID para Web Push (la privada vive en el secret del GitHub Action)
+const VAPID_PUBLIC="BGmv6ZyFcpcRLWh9HUXP8FrDcGf466Qbje6NPoTcGsuyVgyhNJG-J-zbdEi9rr1vV2yvzEmmqy5MfRxDfSfvwyA";
 
 const AREA_EN="ELECTRO NEGRO", AREA_LB="LINEA BLANCA";
 const AREAS=[AREA_EN,AREA_LB];
@@ -400,9 +402,9 @@ const ASESORES=[
   {codigo:"672106",nombre:"Joaquin Moris"},{codigo:"524646",nombre:"Nicole Gonzalez"},{codigo:"621633",nombre:"Cristian Sobarzo"},
   {codigo:"989703",nombre:"Gelen Parra"},{codigo:"621986",nombre:"Tamara Estrada"},{codigo:"570303",nombre:"Christopher Mendez"},
   {codigo:"667366",nombre:"Giovanni Landeros"},{codigo:"555744",nombre:"Yujemary Mendoza"},{codigo:"622974",nombre:"Mariela Meza"},
-  {codigo:"224114",nombre:"Sebastian Soto"},{codigo:"535230",nombre:"Paula Lopez"},{codigo:"705780",nombre:"Marcela Arriagada"},
+  {codigo:"724114",nombre:"Sebastian Soto"},{codigo:"535230",nombre:"Paula Lopez"},{codigo:"705780",nombre:"Marcela Arriagada"},
   {codigo:"777528",nombre:"Enrique Pilar"},{codigo:"849340",nombre:"Karen Guillen"},{codigo:"128171",nombre:"Jasson Guerra"},
-  {codigo:"703095",nombre:"Sebastian Duran"},{codigo:"507326",nombre:"Fernanda Valenzuela"},{codigo:"666698",nombre:"Matias Pinto"},
+  {codigo:"703095",nombre:"Sebastian Duran"},{codigo:"507326",nombre:"Fernanda Valenzuela"},{codigo:"266698",nombre:"Matias Pinto"},
   {codigo:"432539",nombre:"Luis Oropeza"},{codigo:"261432",nombre:"Ignacio Inostroza"},{codigo:"699322",nombre:"Kevin Taico"},
   {codigo:"600024",nombre:"Andrea Catalan"},{codigo:"320374",nombre:"Ambar Ferrer"},{codigo:"628956",nombre:"Claudia Bravo"}
 ];
@@ -962,10 +964,11 @@ function renderConfig(app){const c=Store.config;const admin=Store.isAdmin();cons
       <div><label class="tiny">Computación</label><input id="cMetaAttCOMP" inputmode="numeric" value="${esc((c.metaAttachCat&&c.metaAttachCat.COMPUTACION!=null)?c.metaAttachCat.COMPUTACION:47)}" placeholder="47"></div>
       <div><label class="tiny">Videojuegos</label><input id="cMetaAttVJ" inputmode="numeric" value="${esc((c.metaAttachCat&&c.metaAttachCat.VIDEOJUEGOS!=null)?c.metaAttachCat.VIDEOJUEGOS:45)}" placeholder="45"></div></div>
     <div id="npsStatus"></div></div>
-  <div class="card"><h2>Recordatorio para reportar 🔔</h2><p class="sub">Aviso diario en este teléfono para que no se te olvide reportar. Requiere permiso de notificaciones.</p>
-    <label class="switch-row"><input type="checkbox" id="cRemOn" ${c.remind&&c.remind.on?'checked':''}> Activar recordatorio diario</label>
-    <div class="grid2" style="margin-top:8px"><div><label>Hora</label><input type="time" id="cRemHora" value="${esc((c.remind&&c.remind.hora)||'19:00')}"></div>
-      <div><label>Mensaje</label><input id="cRemMsg" value="${esc((c.remind&&c.remind.msg)||'Recuerda subir el reporte del día')}" placeholder="Texto del aviso"></div></div>
+  <div class="card"><h2>Recordatorios para reportar 🔔</h2><p class="sub">Avisos diarios para no olvidar reportar. Requiere permiso de notificaciones.</p>
+    <label class="switch-row"><input type="checkbox" id="cRemOn" ${c.remindOn?'checked':''}> Activar recordatorios</label>
+    <div id="remList" style="margin-top:8px"></div>
+    <button class="btn ghost sm" id="remAdd" style="width:auto;margin-top:4px">+ Agregar hora</button>
+    <label class="switch-row" style="margin-top:12px"><input type="checkbox" id="cPushOn" ${c.pushOn?'checked':''}> Avisarme aunque la app esté cerrada (push)</label>
     <div id="remStatus" class="tiny" style="margin-top:6px"></div></div>
   <div class="card"><h2>Exportar a Excel 📥</h2><p class="sub">Descarga los registros para cuadrar contra Looker. Elige rango y tipo.</p>
     <div class="grid2"><div><label>Desde</label><input type="date" id="expDesde" value="${esc(c.mes.inicio||todayStr())}"></div><div><label>Hasta</label><input type="date" id="expHasta" value="${todayStr()}"></div></div>
@@ -1030,12 +1033,20 @@ function renderConfig(app){const c=Store.config;const admin=Store.isAdmin();cons
     {const mp=$("#cMetaPlanes");if(mp)c.metaPlanes=num(mp.value);
      const tel=$("#cMetaAttTEL"),cmp=$("#cMetaAttCOMP"),vj=$("#cMetaAttVJ");
      if(tel){c.metaAttachCat={TELEFONIA:num(tel.value)||38,COMPUTACION:num(cmp.value)||47,VIDEOJUEGOS:num(vj.value)||45};}}
-    {const r=$("#cRemOn");if(r)c.remind={on:r.checked,hora:$("#cRemHora").value||'19:00',msg:clean($("#cRemMsg").value)||'Recuerda subir el reporte del día'};}
-    await Store.saveConfig(c);applyTheme();scheduleRecordatorio();toast("Configuración guardada ✓");};
+    {const on=$("#cRemOn");if(on){c.remindOn=on.checked;c.pushOn=$("#cPushOn").checked;
+      c.reminders=[...document.querySelectorAll("#remList .rem-row")].map(r=>({hora:r.querySelector(".rem-h").value||'19:00',msg:clean(r.querySelector(".rem-m").value)||'Recuerda subir el reporte del día'})).filter(x=>x.hora);}}
+    await Store.saveConfig(c);applyTheme();scheduleRecordatorio();if(c.pushOn)pushSubscribe($("#remStatus"));toast("Configuración guardada ✓");};
 
-  // recordatorio: pide permiso al activar
-  {const rem=$("#cRemOn"),rst=$("#remStatus");if(rem){const upd=()=>{if(!("Notification"in window)){rst.textContent="Este dispositivo no soporta notificaciones.";return;}rst.textContent="Permiso: "+Notification.permission;};upd();
-    rem.onchange=async()=>{if(rem.checked&&"Notification"in window&&Notification.permission!=="granted"){const p=await Notification.requestPermission();upd();if(p!=="granted"){rst.textContent="Permiso denegado. Actívalo en ajustes del navegador.";}}};}}
+  // recordatorios: lista dinámica + permiso + push
+  {const on=$("#cRemOn"),rst=$("#remStatus"),list=$("#remList");
+   if(list){let rems=(c.reminders&&c.reminders.length)?c.reminders.slice():[{hora:'19:00',msg:'Recuerda subir el reporte del día'}];
+    const draw=()=>{list.innerHTML=rems.map((r,i)=>`<div class="rem-row row" style="align-items:center;gap:6px;margin-bottom:6px"><input type="time" class="rem-h" value="${esc(r.hora)}" style="flex:0 0 110px"><input class="rem-m" value="${esc(r.msg)}" placeholder="Mensaje" style="flex:1"><button class="icon-btn" data-rem="${i}">✕</button></div>`).join("");
+      list.querySelectorAll("[data-rem]").forEach(b=>b.onclick=()=>{rems=[...list.querySelectorAll(".rem-row")].map(r=>({hora:r.querySelector(".rem-h").value,msg:r.querySelector(".rem-m").value}));rems.splice(+b.dataset.rem,1);draw();});};
+    draw();
+    const add=$("#remAdd");if(add)add.onclick=()=>{rems=[...list.querySelectorAll(".rem-row")].map(r=>({hora:r.querySelector(".rem-h").value,msg:r.querySelector(".rem-m").value}));rems.push({hora:'19:00',msg:'Recuerda subir el reporte del día'});draw();};}
+   const permTxt=()=>{if(!("Notification"in window))return"Este dispositivo no soporta notificaciones.";return"Permiso: "+Notification.permission;};if(rst)rst.textContent=permTxt();
+   if(on)on.onchange=async()=>{if(on.checked&&"Notification"in window&&Notification.permission!=="granted"){await Notification.requestPermission();if(rst)rst.textContent=permTxt();}};
+   const pon=$("#cPushOn");if(pon)pon.onchange=async()=>{if(pon.checked){if("Notification"in window&&Notification.permission!=="granted")await Notification.requestPermission();pushSubscribe(rst);}};}
 
   // exportar a Excel
   {const eb=$("#expBtn");if(eb)eb.onclick=async()=>{const est=$("#expStatus");est.textContent="Generando…";
@@ -1052,13 +1063,25 @@ async function exportarExcel(desde,hasta,tipo){await ensureXLSX();
   data.push({Fecha:"",Tipo:"TOTAL",Asesor:"",Codigo:"",Departamento:"",Monto:totalMonto,ID_TradeIn:"",Folio:"",Registrado_por:data.length+" registros"});
   const ws=XLSX.utils.json_to_sheet(data);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,"Registros");
   XLSX.writeFile(wb,`reporte_${tipo}_${d0}_a_${d1}.xlsx`);}
-// Programa un recordatorio diario local (setTimeout al próximo horario)
-let _remTimer=null;
-function scheduleRecordatorio(){if(_remTimer){clearTimeout(_remTimer);_remTimer=null;}
-  const c=Store.config;const r=c&&c.remind;if(!r||!r.on||!("Notification"in window)||Notification.permission!=="granted")return;
-  const[hh,mm]=(r.hora||"19:00").split(":").map(Number);const now=new Date();const next=new Date();next.setHours(hh||19,mm||0,0,0);if(next<=now)next.setDate(next.getDate()+1);
-  _remTimer=setTimeout(function fire(){try{new Notification("Reporte Electro",{body:(Store.config.remind&&Store.config.remind.msg)||"Recuerda reportar",icon:"icon-180.png"});}catch(e){}
-    _remTimer=setTimeout(fire,86400000);},next-now);}
+// Programa recordatorios locales (setTimeout al próximo horario de cada uno)
+let _remTimers=[];
+function scheduleRecordatorio(){_remTimers.forEach(t=>clearTimeout(t));_remTimers=[];
+  const c=Store.config;if(!c||!c.remindOn||!("Notification"in window)||Notification.permission!=="granted")return;
+  const rems=(c.reminders&&c.reminders.length)?c.reminders:[{hora:'19:00',msg:'Recuerda subir el reporte del día'}];
+  rems.forEach(r=>{const[hh,mm]=(r.hora||"19:00").split(":").map(Number);const now=new Date();const next=new Date();next.setHours(hh||19,mm||0,0,0);if(next<=now)next.setDate(next.getDate()+1);
+    const t=setTimeout(function fire(){try{new Notification("Reporte Electro",{body:r.msg||"Recuerda reportar",icon:"icon-180.png"});}catch(e){}_remTimers.push(setTimeout(fire,86400000));},next-now);_remTimers.push(t);});}
+// Web Push: suscribe este dispositivo y guarda la suscripción en Firestore (pushSubs)
+function b64ToU8(s){const pad="=".repeat((4-s.length%4)%4);const b=(s+pad).replace(/-/g,"+").replace(/_/g,"/");const raw=atob(b);return Uint8Array.from([...raw].map(c=>c.charCodeAt(0)));}
+async function pushSubscribe(statusEl){try{
+  if(!("serviceWorker"in navigator)||!("PushManager"in window)){if(statusEl)statusEl.textContent="Este navegador no soporta push.";return;}
+  if("Notification"in window&&Notification.permission!=="granted"){const p=await Notification.requestPermission();if(p!=="granted"){if(statusEl)statusEl.textContent="Permiso de notificaciones denegado.";return;}}
+  const reg=await navigator.serviceWorker.ready;
+  let sub=await reg.pushManager.getSubscription();
+  if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64ToU8(VAPID_PUBLIC)});
+  const j=sub.toJSON();const id=btoa(j.endpoint).replace(/[^a-zA-Z0-9]/g,"").slice(-40);
+  if(Store.mode==="firebase"){await Store.db.collection("pushSubs").doc(id).set({endpoint:j.endpoint,keys:j.keys,ts:Date.now(),ua:navigator.userAgent.slice(0,120)});}
+  if(statusEl)statusEl.textContent="✓ Push activado en este dispositivo.";
+}catch(err){if(statusEl)statusEl.textContent="Push no disponible: "+err.message;}}
 function bindApar(c){$("#mDark").onclick=()=>{localStorage.setItem("re_mode","dark");applyTheme();renderConfig($("#app"));};
   $("#mLight").onclick=()=>{localStorage.setItem("re_mode","light");applyTheme();renderConfig($("#app"));};
   $$("#app .swatch").forEach(s=>s.onclick=async()=>{c.theme.accent=s.dataset.h;$("#cAccent").value=s.dataset.h;$$("#app .swatch").forEach(x=>x.classList.remove("sel"));s.classList.add("sel");applyThemeAccent(s.dataset.h);Store.lsSet("re4_config",c);if(Store.isAdmin())await Store.saveConfig(c);});
