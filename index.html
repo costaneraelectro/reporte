@@ -2,8 +2,12 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#aad503">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f1210">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="color-scheme" content="dark light">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Reporte Electro</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -16,13 +20,17 @@
     --text:#eef2e8; --muted:#a7b39a; --muted2:#717d64;
     --accent:#aad503; --on-accent:#151a08; --input:#0d120b;
     --ok:#4ade80; --okbg:#12240f; --warn:#facc15; --warnbg:#2a2408; --bad:#f87171; --badbg:#2a1210;
-    --radius:16px; --shadow:0 10px 28px rgba(0,0,0,.35); --safe-b:env(safe-area-inset-bottom,0px);
+    --radius:16px; --shadow:0 10px 28px rgba(0,0,0,.35); --safe-b:env(safe-area-inset-bottom,0px); --safe-t:env(safe-area-inset-top,0px);
+    --ease-out:cubic-bezier(0.23,1,0.32,1); --ease-in-out:cubic-bezier(0.77,0,0.175,1);
   }
-  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent} html,body{margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
   body{font-family:'Poppins',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
-    background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;
+    background:var(--bg);color:var(--text);min-height:100vh;min-height:100dvh;-webkit-font-smoothing:antialiased;
     padding-bottom:calc(78px + var(--safe-b));transition:background .2s,color .2s}
   a{color:var(--accent)}
+  button,.btn,.icon-btn,.seg button,.nav button,.chip,.swatch,[role=button]{touch-action:manipulation;-webkit-user-select:none;user-select:none}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   .spin{animation:respin .6s linear}@keyframes respin{to{transform:rotate(360deg)}}
   .nps{display:inline-block;min-width:30px;text-align:center;padding:2px 8px;border-radius:8px;font-weight:800}
   .nps.g{background:var(--okbg);color:var(--ok)} .nps.y{background:var(--warnbg);color:var(--warn)} .nps.r{background:var(--badbg);color:var(--bad)}
@@ -33,29 +41,29 @@
   .nps-rank .filt-row select:focus{outline:none;border-color:var(--accent)}
   .app{max-width:820px;margin:0 auto;padding:14px 15px 0} .hidden{display:none!important}
 
-  .topbar{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:8px;padding:10px 13px;
-    background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-  .brand{display:flex;align-items:center;gap:9px;font-weight:800;font-size:15px}
+  .topbar{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:8px;padding:calc(10px + var(--safe-t)) 13px 10px;
+    background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);border-bottom:1px solid var(--line)}
+  .brand{display:flex;align-items:center;gap:9px;font-weight:800;font-size:15px;letter-spacing:-.01em}
   .brand img{width:32px;height:32px;border-radius:9px;box-shadow:var(--shadow)}
   .brand small{display:block;color:var(--muted2);font-weight:700;font-size:10px}
   .spacer{flex:1}
   .pill{font-size:11px;color:var(--muted);background:var(--card);border:1px solid var(--line);padding:5px 9px;border-radius:999px;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
   .dot{width:8px;height:8px;border-radius:50%;background:var(--muted2)} .dot.online{background:var(--accent);box-shadow:0 0 10px var(--accent)}
-  .icon-btn{background:var(--card);border:1px solid var(--line);color:var(--text);width:36px;height:36px;border-radius:11px;font-size:15px;cursor:pointer;display:grid;place-items:center;flex:none}
-  .icon-btn:hover{border-color:var(--accent)}
+  .icon-btn{background:var(--card);border:1px solid var(--line);color:var(--text);width:36px;height:36px;border-radius:11px;font-size:15px;cursor:pointer;display:grid;place-items:center;flex:none;transition:transform .12s var(--ease-out),border-color .2s}
+  .icon-btn:active{transform:scale(.92)}
 
   .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin:13px 0;box-shadow:var(--shadow)}
-  .card h2{margin:0 0 3px;font-size:17px} .card h3{margin:15px 0 8px;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
+  .card h2{margin:0 0 3px;font-size:17px;letter-spacing:-.015em} .card h3{margin:15px 0 8px;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
   .sub{color:var(--muted);font-size:13px;margin:0 0 12px} .muted{color:var(--muted)} .tiny{font-size:12px;color:var(--muted2)} .center{text-align:center}
 
   label{display:block;font-size:12.5px;color:var(--muted);margin:12px 0 6px;font-weight:600}
-  input,select,textarea{width:100%;background:var(--input);border:1px solid var(--line);color:var(--text);padding:12px 13px;border-radius:11px;font-size:16px;outline:none}
-  input:focus,select:focus{border-color:var(--accent)}
+  input,select,textarea{width:100%;background:var(--input);border:1px solid var(--line);color:var(--text);padding:12px 13px;border-radius:11px;font-size:16px;outline:none;transition:border-color .18s var(--ease-out),box-shadow .18s var(--ease-out)}
+  input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px} @media(max-width:520px){.grid2{grid-template-columns:1fr}}
   .row{display:flex;gap:10px}.row>*{flex:1}
 
-  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--accent);color:var(--on-accent);border:none;padding:13px 15px;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;width:100%}
-  .btn:active{transform:scale(.985)} .btn:hover{filter:brightness(1.06)}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--accent);color:var(--on-accent);border:none;padding:13px 15px;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;width:100%;transition:transform .13s var(--ease-out),filter .2s,box-shadow .2s}
+  .btn:active{transform:scale(.97)}
   .btn.secondary{background:var(--card2);color:var(--text);border:1px solid var(--line)}
   .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--text)}
   .btn.dark{background:#20261b;color:#eef2e8;border:1px solid var(--line)}
@@ -63,15 +71,32 @@
   .btn[disabled]{opacity:.5} .btn-row{display:flex;gap:10px;margin-top:13px}.btn-row .btn{width:auto;flex:1}
 
   .seg{display:flex;background:var(--input);border:1px solid var(--line);border-radius:12px;padding:4px;gap:4px}
-  .seg button{flex:1;background:none;border:none;color:var(--muted);padding:10px;border-radius:9px;font-weight:800;font-size:13px;cursor:pointer}
+  .seg button{flex:1;background:none;border:none;color:var(--muted);padding:10px;border-radius:9px;font-weight:800;font-size:13px;cursor:pointer;transition:color .2s,background .25s var(--ease-out)}
   .seg button.active{background:var(--accent);color:var(--on-accent)}
 
   .chip{display:inline-block;padding:4px 10px;border-radius:999px;font-size:11.5px;font-weight:800;background:var(--card2);border:1px solid var(--line);color:var(--muted)}
   .chip.acc{background:color-mix(in srgb,var(--accent) 18%,transparent);border-color:var(--accent);color:var(--accent)}
   .chip.warn{background:var(--warnbg);border-color:#5a4a0a;color:var(--warn)}
 
-  .rep-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--line)}
+  .rep-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--line);overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
   td.sep,th.sep{border-left:2px solid var(--line)}
+  .switch-row{display:flex;align-items:center;gap:10px;font-weight:600;margin-top:4px;cursor:pointer}
+  .switch-row input{width:20px;height:20px;accent-color:var(--accent)}
+  /* transiciones y feedback táctil */
+  .btn,.icon-btn,.swatch,.seg button,summary{transition:transform .13s var(--ease-out),background .2s,opacity .2s,box-shadow .2s}
+  .btn:active,.icon-btn:active,.swatch:active{transform:scale(.96)}
+  .card{animation:cardIn .3s var(--ease-out) both}
+  @keyframes cardIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  details>summary{list-style:none}details>summary::-webkit-details-marker{display:none}
+  details[open]>summary{margin-bottom:4px}
+  details[open] .rep-wrap,details[open]>div{animation:revealIn .22s var(--ease-out) both}
+  @keyframes revealIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+  @media (hover:hover) and (pointer:fine){
+    .btn:hover{filter:brightness(1.06)} .icon-btn:hover{border-color:var(--accent)}
+    .list-item:hover{border-color:color-mix(in srgb,var(--accent) 40%,var(--line))}
+    .nav button:hover{color:var(--text)}
+  }
+  @media (prefers-reduced-motion:reduce){.card,details[open] .rep-wrap,details[open]>div{animation:none}.btn:active,.icon-btn:active,.swatch:active{transform:none}}
   table{border-collapse:collapse;width:100%;font-size:13px;background:var(--input)}
   th,td{padding:9px 10px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
   th:first-child,td:first-child{text-align:left}
@@ -104,16 +129,21 @@
   .sem.ok{background:var(--ok)}.sem.warn{background:var(--warn)}.sem.bad{background:var(--bad)}
   .pctok{color:var(--ok)}.pctwarn{color:var(--warn)}.pctbad{color:var(--bad)}
 
-  .nav{position:fixed;left:0;right:0;bottom:0;z-index:50;background:color-mix(in srgb,var(--bg) 94%,transparent);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:8px 6px calc(8px + var(--safe-b));display:flex;justify-content:space-around}
-  .nav button{background:none;border:none;color:var(--muted2);font-size:11px;font-weight:800;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px;cursor:pointer;flex:1;border-radius:10px}
-  .nav button .ic{font-size:20px;line-height:1} .nav button.active{color:var(--accent)}
+  .nav{position:fixed;left:0;right:0;bottom:0;z-index:50;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);border-top:1px solid var(--line);padding:8px 6px calc(8px + var(--safe-b));display:flex;justify-content:space-around}
+  .nav button{background:none;border:none;color:var(--muted2);font-size:11px;font-weight:800;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px;cursor:pointer;flex:1;border-radius:10px;transition:color .2s var(--ease-out),transform .12s var(--ease-out)}
+  .nav button:active{transform:scale(.9)}
+  .nav button .ic{font-size:20px;line-height:1;transition:transform .2s var(--ease-out)} .nav button.active{color:var(--accent)} .nav button.active .ic{transform:translateY(-1px) scale(1.08)}
 
-  .toast{position:fixed;left:50%;bottom:calc(92px + var(--safe-b));transform:translateX(-50%);background:var(--card);border:1px solid var(--line);color:var(--text);padding:12px 18px;border-radius:12px;box-shadow:var(--shadow);z-index:120;max-width:90%;text-align:center;font-size:14px}
-  .modal-bg{position:fixed;inset:0;background:rgba(3,7,4,.72);z-index:90;display:grid;place-items:center;padding:14px}
-  .modal{background:var(--card);border:1px solid var(--line);border-radius:18px;max-width:560px;width:100%;max-height:90vh;overflow:auto;box-shadow:var(--shadow)}
+  .toast{position:fixed;left:50%;bottom:calc(92px + var(--safe-b));transform:translateX(-50%);background:var(--card);border:1px solid var(--line);color:var(--text);padding:12px 18px;border-radius:12px;box-shadow:var(--shadow);z-index:120;max-width:90%;text-align:center;font-size:14px;animation:toastIn .26s var(--ease-out) both}
+  @keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(14px) scale(.96)}to{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}}
+  .modal-bg{position:fixed;inset:0;background:rgba(3,7,4,.72);z-index:90;display:grid;place-items:center;padding:14px;animation:fadeIn .2s var(--ease-out) both}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  .modal{background:var(--card);border:1px solid var(--line);border-radius:18px;max-width:560px;width:100%;max-height:90vh;overflow:auto;overscroll-behavior:contain;box-shadow:var(--shadow);animation:modalIn .26s var(--ease-out) both}
+  @keyframes modalIn{from{opacity:0;transform:scale(.96) translateY(8px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.toast,.modal,.modal-bg{animation:none}}
   .modal .m-head{padding:15px 17px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
   .modal .m-body{padding:17px}
-  .list-item{display:flex;align-items:center;gap:10px;padding:11px;border:1px solid var(--line);border-radius:12px;margin-bottom:8px;background:var(--input)}
+  .list-item{display:flex;align-items:center;gap:10px;padding:11px;border:1px solid var(--line);border-radius:12px;margin-bottom:8px;background:var(--input);transition:border-color .2s var(--ease-out)}
   .list-item .li-main{flex:1;min-width:0}.list-item .li-main .t{font-weight:800}.list-item .li-main .s{font-size:12px;color:var(--muted)}
 
   .ocr-note{font-size:12px;color:var(--warn);background:var(--warnbg);border:1px solid #5a4a0a;padding:8px 10px;border-radius:10px;margin-top:8px}
@@ -174,6 +204,8 @@ const FIREBASE_CONFIG = {
   messagingSenderId:"791907095112",
   appId:"1:791907095112:web:49ecbd5dee34764265fe7d"
 };
+// Clave pública VAPID para Web Push (la privada vive en el secret del GitHub Action)
+const VAPID_PUBLIC="BGmv6ZyFcpcRLWh9HUXP8FrDcGf466Qbje6NPoTcGsuyVgyhNJG-J-zbdEi9rr1vV2yvzEmmqy5MfRxDfSfvwyA";
 
 const AREA_EN="ELECTRO NEGRO", AREA_LB="LINEA BLANCA";
 const AREAS=[AREA_EN,AREA_LB];
@@ -386,14 +418,14 @@ function nombreCorto(full){const raw=clean(full);if(!raw)return "";const key=nor
   return (cap(toks[0])+" "+cap(rest[1]||rest[0]||"")).trim();}
 // Roster fijo de asesores para "reportar a otra persona": nombre = primer nombre + apellido paterno.
 const ASESORES=[
-  {codigo:"955744",nombre:"Yujemary Mendoza"},{codigo:"989703",nombre:"Gelen Parra"},{codigo:"535230",nombre:"Paula Lopez"},
-  {codigo:"777528",nombre:"Enrique Pilar"},{codigo:"524646",nombre:"Nicole Gonzalez"},{codigo:"261432",nombre:"Ignacio Inostroza"},
-  {codigo:"705780",nombre:"Marcela Arriagada"},{codigo:"723177",nombre:"Christian Vega"},{codigo:"320374",nombre:"Ambar Ferrer"},
-  {codigo:"128171",nombre:"Jasson Guerra"},{codigo:"621633",nombre:"Cristian Sobarzo"},
-  {codigo:"432539",nombre:"Luis Oropeza"},{codigo:"724114",nombre:"Sebastian Soto"},{codigo:"622974",nombre:"Mariela Meza"},
-  {codigo:"849340",nombre:"Karen Guillen"},{codigo:"621986",nombre:"Tamara Estrada"},{codigo:"667366",nombre:"Giovanni Landeros"},
-  {codigo:"507326",nombre:"Fernanda Valenzuela"},{codigo:"672106",nombre:"Joaquin Moris"},{codigo:"699322",nombre:"Kevin Taico"},
-  {codigo:"570303",nombre:"Christopher Mendez"}
+  {codigo:"672106",nombre:"Joaquin Moris"},{codigo:"524646",nombre:"Nicole Gonzalez"},{codigo:"621633",nombre:"Cristian Sobarzo"},
+  {codigo:"989703",nombre:"Gelen Parra"},{codigo:"621986",nombre:"Tamara Estrada"},{codigo:"570303",nombre:"Christopher Mendez"},
+  {codigo:"667366",nombre:"Giovanni Landeros"},{codigo:"555744",nombre:"Yujemary Mendoza"},{codigo:"622974",nombre:"Mariela Meza"},
+  {codigo:"724114",nombre:"Sebastian Soto"},{codigo:"535230",nombre:"Paula Lopez"},{codigo:"705780",nombre:"Marcela Arriagada"},
+  {codigo:"777528",nombre:"Enrique Pilar"},{codigo:"849340",nombre:"Karen Guillen"},{codigo:"128171",nombre:"Jasson Guerra"},
+  {codigo:"703095",nombre:"Sebastian Duran"},{codigo:"507326",nombre:"Fernanda Valenzuela"},{codigo:"266698",nombre:"Matias Pinto"},
+  {codigo:"432539",nombre:"Luis Oropeza"},{codigo:"261432",nombre:"Ignacio Inostroza"},{codigo:"699322",nombre:"Kevin Taico"},
+  {codigo:"600024",nombre:"Andrea Catalan"},{codigo:"320374",nombre:"Ambar Ferrer"},{codigo:"628956",nombre:"Claudia Bravo"}
 ];
 // Aplica solo el override de nombre (Yesenia Nicole Gonzalez -> Nicole Gonzalez) sin acortar el resto.
 function fixNombre(n){const raw=clean(n);if(!raw)return raw;const k=norm(raw);for(const kk in NOMBRE_OVERRIDES){if(k.includes(kk)||kk.includes(k))return NOMBRE_OVERRIDES[kk];}return raw;}
@@ -939,7 +971,6 @@ function renderConfig(app){const c=Store.config;const admin=Store.isAdmin();cons
   html+=`<div class="card"><h2>Mes comercial</h2><div class="grid2"><div><label>Inicio</label><input id="cMesIni" type="date" value="${esc(c.mes.inicio||'')}"></div><div><label>Término</label><input id="cMesFin" type="date" value="${esc(c.mes.fin||'')}"></div></div>
     ${mi?`<p class="tiny" style="margin-top:8px">Quedan <b style="color:var(--accent)">${mi.diasRest}</b> día(s) para que termine el mes (van ${mi.diasTrans}/${mi.diasTot}).</p>`:''}</div>
   <div class="card"><h2>Metas</h2><div id="metasBox"></div></div>
-  <div class="card users-mini"><details open><summary style="cursor:pointer;font-weight:800;font-size:17px">Usuarios</summary><p class="sub">Aprueba cuentas y designa administradores.</p><div id="usersBox">Cargando…</div></details></div>
   <div class="card"><h2>Subir avance de Looker</h2><p class="sub">Sube los HTML de Looker (Venta x Vendedor y/o Venta x Departamento). Puedes elegir ambos a la vez. <b>No usa IA.</b></p>
     <label>Fecha del avance</label><input type="date" id="avFecha" value="${todayStr()}">
     <label class="btn secondary" style="cursor:pointer;margin-top:10px">📄 Elegir archivo(s) (.html)<input id="avFile" type="file" accept=".html,.htm,.txt" multiple class="hidden"></label>
@@ -952,7 +983,19 @@ function renderConfig(app){const c=Store.config;const admin=Store.isAdmin();cons
       <div><label class="tiny">Computación</label><input id="cMetaAttCOMP" inputmode="numeric" value="${esc((c.metaAttachCat&&c.metaAttachCat.COMPUTACION!=null)?c.metaAttachCat.COMPUTACION:47)}" placeholder="47"></div>
       <div><label class="tiny">Videojuegos</label><input id="cMetaAttVJ" inputmode="numeric" value="${esc((c.metaAttachCat&&c.metaAttachCat.VIDEOJUEGOS!=null)?c.metaAttachCat.VIDEOJUEGOS:45)}" placeholder="45"></div></div>
     <div id="npsStatus"></div></div>
-  <div class="btn-row"><button class="btn" id="cfgSave">Guardar configuración</button></div>`;
+  <div class="card"><h2>Recordatorios para reportar 🔔</h2><p class="sub">Avisos diarios para no olvidar reportar. Requiere permiso de notificaciones.</p>
+    <label class="switch-row"><input type="checkbox" id="cRemOn" ${c.remindOn?'checked':''}> Activar recordatorios</label>
+    <div id="remList" style="margin-top:8px"></div>
+    <button class="btn ghost sm" id="remAdd" style="width:auto;margin-top:4px">+ Agregar hora</button>
+    <label class="switch-row" style="margin-top:12px"><input type="checkbox" id="cPushOn" ${c.pushOn?'checked':''}> Avisarme aunque la app esté cerrada (push)</label>
+    <div id="remStatus" class="tiny" style="margin-top:6px"></div></div>
+  <div class="card"><h2>Exportar a Excel 📥</h2><p class="sub">Descarga los registros para cuadrar contra Looker. Elige rango y tipo.</p>
+    <div class="grid2"><div><label>Desde</label><input type="date" id="expDesde" value="${esc(c.mes.inicio||todayStr())}"></div><div><label>Hasta</label><input type="date" id="expHasta" value="${todayStr()}"></div></div>
+    <label style="margin-top:8px">Tipo</label>
+    <select id="expTipo"><option value="GEXT_SEGURO">Garantía + Seguro</option><option value="NOMIX">No Mix</option><option value="CANJES">Canjes (Fpuntos y F+Pesos)</option><option value="EXCHANGE">Exchange</option><option value="TODO">Todo</option></select>
+    <div class="btn-row"><button class="btn secondary" id="expBtn">Descargar Excel</button></div><div id="expStatus" class="tiny"></div></div>
+  <div class="btn-row"><button class="btn" id="cfgSave">Guardar configuración</button></div>
+  <div class="card users-mini"><details><summary style="cursor:pointer;font-weight:800;font-size:17px">👥 Usuarios</summary><p class="sub">Aprueba cuentas y designa administradores.</p><div id="usersBox">Cargando…</div></details></div>`;
   app.innerHTML=html;bindApar(c);
 
   function drawMetas(){const rowEN=d=>{const m=metaOf(AREA_EN,d);const seg=SEGURO_DEPTS.has(d);
@@ -1009,8 +1052,55 @@ function renderConfig(app){const c=Store.config;const admin=Store.isAdmin();cons
     {const mp=$("#cMetaPlanes");if(mp)c.metaPlanes=num(mp.value);
      const tel=$("#cMetaAttTEL"),cmp=$("#cMetaAttCOMP"),vj=$("#cMetaAttVJ");
      if(tel){c.metaAttachCat={TELEFONIA:num(tel.value)||38,COMPUTACION:num(cmp.value)||47,VIDEOJUEGOS:num(vj.value)||45};}}
-    await Store.saveConfig(c);applyTheme();toast("Configuración guardada ✓");};
+    {const on=$("#cRemOn");if(on){c.remindOn=on.checked;c.pushOn=$("#cPushOn").checked;
+      c.reminders=[...document.querySelectorAll("#remList .rem-row")].map(r=>({hora:r.querySelector(".rem-h").value||'19:00',msg:clean(r.querySelector(".rem-m").value)||'Recuerda subir el reporte del día'})).filter(x=>x.hora);}}
+    await Store.saveConfig(c);applyTheme();scheduleRecordatorio();if(c.pushOn)pushSubscribe($("#remStatus"));toast("Configuración guardada ✓");};
+
+  // recordatorios: lista dinámica + permiso + push
+  {const on=$("#cRemOn"),rst=$("#remStatus"),list=$("#remList");
+   if(list){let rems=(c.reminders&&c.reminders.length)?c.reminders.slice():[{hora:'19:00',msg:'Recuerda subir el reporte del día'}];
+    const draw=()=>{list.innerHTML=rems.map((r,i)=>`<div class="rem-row row" style="align-items:center;gap:6px;margin-bottom:6px"><input type="time" class="rem-h" value="${esc(r.hora)}" style="flex:0 0 110px"><input class="rem-m" value="${esc(r.msg)}" placeholder="Mensaje" style="flex:1"><button class="icon-btn" data-rem="${i}">✕</button></div>`).join("");
+      list.querySelectorAll("[data-rem]").forEach(b=>b.onclick=()=>{rems=[...list.querySelectorAll(".rem-row")].map(r=>({hora:r.querySelector(".rem-h").value,msg:r.querySelector(".rem-m").value}));rems.splice(+b.dataset.rem,1);draw();});};
+    draw();
+    const add=$("#remAdd");if(add)add.onclick=()=>{rems=[...list.querySelectorAll(".rem-row")].map(r=>({hora:r.querySelector(".rem-h").value,msg:r.querySelector(".rem-m").value}));rems.push({hora:'19:00',msg:'Recuerda subir el reporte del día'});draw();};}
+   const permTxt=()=>{if(!("Notification"in window))return"Este dispositivo no soporta notificaciones.";return"Permiso: "+Notification.permission;};if(rst)rst.textContent=permTxt();
+   if(on)on.onchange=async()=>{if(on.checked&&"Notification"in window&&Notification.permission!=="granted"){await Notification.requestPermission();if(rst)rst.textContent=permTxt();}};
+   const pon=$("#cPushOn");if(pon)pon.onchange=async()=>{if(pon.checked){if("Notification"in window&&Notification.permission!=="granted")await Notification.requestPermission();pushSubscribe(rst);}};}
+
+  // exportar a Excel
+  {const eb=$("#expBtn");if(eb)eb.onclick=async()=>{const est=$("#expStatus");est.textContent="Generando…";
+    try{await exportarExcel($("#expDesde").value,$("#expHasta").value,$("#expTipo").value);est.textContent="✓ Descargado.";}catch(err){est.textContent="Error: "+err.message;}};}
 }
+async function exportarExcel(desde,hasta,tipo){await ensureXLSX();
+  const d0=desde||"0000-01-01",d1=hasta||"9999-12-31";
+  const all=(Store.ventasCache||[]).filter(v=>{const f=(v.fecha||"").slice(0,10);return f>=d0&&f<=d1;});
+  const TIPOCAT={GEXT_SEGURO:["GEXT","SEGURO"],NOMIX:["NOMIX"],CANJES:["FPUNTOS","FPUNTOSPESOS"],EXCHANGE:["EXCHANGE"],TODO:null};
+  const cats=TIPOCAT[tipo];const rows=all.filter(v=>!cats||cats.includes(v.categoria));
+  const TIPO={GEXT:"Garantía",SEGURO:"Seguro",NOMIX:"No Mix",FPUNTOS:"Canje Fpuntos",FPUNTOSPESOS:"Fpuntos + Pesos",EXCHANGE:"Exchange",OTROS:"Otros"};
+  const data=rows.map(v=>({Fecha:(v.fecha||"").slice(0,10),Tipo:TIPO[v.categoria]||v.categoria||"",Asesor:fixNombre(v.asesorNombre||""),Codigo:v.asesorCodigo||"",Departamento:v.departamento||v.area||"",Monto:v.monto||0,ID_TradeIn:v.idTradeIn||"",Folio:v.folioBolsa||"",Registrado_por:v.registradoPorNombre||""}));
+  const totalMonto=data.reduce((s,r)=>s+(Number(r.Monto)||0),0);
+  data.push({Fecha:"",Tipo:"TOTAL",Asesor:"",Codigo:"",Departamento:"",Monto:totalMonto,ID_TradeIn:"",Folio:"",Registrado_por:data.length+" registros"});
+  const ws=XLSX.utils.json_to_sheet(data);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,"Registros");
+  XLSX.writeFile(wb,`reporte_${tipo}_${d0}_a_${d1}.xlsx`);}
+// Programa recordatorios locales (setTimeout al próximo horario de cada uno)
+let _remTimers=[];
+function scheduleRecordatorio(){_remTimers.forEach(t=>clearTimeout(t));_remTimers=[];
+  const c=Store.config;if(!c||!c.remindOn||!("Notification"in window)||Notification.permission!=="granted")return;
+  const rems=(c.reminders&&c.reminders.length)?c.reminders:[{hora:'19:00',msg:'Recuerda subir el reporte del día'}];
+  rems.forEach(r=>{const[hh,mm]=(r.hora||"19:00").split(":").map(Number);const now=new Date();const next=new Date();next.setHours(hh||19,mm||0,0,0);if(next<=now)next.setDate(next.getDate()+1);
+    const t=setTimeout(function fire(){try{new Notification("Reporte Electro",{body:r.msg||"Recuerda reportar",icon:"icon-180.png"});}catch(e){}_remTimers.push(setTimeout(fire,86400000));},next-now);_remTimers.push(t);});}
+// Web Push: suscribe este dispositivo y guarda la suscripción en Firestore (pushSubs)
+function b64ToU8(s){const pad="=".repeat((4-s.length%4)%4);const b=(s+pad).replace(/-/g,"+").replace(/_/g,"/");const raw=atob(b);return Uint8Array.from([...raw].map(c=>c.charCodeAt(0)));}
+async function pushSubscribe(statusEl){try{
+  if(!("serviceWorker"in navigator)||!("PushManager"in window)){if(statusEl)statusEl.textContent="Este navegador no soporta push.";return;}
+  if("Notification"in window&&Notification.permission!=="granted"){const p=await Notification.requestPermission();if(p!=="granted"){if(statusEl)statusEl.textContent="Permiso de notificaciones denegado.";return;}}
+  const reg=await navigator.serviceWorker.ready;
+  let sub=await reg.pushManager.getSubscription();
+  if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64ToU8(VAPID_PUBLIC)});
+  const j=sub.toJSON();const id=btoa(j.endpoint).replace(/[^a-zA-Z0-9]/g,"").slice(-40);
+  if(Store.mode==="firebase"){await Store.db.collection("pushSubs").doc(id).set({endpoint:j.endpoint,keys:j.keys,ts:Date.now(),ua:navigator.userAgent.slice(0,120)});}
+  if(statusEl)statusEl.textContent="✓ Push activado en este dispositivo.";
+}catch(err){if(statusEl)statusEl.textContent="Push no disponible: "+err.message;}}
 function bindApar(c){$("#mDark").onclick=()=>{localStorage.setItem("re_mode","dark");applyTheme();renderConfig($("#app"));};
   $("#mLight").onclick=()=>{localStorage.setItem("re_mode","light");applyTheme();renderConfig($("#app"));};
   $$("#app .swatch").forEach(s=>s.onclick=async()=>{c.theme.accent=s.dataset.h;$("#cAccent").value=s.dataset.h;$$("#app .swatch").forEach(x=>x.classList.remove("sel"));s.classList.add("sel");applyThemeAccent(s.dataset.h);Store.lsSet("re4_config",c);if(Store.isAdmin())await Store.saveConfig(c);});
@@ -1022,7 +1112,7 @@ function bindApar(c){$("#mDark").onclick=()=>{localStorage.setItem("re_mode","da
   Store.subscribeVentas(()=>{updateHeader();if(CURRENT==="reporte")renderReporte($("#app"));});
   Store.subscribeAvances(()=>{updateHeader();if(CURRENT==="avance")renderAvance($("#app"));});
   Store.subscribeNps(()=>{if(CURRENT==="avance")renderAvance($("#app"));});
-  updateHeader();render();
+  updateHeader();render();scheduleRecordatorio();
   if("serviceWorker" in navigator){try{navigator.serviceWorker.register("sw.js");}catch{}}
 })();
 </script>

@@ -49,5 +49,12 @@ service cloud.firestore {
       allow read:  if request.auth != null;
       allow write: if esAdmin();
     }
+
+    // Suscripciones de notificaciones push: cada dispositivo con sesión guarda la suya.
+    // El servidor (GitHub Action con Admin SDK) las lee para enviar; eso omite estas reglas.
+    match /pushSubs/{id} {
+      allow read: if esAdmin();
+      allow create, update, delete: if request.auth != null;
+    }
   }
 }
