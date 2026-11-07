@@ -1,6 +1,6 @@
 /* Service worker mínimo para que Reporte Electro sea instalable (PWA).
    Estrategia: network-first para no dejar la app pegada en una versión vieja. */
-const CACHE = 'reporte-electro-preview1';
+const CACHE = 'reporte-electro-preview2';
 const ASSETS = ['./', './index.html', './manifest.json', './icon-180.png', './icon-512.png', './fpuntos.svg', './epa.svg', './epa.png', './logo-falabella.png', './attach.svg', './connect.png'];
 
 self.addEventListener('install', e => {
@@ -23,4 +23,20 @@ self.addEventListener('fetch', e => {
       return res;
     }).catch(() => caches.match(req).then(r => r || caches.match('./index.html')))
   );
+});
+// Web Push: muestra la notificación enviada por el servidor (GitHub Action)
+self.addEventListener('push', e => {
+  let d = {}; try { d = e.data ? e.data.json() : {}; } catch (_) { d = { body: e.data && e.data.text() }; }
+  const title = d.title || 'Reporte Electro';
+  e.waitUntil(self.registration.showNotification(title, {
+    body: d.body || 'Recuerda subir el reporte del día',
+    icon: './icon-180.png', badge: './icon-180.png', tag: 'reporte-remind'
+  }));
+});
+self.addEventListener('notificationclick', e => {
+  e.notification.close();
+  e.waitUntil(clients.matchAll({ type: 'window', includeUncontrolled: true }).then(ws => {
+    for (const w of ws) { if ('focus' in w) return w.focus(); }
+    if (clients.openWindow) return clients.openWindow('./');
+  }));
 });

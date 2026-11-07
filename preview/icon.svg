@@ -7,33 +7,28 @@
   </defs>
   <rect width="512" height="512" rx="112" fill="url(#g)"/>
   <!-- pantalla / reporte -->
-  <rect x="146" y="104" width="220" height="150" rx="16" fill="#fff"/>
-  <rect x="246" y="254" width="20" height="24" fill="#fff"/>
-  <rect x="210" y="278" width="92" height="15" rx="7.5" fill="#fff"/>
-  <rect x="176" y="190" width="28" height="40" rx="4" fill="#0A6E48"/>
-  <rect x="222" y="158" width="28" height="72" rx="4" fill="#0A6E48"/>
-  <rect x="268" y="174" width="28" height="56" rx="4" fill="#0A6E48"/>
-  <!-- fila de categorias -->
-  <!-- electrodomestico (refrigerador) -->
-  <rect x="78" y="314" width="38" height="82" rx="9" fill="#fff"/>
-  <rect x="78" y="346" width="38" height="4" fill="#0A6E48"/>
-  <rect x="104" y="324" width="5" height="14" rx="2" fill="#0A6E48"/>
-  <rect x="104" y="356" width="5" height="16" rx="2" fill="#0A6E48"/>
+  <rect x="146" y="100" width="220" height="150" rx="16" fill="#fff"/>
+  <rect x="246" y="250" width="20" height="24" fill="#fff"/>
+  <rect x="210" y="274" width="92" height="15" rx="7.5" fill="#fff"/>
+  <rect x="176" y="186" width="28" height="40" rx="4" fill="#0A6E48"/>
+  <rect x="222" y="154" width="28" height="72" rx="4" fill="#0A6E48"/>
+  <rect x="268" y="170" width="28" height="56" rx="4" fill="#0A6E48"/>
+  <!-- fila de categorias (centradas: telefono, laptop, control, audifonos) -->
   <!-- telefono -->
-  <rect x="160" y="314" width="32" height="82" rx="8" fill="#fff"/>
-  <rect x="169" y="322" width="14" height="4" rx="2" fill="#0A6E48"/>
-  <circle cx="176" cy="385" r="3.5" fill="#0A6E48"/>
+  <rect x="112" y="316" width="34" height="86" rx="9" fill="#fff"/>
+  <rect x="121" y="324" width="16" height="4" rx="2" fill="#0A6E48"/>
+  <circle cx="129" cy="392" r="4" fill="#0A6E48"/>
   <!-- computacion (laptop) -->
-  <rect x="233" y="316" width="46" height="32" rx="4" fill="#fff"/>
-  <polygon points="226,354 286,354 294,366 218,366" fill="#fff"/>
+  <rect x="186" y="320" width="54" height="38" rx="5" fill="#fff"/>
+  <polygon points="178,364 248,364 258,378 168,378" fill="#fff"/>
   <!-- videojuegos (control) -->
-  <rect x="306" y="336" width="62" height="36" rx="18" fill="#fff"/>
-  <rect x="318" y="346" width="5" height="18" rx="2" fill="#0A6E48"/>
-  <rect x="311" y="352" width="18" height="5" rx="2" fill="#0A6E48"/>
-  <circle cx="352" cy="349" r="4" fill="#0A6E48"/>
-  <circle cx="361" cy="358" r="4" fill="#0A6E48"/>
+  <rect x="280" y="340" width="70" height="40" rx="20" fill="#fff"/>
+  <rect x="294" y="352" width="6" height="20" rx="2" fill="#0A6E48"/>
+  <rect x="286" y="359" width="20" height="6" rx="2" fill="#0A6E48"/>
+  <circle cx="332" cy="355" r="4.5" fill="#0A6E48"/>
+  <circle cx="342" cy="365" r="4.5" fill="#0A6E48"/>
   <!-- audio (audifonos) -->
-  <path d="M392 366 a24 24 0 0 1 48 0" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
-  <rect x="386" y="362" width="13" height="24" rx="5" fill="#fff"/>
-  <rect x="433" y="362" width="13" height="24" rx="5" fill="#fff"/>
+  <path d="M372 372 a28 28 0 0 1 56 0" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+  <rect x="366" y="368" width="15" height="28" rx="6" fill="#fff"/>
+  <rect x="419" y="368" width="15" height="28" rx="6" fill="#fff"/>
 </svg>
