@@ -171,6 +171,26 @@
   .fs tr.total td{background:#111;color:#fff;font-weight:900}
   .fs .sem{width:10px;height:10px}
   .fs .fs-foot{text-align:center;color:#888;font-size:12px;margin-top:12px}
+
+  /* ===== Tema navideño (hasta 25 dic) — no intrusivo ===== */
+  #snow{position:fixed;inset:0;z-index:35;pointer-events:none;overflow:hidden}
+  #snow i{position:absolute;top:-6%;color:#fff;opacity:.85;will-change:transform;animation:snowfall linear infinite;text-shadow:0 0 4px rgba(180,220,255,.6)}
+  @keyframes snowfall{0%{transform:translateY(-10vh) translateX(0) rotate(0)}100%{transform:translateY(110vh) translateX(var(--drift,10px)) rotate(360deg)}}
+  .xmas .topbar{border-bottom:none;box-shadow:0 2px 0 0 transparent}
+  .garland{height:0;display:none}
+  .xmas .garland{display:block;height:14px;background:
+    radial-gradient(circle at 10px 0,#e4002b 0 4px,transparent 5px) 0 0/40px 14px repeat-x,
+    radial-gradient(circle at 30px 0,#00a94f 0 4px,transparent 5px) 0 0/40px 14px repeat-x,
+    radial-gradient(circle at 20px 0,#f5c518 0 4px,transparent 5px) 0 0/40px 14px repeat-x;
+    border-top:2px solid #0a4d2c;animation:twinkle 1.6s steps(2) infinite}
+  @keyframes twinkle{0%,100%{filter:brightness(1)}50%{filter:brightness(1.5)}}
+  .xmas .brand{position:relative}
+  .xmas .brand>img::after{content:""}
+  .xmas .brand::before{content:"🎅";position:absolute;left:-7px;top:-9px;font-size:15px;transform:rotate(-18deg);filter:drop-shadow(0 1px 1px rgba(0,0,0,.4));z-index:2}
+  .xmas .card h2::after{content:" 🎄";font-size:.85em;filter:saturate(1.2)}
+  .xmas .kpi .k{position:relative;overflow:hidden}
+  .xmas .kpi .k::after{content:"❄";position:absolute;right:6px;top:4px;font-size:12px;color:color-mix(in srgb,var(--accent) 60%,#fff);opacity:.4}
+  @media (prefers-reduced-motion:reduce){#snow i{animation:none;display:none}.xmas .garland{animation:none}}
 </style>
 </head>
 <body>
@@ -184,6 +204,7 @@
   <button class="icon-btn" id="btnTheme" title="Claro/oscuro">🌙</button>
   <button class="icon-btn" id="btnLogout" title="Cerrar sesión">⎋</button>
 </div>
+<div class="garland" id="garland"></div>
 
 <div class="app" id="app"></div>
 
@@ -963,7 +984,8 @@ function renderAvance(app){
 function renderConfig(app){const c=Store.config;const admin=Store.isAdmin();const mode=localStorage.getItem("re_mode")||"dark";
   let html=`<div class="card"><h2>Apariencia</h2><div class="seg" style="margin-top:8px"><button id="mDark" class="${mode==='dark'?'active':''}">🌙 Oscuro</button><button id="mLight" class="${mode==='light'?'active':''}">☀️ Claro</button></div>
     <h3>Color de la app</h3><div style="display:flex;gap:10px;flex-wrap:wrap">${Object.entries(THEME_PRESETS).map(([n,h])=>`<div class="swatch ${c.theme.accent===h?'sel':''}" data-h="${h}" title="${n}" style="background:${h}"></div>`).join("")}</div>
-    <label style="margin-top:12px">Personalizado</label><input type="color" id="cAccent" value="${c.theme.accent}" style="height:44px;padding:4px"></div>`;
+    <label style="margin-top:12px">Personalizado</label><input type="color" id="cAccent" value="${c.theme.accent}" style="height:44px;padding:4px">
+    ${esNavidadVentana()?`<label class="switch-row" style="margin-top:14px"><input type="checkbox" id="cXmas" ${xmasActivo()?'checked':''}> 🎄 Tema navideño (hasta el 25 dic)</label>`:''}</div>`;
   if(!admin){html+=`<div class="card"><h2>Administración</h2><p class="sub">Necesitas cuenta de administrador para metas, usuarios y avances.</p>
     <label>Clave de administrador</label><input id="claimPass" type="password" placeholder="••••••••"><div class="btn-row"><button class="btn" id="claimBtn">Convertirme en administrador</button></div></div>`;
     app.innerHTML=html;bindApar(c);$("#claimBtn").onclick=async()=>{if($("#claimPass").value!==ADMIN_PASS)return toast("Clave incorrecta");await Store.claimAdmin();toast("Ahora eres administrador");renderConfig(app);};return;}
@@ -1104,7 +1126,18 @@ async function pushSubscribe(statusEl){try{
 function bindApar(c){$("#mDark").onclick=()=>{localStorage.setItem("re_mode","dark");applyTheme();renderConfig($("#app"));};
   $("#mLight").onclick=()=>{localStorage.setItem("re_mode","light");applyTheme();renderConfig($("#app"));};
   $$("#app .swatch").forEach(s=>s.onclick=async()=>{c.theme.accent=s.dataset.h;$("#cAccent").value=s.dataset.h;$$("#app .swatch").forEach(x=>x.classList.remove("sel"));s.classList.add("sel");applyThemeAccent(s.dataset.h);Store.lsSet("re4_config",c);if(Store.isAdmin())await Store.saveConfig(c);});
-  $("#cAccent").oninput=e=>{c.theme.accent=e.target.value;applyThemeAccent(e.target.value);};}
+  $("#cAccent").oninput=e=>{c.theme.accent=e.target.value;applyThemeAccent(e.target.value);};
+  {const x=$("#cXmas");if(x)x.onchange=()=>{localStorage.setItem("re_xmas",x.checked?"1":"0");applyXmas();};}}
+// ===== Tema navideño (noviembre y 1–25 de diciembre) =====
+function esNavidadVentana(){const d=new Date();const m=d.getMonth();return m===10||(m===11&&d.getDate()<=25);}
+function xmasActivo(){return esNavidadVentana()&&localStorage.getItem("re_xmas")!=="0";}
+function applyXmas(){const on=xmasActivo();document.body.classList.toggle("xmas",on);let snow=document.getElementById("snow");
+  if(on){if(!snow){snow=document.createElement("div");snow.id="snow";
+    const red=window.matchMedia&&matchMedia("(prefers-reduced-motion:reduce)").matches;const N=red?0:22;let h="";
+    for(let i=0;i<N;i++){const left=(Math.random()*100).toFixed(1);const dur=(6+Math.random()*7).toFixed(1);const delay=(-Math.random()*12).toFixed(1);const size=(8+Math.random()*10).toFixed(0);const drift=(Math.random()*40-20).toFixed(0);const ch=Math.random()<.5?"❄":"❅";
+      h+=`<i style="left:${left}%;font-size:${size}px;animation-duration:${dur}s;animation-delay:${delay}s;--drift:${drift}px">${ch}</i>`;}
+    snow.innerHTML=h;document.body.appendChild(snow);}}
+  else if(snow){snow.remove();}}
 
 /* ===================== arranque ===================== */
 (async function(){await Store.init();applyTheme();
@@ -1112,7 +1145,7 @@ function bindApar(c){$("#mDark").onclick=()=>{localStorage.setItem("re_mode","da
   Store.subscribeVentas(()=>{updateHeader();if(CURRENT==="reporte")renderReporte($("#app"));});
   Store.subscribeAvances(()=>{updateHeader();if(CURRENT==="avance")renderAvance($("#app"));});
   Store.subscribeNps(()=>{if(CURRENT==="avance")renderAvance($("#app"));});
-  updateHeader();render();scheduleRecordatorio();
+  updateHeader();render();scheduleRecordatorio();applyXmas();
   if("serviceWorker" in navigator){try{navigator.serviceWorker.register("sw.js");}catch{}}
 })();
 </script>
