@@ -301,7 +301,8 @@ const Store={mode:"local",db:null,auth:null,storage:null,user:null,config:null,
     const first=(await this.countUsers())===0;const prof=mkProf(first);const users=this.lsGet("re4_users",{});if(users[username])throw new Error("Ese usuario ya existe.");prof.uid="local_"+uid();prof.clave=clave;users[username]=prof;this.lsSet("re4_users",users);if(prof.estado==="activo"){this.lsSet("re4_session",prof.uid);this.user=prof;}
     return prof;},
   async signIn({username,clave}){username=norm(username).replace(/\s+/g,".");
-    if(this.mode==="firebase"){const cred=await this.auth.signInWithEmailAndPassword(this.emailFor(username),clave);const d=await this.db.collection("usuarios").doc(cred.user.uid).get();const p=d.exists?d.data():null;
+    if(this.mode==="firebase"){const cred=await this.auth.signInWithEmailAndPassword(this.emailFor(username),clave);const ref=this.db.collection("usuarios").doc(cred.user.uid);const d=await ref.get();let p=d.exists?d.data():null;
+      if(!p){const nom=username.split(".");p={nombre:clean(nom[0]||username),apellido:clean(nom[1]||""),codigo:"",username,display:(nom.join(" ")||username),rol:"user",estado:"pendiente",createdAt:Date.now(),uid:cred.user.uid};try{await ref.set(p);}catch(e){}}
       if(!p||p.estado!=="activo"){await this.auth.signOut();throw new Error("Tu cuenta está pendiente de aprobación.");}this.user=p;await this.loadRemoteConfig();return p;}
     const users=this.lsGet("re4_users",{});const u=users[username];if(!u||u.clave!==clave)throw new Error("Usuario o clave incorrectos.");
     if(u.estado!=="activo")throw new Error("Tu cuenta está pendiente de aprobación.");this.lsSet("re4_session",u.uid);this.user=u;return u;},
