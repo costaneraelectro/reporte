@@ -72,6 +72,17 @@
 
   .rep-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--line)}
   td.sep,th.sep{border-left:2px solid var(--line)}
+  .switch-row{display:flex;align-items:center;gap:10px;font-weight:600;margin-top:4px;cursor:pointer}
+  .switch-row input{width:20px;height:20px;accent-color:var(--accent)}
+  /* transiciones y feedback táctil */
+  *{-webkit-tap-highlight-color:transparent}
+  .btn,.icon-btn,.swatch,.seg button,summary{transition:transform .12s ease,background .2s ease,opacity .2s ease,box-shadow .2s ease}
+  .btn:active,.icon-btn:active{transform:scale(.96)}
+  .card{animation:cardIn .28s ease both}
+  @keyframes cardIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  details>summary{list-style:none}details>summary::-webkit-details-marker{display:none}
+  details[open]>summary{margin-bottom:4px}
+  @media (prefers-reduced-motion:reduce){.card{animation:none}.btn:active,.icon-btn:active{transform:none}}
   table{border-collapse:collapse;width:100%;font-size:13px;background:var(--input)}
   th,td{padding:9px 10px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
   th:first-child,td:first-child{text-align:left}
@@ -386,14 +397,14 @@ function nombreCorto(full){const raw=clean(full);if(!raw)return "";const key=nor
   return (cap(toks[0])+" "+cap(rest[1]||rest[0]||"")).trim();}
 // Roster fijo de asesores para "reportar a otra persona": nombre = primer nombre + apellido paterno.
 const ASESORES=[
-  {codigo:"955744",nombre:"Yujemary Mendoza"},{codigo:"989703",nombre:"Gelen Parra"},{codigo:"535230",nombre:"Paula Lopez"},
-  {codigo:"777528",nombre:"Enrique Pilar"},{codigo:"524646",nombre:"Nicole Gonzalez"},{codigo:"261432",nombre:"Ignacio Inostroza"},
-  {codigo:"705780",nombre:"Marcela Arriagada"},{codigo:"723177",nombre:"Christian Vega"},{codigo:"320374",nombre:"Ambar Ferrer"},
-  {codigo:"128171",nombre:"Jasson Guerra"},{codigo:"621633",nombre:"Cristian Sobarzo"},
-  {codigo:"432539",nombre:"Luis Oropeza"},{codigo:"724114",nombre:"Sebastian Soto"},{codigo:"622974",nombre:"Mariela Meza"},
-  {codigo:"849340",nombre:"Karen Guillen"},{codigo:"621986",nombre:"Tamara Estrada"},{codigo:"667366",nombre:"Giovanni Landeros"},
-  {codigo:"507326",nombre:"Fernanda Valenzuela"},{codigo:"672106",nombre:"Joaquin Moris"},{codigo:"699322",nombre:"Kevin Taico"},
-  {codigo:"570303",nombre:"Christopher Mendez"}
+  {codigo:"672106",nombre:"Joaquin Moris"},{codigo:"524646",nombre:"Nicole Gonzalez"},{codigo:"621633",nombre:"Cristian Sobarzo"},
+  {codigo:"989703",nombre:"Gelen Parra"},{codigo:"621986",nombre:"Tamara Estrada"},{codigo:"570303",nombre:"Christopher Mendez"},
+  {codigo:"667366",nombre:"Giovanni Landeros"},{codigo:"555744",nombre:"Yujemary Mendoza"},{codigo:"622974",nombre:"Mariela Meza"},
+  {codigo:"224114",nombre:"Sebastian Soto"},{codigo:"535230",nombre:"Paula Lopez"},{codigo:"705780",nombre:"Marcela Arriagada"},
+  {codigo:"749340",nombre:"Enrique Pilar"},{codigo:"849340",nombre:"Karen Guillen"},{codigo:"128171",nombre:"Jasson Guerra"},
+  {codigo:"703095",nombre:"Sebastian Duran"},{codigo:"507326",nombre:"Fernanda Valenzuela"},{codigo:"666698",nombre:"Matias Pinto"},
+  {codigo:"432539",nombre:"Luis Oropeza"},{codigo:"261432",nombre:"Ignacio Inostroza"},{codigo:"699322",nombre:"Kevin Taico"},
+  {codigo:"600024",nombre:"Andrea Catalan"},{codigo:"320374",nombre:"Ambar Ferrer"},{codigo:"628956",nombre:"Claudia Bravo"}
 ];
 // Aplica solo el override de nombre (Yesenia Nicole Gonzalez -> Nicole Gonzalez) sin acortar el resto.
 function fixNombre(n){const raw=clean(n);if(!raw)return raw;const k=norm(raw);for(const kk in NOMBRE_OVERRIDES){if(k.includes(kk)||kk.includes(k))return NOMBRE_OVERRIDES[kk];}return raw;}
@@ -939,7 +950,6 @@ function renderConfig(app){const c=Store.config;const admin=Store.isAdmin();cons
   html+=`<div class="card"><h2>Mes comercial</h2><div class="grid2"><div><label>Inicio</label><input id="cMesIni" type="date" value="${esc(c.mes.inicio||'')}"></div><div><label>Término</label><input id="cMesFin" type="date" value="${esc(c.mes.fin||'')}"></div></div>
     ${mi?`<p class="tiny" style="margin-top:8px">Quedan <b style="color:var(--accent)">${mi.diasRest}</b> día(s) para que termine el mes (van ${mi.diasTrans}/${mi.diasTot}).</p>`:''}</div>
   <div class="card"><h2>Metas</h2><div id="metasBox"></div></div>
-  <div class="card users-mini"><details open><summary style="cursor:pointer;font-weight:800;font-size:17px">Usuarios</summary><p class="sub">Aprueba cuentas y designa administradores.</p><div id="usersBox">Cargando…</div></details></div>
   <div class="card"><h2>Subir avance de Looker</h2><p class="sub">Sube los HTML de Looker (Venta x Vendedor y/o Venta x Departamento). Puedes elegir ambos a la vez. <b>No usa IA.</b></p>
     <label>Fecha del avance</label><input type="date" id="avFecha" value="${todayStr()}">
     <label class="btn secondary" style="cursor:pointer;margin-top:10px">📄 Elegir archivo(s) (.html)<input id="avFile" type="file" accept=".html,.htm,.txt" multiple class="hidden"></label>
@@ -952,7 +962,18 @@ function renderConfig(app){const c=Store.config;const admin=Store.isAdmin();cons
       <div><label class="tiny">Computación</label><input id="cMetaAttCOMP" inputmode="numeric" value="${esc((c.metaAttachCat&&c.metaAttachCat.COMPUTACION!=null)?c.metaAttachCat.COMPUTACION:47)}" placeholder="47"></div>
       <div><label class="tiny">Videojuegos</label><input id="cMetaAttVJ" inputmode="numeric" value="${esc((c.metaAttachCat&&c.metaAttachCat.VIDEOJUEGOS!=null)?c.metaAttachCat.VIDEOJUEGOS:45)}" placeholder="45"></div></div>
     <div id="npsStatus"></div></div>
-  <div class="btn-row"><button class="btn" id="cfgSave">Guardar configuración</button></div>`;
+  <div class="card"><h2>Recordatorio para reportar 🔔</h2><p class="sub">Aviso diario en este teléfono para que no se te olvide reportar. Requiere permiso de notificaciones.</p>
+    <label class="switch-row"><input type="checkbox" id="cRemOn" ${c.remind&&c.remind.on?'checked':''}> Activar recordatorio diario</label>
+    <div class="grid2" style="margin-top:8px"><div><label>Hora</label><input type="time" id="cRemHora" value="${esc((c.remind&&c.remind.hora)||'19:00')}"></div>
+      <div><label>Mensaje</label><input id="cRemMsg" value="${esc((c.remind&&c.remind.msg)||'Recuerda subir el reporte del día')}" placeholder="Texto del aviso"></div></div>
+    <div id="remStatus" class="tiny" style="margin-top:6px"></div></div>
+  <div class="card"><h2>Exportar a Excel 📥</h2><p class="sub">Descarga los registros para cuadrar contra Looker. Elige rango y tipo.</p>
+    <div class="grid2"><div><label>Desde</label><input type="date" id="expDesde" value="${esc(c.mes.inicio||todayStr())}"></div><div><label>Hasta</label><input type="date" id="expHasta" value="${todayStr()}"></div></div>
+    <label style="margin-top:8px">Tipo</label>
+    <select id="expTipo"><option value="GEXT_SEGURO">Garantía + Seguro</option><option value="NOMIX">No Mix</option><option value="CANJES">Canjes (Fpuntos y F+Pesos)</option><option value="EXCHANGE">Exchange</option><option value="TODO">Todo</option></select>
+    <div class="btn-row"><button class="btn secondary" id="expBtn">Descargar Excel</button></div><div id="expStatus" class="tiny"></div></div>
+  <div class="btn-row"><button class="btn" id="cfgSave">Guardar configuración</button></div>
+  <div class="card users-mini"><details><summary style="cursor:pointer;font-weight:800;font-size:17px">👥 Usuarios</summary><p class="sub">Aprueba cuentas y designa administradores.</p><div id="usersBox">Cargando…</div></details></div>`;
   app.innerHTML=html;bindApar(c);
 
   function drawMetas(){const rowEN=d=>{const m=metaOf(AREA_EN,d);const seg=SEGURO_DEPTS.has(d);
@@ -1009,8 +1030,35 @@ function renderConfig(app){const c=Store.config;const admin=Store.isAdmin();cons
     {const mp=$("#cMetaPlanes");if(mp)c.metaPlanes=num(mp.value);
      const tel=$("#cMetaAttTEL"),cmp=$("#cMetaAttCOMP"),vj=$("#cMetaAttVJ");
      if(tel){c.metaAttachCat={TELEFONIA:num(tel.value)||38,COMPUTACION:num(cmp.value)||47,VIDEOJUEGOS:num(vj.value)||45};}}
-    await Store.saveConfig(c);applyTheme();toast("Configuración guardada ✓");};
+    {const r=$("#cRemOn");if(r)c.remind={on:r.checked,hora:$("#cRemHora").value||'19:00',msg:clean($("#cRemMsg").value)||'Recuerda subir el reporte del día'};}
+    await Store.saveConfig(c);applyTheme();scheduleRecordatorio();toast("Configuración guardada ✓");};
+
+  // recordatorio: pide permiso al activar
+  {const rem=$("#cRemOn"),rst=$("#remStatus");if(rem){const upd=()=>{if(!("Notification"in window)){rst.textContent="Este dispositivo no soporta notificaciones.";return;}rst.textContent="Permiso: "+Notification.permission;};upd();
+    rem.onchange=async()=>{if(rem.checked&&"Notification"in window&&Notification.permission!=="granted"){const p=await Notification.requestPermission();upd();if(p!=="granted"){rst.textContent="Permiso denegado. Actívalo en ajustes del navegador.";}}};}}
+
+  // exportar a Excel
+  {const eb=$("#expBtn");if(eb)eb.onclick=async()=>{const est=$("#expStatus");est.textContent="Generando…";
+    try{await exportarExcel($("#expDesde").value,$("#expHasta").value,$("#expTipo").value);est.textContent="✓ Descargado.";}catch(err){est.textContent="Error: "+err.message;}};}
 }
+async function exportarExcel(desde,hasta,tipo){await ensureXLSX();
+  const d0=desde||"0000-01-01",d1=hasta||"9999-12-31";
+  const all=(Store.ventasCache||[]).filter(v=>{const f=(v.fecha||"").slice(0,10);return f>=d0&&f<=d1;});
+  const TIPOCAT={GEXT_SEGURO:["GEXT","SEGURO"],NOMIX:["NOMIX"],CANJES:["FPUNTOS","FPUNTOSPESOS"],EXCHANGE:["EXCHANGE"],TODO:null};
+  const cats=TIPOCAT[tipo];const rows=all.filter(v=>!cats||cats.includes(v.categoria));
+  const TIPO={GEXT:"Garantía",SEGURO:"Seguro",NOMIX:"No Mix",FPUNTOS:"Canje Fpuntos",FPUNTOSPESOS:"Fpuntos + Pesos",EXCHANGE:"Exchange",OTROS:"Otros"};
+  const data=rows.map(v=>({Fecha:(v.fecha||"").slice(0,10),Tipo:TIPO[v.categoria]||v.categoria||"",Asesor:fixNombre(v.asesorNombre||""),Codigo:v.asesorCodigo||"",Departamento:v.departamento||v.area||"",Monto:v.monto||0,ID_TradeIn:v.idTradeIn||"",Folio:v.folioBolsa||"",Registrado_por:v.registradoPorNombre||""}));
+  const totalMonto=data.reduce((s,r)=>s+(Number(r.Monto)||0),0);
+  data.push({Fecha:"",Tipo:"TOTAL",Asesor:"",Codigo:"",Departamento:"",Monto:totalMonto,ID_TradeIn:"",Folio:"",Registrado_por:data.length+" registros"});
+  const ws=XLSX.utils.json_to_sheet(data);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,"Registros");
+  XLSX.writeFile(wb,`reporte_${tipo}_${d0}_a_${d1}.xlsx`);}
+// Programa un recordatorio diario local (setTimeout al próximo horario)
+let _remTimer=null;
+function scheduleRecordatorio(){if(_remTimer){clearTimeout(_remTimer);_remTimer=null;}
+  const c=Store.config;const r=c&&c.remind;if(!r||!r.on||!("Notification"in window)||Notification.permission!=="granted")return;
+  const[hh,mm]=(r.hora||"19:00").split(":").map(Number);const now=new Date();const next=new Date();next.setHours(hh||19,mm||0,0,0);if(next<=now)next.setDate(next.getDate()+1);
+  _remTimer=setTimeout(function fire(){try{new Notification("Reporte Electro",{body:(Store.config.remind&&Store.config.remind.msg)||"Recuerda reportar",icon:"icon-180.png"});}catch(e){}
+    _remTimer=setTimeout(fire,86400000);},next-now);}
 function bindApar(c){$("#mDark").onclick=()=>{localStorage.setItem("re_mode","dark");applyTheme();renderConfig($("#app"));};
   $("#mLight").onclick=()=>{localStorage.setItem("re_mode","light");applyTheme();renderConfig($("#app"));};
   $$("#app .swatch").forEach(s=>s.onclick=async()=>{c.theme.accent=s.dataset.h;$("#cAccent").value=s.dataset.h;$$("#app .swatch").forEach(x=>x.classList.remove("sel"));s.classList.add("sel");applyThemeAccent(s.dataset.h);Store.lsSet("re4_config",c);if(Store.isAdmin())await Store.saveConfig(c);});
@@ -1022,7 +1070,7 @@ function bindApar(c){$("#mDark").onclick=()=>{localStorage.setItem("re_mode","da
   Store.subscribeVentas(()=>{updateHeader();if(CURRENT==="reporte")renderReporte($("#app"));});
   Store.subscribeAvances(()=>{updateHeader();if(CURRENT==="avance")renderAvance($("#app"));});
   Store.subscribeNps(()=>{if(CURRENT==="avance")renderAvance($("#app"));});
-  updateHeader();render();
+  updateHeader();render();scheduleRecordatorio();
   if("serviceWorker" in navigator){try{navigator.serviceWorker.register("sw.js");}catch{}}
 })();
 </script>
